@@ -22,4 +22,9 @@
 - ✅ T2.5 (2026-09-15): Layout e stati globali.
 
 ## FASE 3 - Denaro: anagrafiche
-- ⏳ T3.1: Fonti di entrata.
+- ✅ T3.1 (2026-09-15): Fonti di entrata: CRUD.
+- ✅ T3.2 (2026-09-15): Bucket: CRUD e ordine.
+- ✅ T3.3 (2026-09-15): Regole di allocazione.
+
+## FASE 4 - Denaro: il Ciclo Attivo
+- ⏳ T4.1: Motore del ciclo (chiusura/apertura).

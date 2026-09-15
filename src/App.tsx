@@ -9,6 +9,8 @@ import { DevUIScreen } from './features/dev/DevUIScreen';
 import { ToastContainer } from './ui/Toast';
 
 import { IncomeSourcesScreen } from './features/finance/sources/IncomeSourcesScreen';
+import { BucketsScreen } from './features/finance/buckets/BucketsScreen';
+import { AllocationRulesScreen } from './features/finance/allocations/AllocationRulesScreen';
 
 export default function App() {
   return (
@@ -20,6 +22,8 @@ export default function App() {
             <Route path="soldi">
               <Route index element={<FinanceScreen />} />
               <Route path="fonti" element={<IncomeSourcesScreen />} />
+              <Route path="bucket" element={<BucketsScreen />} />
+              <Route path="allocazioni" element={<AllocationRulesScreen />} />
             </Route>
             <Route path="progetti" element={<ProjectsScreen />} />
             <Route path="impostazioni" element={<SettingsScreen />} />

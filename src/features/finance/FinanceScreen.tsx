@@ -31,6 +31,18 @@ export default function FinanceScreen() {
             </Button>
           </Link>
         </Card>
+
+        <Card className="flex flex-col space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold">Regole di Allocazione</h2>
+            <p className="text-sm text-zinc-500">Distribuisci automaticamente le tue entrate</p>
+          </div>
+          <Link to="/soldi/allocazioni">
+            <Button variant="secondary" fullWidth>
+              Modifica Regole
+            </Button>
+          </Link>
+        </Card>
       </div>
     </div>
   );
