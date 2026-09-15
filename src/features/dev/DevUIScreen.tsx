@@ -10,6 +10,8 @@ import {
   Divider,
   EmptyState,
   Sheet,
+  Money,
+  MoneyInput,
 } from '@/ui';
 import { Star, Home, Settings } from 'lucide-react';
 import { useToastStore } from '@/stores/toast';
@@ -17,6 +19,7 @@ import { useToastStore } from '@/stores/toast';
 export function DevUIScreen() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [toggleState, setToggleState] = useState(false);
+  const [moneyValue, setMoneyValue] = useState<number | null>(123456);
   const addToast = useToastStore((state) => state.addToast);
 
   return (
@@ -25,6 +28,37 @@ export function DevUIScreen() {
         <h1 className="text-3xl font-bold">Design System</h1>
         <p className="text-zinc-500">Preview di tutti i componenti UI (Responsive)</p>
       </div>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold border-b pb-2">Denaro (Money & MoneyInput)</h2>
+        <div className="flex flex-col gap-4 max-w-md">
+          <div className="flex gap-4 items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-xl">
+            <div className="flex flex-col">
+              <span className="text-xs text-zinc-500">Base</span>
+              <Money cents={123456} className="text-lg font-medium" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-zinc-500">Con Segno</span>
+              <Money cents={123456} showSign className="text-lg font-medium" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-zinc-500">Semantico (+)</span>
+              <Money cents={123456} semanticColor showSign className="text-lg font-bold" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs text-zinc-500">Semantico (-)</span>
+              <Money cents={-5000} semanticColor showSign className="text-lg font-bold" />
+            </div>
+          </div>
+
+          <MoneyInput
+            label="Inserisci importo"
+            value={moneyValue ?? 0}
+            onChange={setMoneyValue}
+            helpText={`Valore nello stato: ${moneyValue} centesimi`}
+          />
+        </div>
+      </section>
 
       <section className="space-y-4">
         <h2 className="text-xl font-bold border-b pb-2">Buttons</h2>
