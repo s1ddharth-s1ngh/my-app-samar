@@ -12,6 +12,7 @@ import {
   Sheet,
   Money,
   MoneyInput,
+  CycleRing,
 } from '@/ui';
 import { Star, Home, Settings } from 'lucide-react';
 import { useToastStore } from '@/stores/toast';
@@ -28,6 +29,22 @@ export function DevUIScreen() {
         <h1 className="text-3xl font-bold">Design System</h1>
         <p className="text-zinc-500">Preview di tutti i componenti UI (Responsive)</p>
       </div>
+
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold border-b pb-2">Anello del Ciclo (CycleRing)</h2>
+        <div className="flex justify-center p-8 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800">
+          <CycleRing
+            daysTotal={30}
+            daysPassed={12}
+            totalBudget={200000}
+            buckets={[
+              { id: '1', amount: 80000, color: '#ef4444' }, // red
+              { id: '2', amount: 40000, color: '#eab308' }, // yellow
+              { id: '3', amount: 60000, color: '#22c55e' }, // green
+            ]}
+          />
+        </div>
+      </section>
 
       <section className="space-y-4">
         <h2 className="text-xl font-bold border-b pb-2">Denaro (Money & MoneyInput)</h2>
