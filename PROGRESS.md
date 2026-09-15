@@ -6,3 +6,6 @@
 - ✅ T0.4 (2026-09-15): Vitest (testing-library, test configurati).
 - 🏗️ T0.5 (2026-09-15): Documenti di progetto.
 - ✅ T0.6 (2026-09-15): Router e scheletro di navigazione.
+- ✅ T1.1 (2026-09-15): Tipi del dominio.
+- ✅ T1.2 (2026-09-15): Schemi zod.
+- ⏳ T1.3: Interfaccia DataAdapter.
