@@ -12,7 +12,7 @@
 - ✅ T1.4 (2026-09-15): Implementazione IndexedDB.
 - ✅ T1.5 (2026-09-15): Outbox per la sincronizzazione futura.
 - ✅ T1.6 (2026-09-15): Store Zustand base e idratazione.
-- ⏳ T1.7: Dati di esempio.
+- ✅ T1.7 (2026-09-15): Dati di esempio.
 
-## FASE 2 - Foundation (Stato)
-- ⏳ T2.1: Store Zustand.
+## FASE 2 - Sistema visivo e guscio
+- ⏳ T2.1: Primitivi UI.
