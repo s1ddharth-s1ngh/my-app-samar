@@ -37,4 +37,4 @@
 - ✅ T5.3 (2026-09-15): Task Timer & Abitudini.
 
 ## FASE 6 - Review e Pulizia
-- ⏳ T6.1: Check finale PWA.
+- ✅ T6.1 (2026-09-15): Check finale PWA.

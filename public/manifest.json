@@ -1,0 +1,16 @@
+{
+  "name": "Ciclo",
+  "short_name": "Ciclo",
+  "description": "Denaro, Lavoro e Ritmo in un'unica app.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#10b981",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
