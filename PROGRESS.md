@@ -9,4 +9,7 @@
 - ✅ T1.1 (2026-09-15): Tipi del dominio.
 - ✅ T1.2 (2026-09-15): Schemi zod.
 - ✅ T1.3 (2026-09-15): Interfaccia DataAdapter.
-- ⏳ T1.4: Implementazione IndexedDB.
+- ✅ T1.4 (2026-09-15): Implementazione IndexedDB.
+
+## FASE 2 - Foundation (Stato)
+- ⏳ T2.1: Store Zustand.
