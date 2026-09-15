@@ -60,8 +60,14 @@ export class IndexedDBRepository<T extends Base> implements Repository<T> {
     const store = tx.objectStore(this.storeName as any);
     const existing = await store.get(id);
 
-    if (!existing || existing.deletedAt) {
+    if (!existing) {
       throw new Error(`Record ${id} not found in ${this.storeName}`);
+    }
+
+    // Allow update if we are explicitly restoring
+    const isRestoring = data.deletedAt === null;
+    if (existing.deletedAt && !isRestoring) {
+      throw new Error(`Record ${id} not found in ${this.storeName} (deleted)`);
     }
 
     const updated = { ...existing, ...data } as any;

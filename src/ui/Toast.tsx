@@ -26,10 +26,21 @@ export function ToastContainer() {
               <Info size={18} className="text-blue-500" />
             )}
           </div>
-          <div className="flex-1 text-sm font-medium">{toast.message}</div>
+          <div className="flex-1 text-sm font-medium pr-2">{toast.message}</div>
+          {toast.action && (
+            <button
+              onClick={() => {
+                toast.action!.onClick();
+                removeToast(toast.id);
+              }}
+              className="shrink-0 text-sm font-bold underline hover:no-underline px-2 py-1"
+            >
+              {toast.action.label}
+            </button>
+          )}
           <button
             onClick={() => removeToast(toast.id)}
-            className="shrink-0 opacity-50 hover:opacity-100 transition-opacity"
+            className="shrink-0 opacity-50 hover:opacity-100 transition-opacity p-1"
             aria-label="Chiudi"
           >
             <X size={18} />

@@ -8,6 +8,8 @@ import { SettingsScreen } from './features/settings/SettingsScreen';
 import { DevUIScreen } from './features/dev/DevUIScreen';
 import { ToastContainer } from './ui/Toast';
 
+import { IncomeSourcesScreen } from './features/finance/sources/IncomeSourcesScreen';
+
 export default function App() {
   return (
     <Router>
@@ -15,7 +17,10 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<TodayScreen />} />
-            <Route path="soldi" element={<FinanceScreen />} />
+            <Route path="soldi">
+              <Route index element={<FinanceScreen />} />
+              <Route path="fonti" element={<IncomeSourcesScreen />} />
+            </Route>
             <Route path="progetti" element={<ProjectsScreen />} />
             <Route path="impostazioni" element={<SettingsScreen />} />
           </Route>

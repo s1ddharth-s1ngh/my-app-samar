@@ -32,6 +32,7 @@ interface Actions {
     data: Partial<State[K][0]>
   ) => Promise<void>;
   removeItem: <K extends CollectionName>(collection: K, id: string) => Promise<void>;
+  restoreItem: <K extends CollectionName>(collection: K, id: string) => Promise<void>;
   updateSettings: (settings: T.Settings) => Promise<void>;
   loadSeed: () => Promise<void>;
   resetAll: () => Promise<void>;
@@ -130,9 +131,23 @@ export const useDataStore = create<State & Actions>((set, get) => ({
     try {
       await (dbAdapter[collection] as any).remove(id);
     } catch (err) {
-      // Rollback
-      set({ [collection]: prev } as any);
-      useToastStore.getState().addToast('Non è stato possibile salvare. Riprova.', 'error');
+      set({ [collection]: prev } as unknown as Partial<State>);
+      useToastStore.getState().addToast('Non è stato possibile eliminare. Riprova.', 'error');
+      throw err;
+    }
+  },
+
+  restoreItem: async (collection, id) => {
+    try {
+      await (dbAdapter[collection] as any).update(id, { deletedAt: null });
+      const record = await (dbAdapter[collection] as any).get(id);
+
+      const prev = get()[collection];
+      set({
+        [collection]: [...prev, record],
+      } as unknown as Partial<State>);
+    } catch (err) {
+      useToastStore.getState().addToast('Non è stato possibile ripristinare.', 'error');
       throw err;
     }
   },
