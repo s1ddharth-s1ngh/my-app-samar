@@ -16,4 +16,6 @@
 
 ## FASE 2 - Sistema visivo e guscio
 - ✅ T2.1 (2026-09-15): Primitivi UI.
-- ⏳ T2.2: Componenti del denaro.
+- ✅ T2.2 (2026-09-15): Componenti del denaro.
+- ✅ T2.3 (2026-09-15): Anello del ciclo.
+- ⏳ T2.4: Tema chiaro/scuro.
