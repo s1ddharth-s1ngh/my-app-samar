@@ -27,4 +27,9 @@
 - ✅ T3.3 (2026-09-15): Regole di allocazione.
 
 ## FASE 4 - Denaro: il Ciclo Attivo
-- ⏳ T4.1: Motore del ciclo (chiusura/apertura).
+- ✅ T4.1 (2026-09-15): Motore del ciclo (chiusura/apertura).
+- ✅ T4.2 (2026-09-15): Visualizzazione ciclo.
+- ✅ T4.3 (2026-09-15): Dashboard e Spese rapide.
+
+## FASE 5 - Lavoro e Task
+- ⏳ T5.1: Lista progetti.
