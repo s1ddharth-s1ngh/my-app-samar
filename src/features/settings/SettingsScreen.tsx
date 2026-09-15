@@ -1,8 +1,49 @@
-export default function SettingsScreen() {
+import { useDataStore } from '@/stores/useDataStore';
+
+export function SettingsScreen() {
+  const loadSeed = useDataStore((state) => state.loadSeed);
+  const resetAll = useDataStore((state) => state.resetAll);
+
+  const handleLoadSeed = async () => {
+    if (
+      confirm('Vuoi davvero caricare i dati di esempio? Tutti i dati attuali verranno sostituiti.')
+    ) {
+      await loadSeed();
+      window.location.reload(); // Hard reload for simplicity in this demo
+    }
+  };
+
+  const handleReset = async () => {
+    if (
+      confirm('Sei sicuro di voler eliminare TUTTI i tuoi dati? Questa azione è irreversibile.')
+    ) {
+      await resetAll();
+      window.location.reload();
+    }
+  };
+
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-heading mb-4">Impostazioni</h1>
-      <p className="text-ink-muted">Questa è la schermata Impostazioni.</p>
+    <div className="p-4 space-y-4 max-w-[560px] mx-auto">
+      <h1 className="text-2xl font-bold">Impostazioni</h1>
+
+      <div className="space-y-2 border p-4 rounded-lg bg-red-50 text-red-900 border-red-200">
+        <h2 className="font-semibold text-lg">Area Pericolosa (Sviluppo)</h2>
+        <div className="flex gap-4">
+          <button
+            onClick={handleLoadSeed}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium"
+          >
+            Carica dati di esempio
+          </button>
+
+          <button
+            onClick={handleReset}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 font-medium"
+          >
+            Svuota tutto
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

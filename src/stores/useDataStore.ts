@@ -33,6 +33,8 @@ interface Actions {
   ) => Promise<void>;
   removeItem: <K extends CollectionName>(collection: K, id: string) => Promise<void>;
   updateSettings: (settings: T.Settings) => Promise<void>;
+  loadSeed: () => Promise<void>;
+  resetAll: () => Promise<void>;
 }
 
 const initialState: State = {
@@ -57,7 +59,9 @@ export const useDataStore = create<State & Actions>((set, get) => ({
   ...initialState,
 
   hydrate: async () => {
-    await dbAdapter.init();
+    if (!(dbAdapter as any).db) {
+      await dbAdapter.init();
+    }
     const data = await dbAdapter.exportAll();
 
     set({
@@ -138,8 +142,6 @@ export const useDataStore = create<State & Actions>((set, get) => ({
     set({ settings });
 
     try {
-      // delete existing first if needed, or update if exists
-      // Assuming settings has a fixed ID or we just bulk upsert
       const existing = await dbAdapter.settings.list();
       if (existing.length > 0) {
         await dbAdapter.settings.update(existing[0].id, settings);
@@ -151,5 +153,42 @@ export const useDataStore = create<State & Actions>((set, get) => ({
       useToastStore.getState().addToast('Non è stato possibile salvare. Riprova.', 'error');
       throw err;
     }
+  },
+
+  loadSeed: async () => {
+    const { generateSeedData } = await import('../data/seed');
+    const seed = generateSeedData();
+    const exportData = { version: 1, timestamp: new Date().toISOString(), collections: seed };
+    await dbAdapter.importAll(exportData, 'replace');
+    await get().hydrate();
+    useToastStore.getState().addToast('Dati di esempio caricati con successo.', 'info');
+  },
+
+  resetAll: async () => {
+    const emptyCollections = {
+      incomeSources: [],
+      incomeEntries: [],
+      buckets: [],
+      cycles: [],
+      allocations: [],
+      transactions: [],
+      recurringExpenses: [],
+      projects: [],
+      tasks: [],
+      taskOccurrences: [],
+      timerSessions: [],
+      shoppingItems: [],
+      scheduledNotifications: [],
+      settings: [],
+      outbox: [],
+    };
+    const exportData = {
+      version: 1,
+      timestamp: new Date().toISOString(),
+      collections: emptyCollections,
+    };
+    await dbAdapter.importAll(exportData, 'replace');
+    await get().hydrate();
+    useToastStore.getState().addToast('Tutti i dati sono stati eliminati.', 'info');
   },
 }));

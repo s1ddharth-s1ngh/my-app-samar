@@ -60,15 +60,16 @@ export class IndexedDBAdapter implements DataAdapter {
   }
 
   async importAll(data: ExportData, mode: 'merge' | 'replace'): Promise<void> {
-    const tx = this.db.transaction(this.db.objectStoreNames, 'readwrite');
-    for (const storeName of this.db.objectStoreNames) {
+    const storeNames = Array.from(this.db.objectStoreNames);
+    const tx = this.db.transaction(storeNames, 'readwrite');
+    for (const storeName of storeNames) {
       const store = tx.objectStore(storeName);
       if (mode === 'replace') {
-        await store.clear();
+        store.clear();
       }
       const items = (data.collections as any)[storeName] || [];
       for (const item of items) {
-        await store.put(item);
+        store.put(item);
       }
     }
     await tx.done;

@@ -44,4 +44,31 @@ describe('useDataStore', () => {
     expect(toasts[0]?.message).toBe('Non è stato possibile salvare. Riprova.');
     expect(toasts[0]?.type).toBe('error');
   });
+
+  it('carica i dati di seed e popola lo store', async () => {
+    await useDataStore.getState().loadSeed();
+    const state = useDataStore.getState();
+    expect(state.incomeSources.length).toBe(2);
+    expect(state.buckets.length).toBe(5);
+    expect(state.projects.length).toBe(2);
+    expect(state.tasks.length).toBe(10);
+    expect(state.shoppingItems.length).toBe(4);
+    expect(state.cycles.length).toBe(1);
+    expect(state.transactions.length).toBe(2);
+    expect(state.settings?.currency).toBe('EUR');
+
+    const toasts = useToastStore.getState().toasts;
+    expect(toasts.some((t) => t.message.includes('Dati di esempio'))).toBe(true);
+  });
+
+  it('svuota tutti i dati', async () => {
+    await useDataStore.getState().loadSeed();
+    expect(useDataStore.getState().projects.length).toBe(2);
+
+    await useDataStore.getState().resetAll();
+    const state = useDataStore.getState();
+    expect(state.projects.length).toBe(0);
+    expect(state.tasks.length).toBe(0);
+    expect(state.settings).toBeNull();
+  });
 });

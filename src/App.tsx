@@ -4,7 +4,7 @@ import { Layout } from './app/Layout';
 import TodayScreen from './features/today/TodayScreen';
 import FinanceScreen from './features/finance/FinanceScreen';
 import ProjectsScreen from './features/projects/ProjectsScreen';
-import SettingsScreen from './features/settings/SettingsScreen';
+import { SettingsScreen } from './features/settings/SettingsScreen';
 
 export default function App() {
   return (
