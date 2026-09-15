@@ -1,8 +1,11 @@
 import { useDataStore } from '@/stores/useDataStore';
+import { useThemeStore } from '@/stores/useThemeStore';
+import { Select } from '@/ui';
 
 export function SettingsScreen() {
   const loadSeed = useDataStore((state) => state.loadSeed);
   const resetAll = useDataStore((state) => state.resetAll);
+  const { theme, setTheme } = useThemeStore();
 
   const handleLoadSeed = async () => {
     if (
@@ -23,10 +26,24 @@ export function SettingsScreen() {
   };
 
   return (
-    <div className="p-4 space-y-4 max-w-[560px] mx-auto">
+    <div className="p-4 space-y-8 max-w-[560px] mx-auto">
       <h1 className="text-2xl font-bold">Impostazioni</h1>
 
-      <div className="space-y-2 border p-4 rounded-lg bg-red-50 text-red-900 border-red-200">
+      <section className="space-y-4">
+        <h2 className="text-xl font-bold">Aspetto</h2>
+        <Select
+          label="Tema dell'applicazione"
+          value={theme}
+          onChange={(e) => setTheme(e.target.value as any)}
+          options={[
+            { value: 'light', label: 'Chiaro' },
+            { value: 'dark', label: 'Scuro' },
+            { value: 'system', label: 'Sistema' },
+          ]}
+        />
+      </section>
+
+      <section className="space-y-4 border p-4 rounded-xl bg-red-50 text-red-900 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-900/50">
         <h2 className="font-semibold text-lg">Area Pericolosa (Sviluppo)</h2>
         <div className="flex gap-4">
           <button
@@ -43,7 +60,7 @@ export function SettingsScreen() {
             Svuota tutto
           </button>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

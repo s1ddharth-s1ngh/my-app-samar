@@ -25,17 +25,15 @@
   --line: #D9E0DC;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #10191B;
-    --surface: #162326;
-    --ink: #E8EFEA;
-    --ink-muted: #8A9D9F;
-    --accent: #3DA28A;
-    --signal: #D9A036;
-    --alert: #B5424F;
-    --line: #2E3E41;
-  }
+:root.dark {
+  --bg: #10191B;
+  --surface: #162326;
+  --ink: #E8EFEA;
+  --ink-muted: #8A9D9F;
+  --accent: #3DA28A;
+  --signal: #D9A036;
+  --alert: #B5424F;
+  --line: #2E3E41;
 }
 
 body {
