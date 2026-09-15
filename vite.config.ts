@@ -1,7 +1,8 @@
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite'
-import path from 'path'
+/// <reference types="vitest" />
+import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vitest/config';
+import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,4 +12,9 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
-})
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.ts',
+  },
+});
