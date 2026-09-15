@@ -11,6 +11,7 @@ import { ToastContainer } from './ui/Toast';
 import { IncomeSourcesScreen } from './features/finance/sources/IncomeSourcesScreen';
 import { BucketsScreen } from './features/finance/buckets/BucketsScreen';
 import { AllocationRulesScreen } from './features/finance/allocations/AllocationRulesScreen';
+import { ProjectDetailsScreen } from './features/projects/ProjectDetailsScreen';
 
 export default function App() {
   return (
@@ -25,7 +26,10 @@ export default function App() {
               <Route path="bucket" element={<BucketsScreen />} />
               <Route path="allocazioni" element={<AllocationRulesScreen />} />
             </Route>
-            <Route path="progetti" element={<ProjectsScreen />} />
+            <Route path="progetti">
+              <Route index element={<ProjectsScreen />} />
+              <Route path=":id" element={<ProjectDetailsScreen />} />
+            </Route>
             <Route path="impostazioni" element={<SettingsScreen />} />
           </Route>
           {import.meta.env.DEV && <Route path="/dev/ui" element={<DevUIScreen />} />}

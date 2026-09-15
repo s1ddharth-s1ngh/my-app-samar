@@ -32,4 +32,9 @@
 - ✅ T4.3 (2026-09-15): Dashboard e Spese rapide.
 
 ## FASE 5 - Lavoro e Task
-- ⏳ T5.1: Lista progetti.
+- ✅ T5.1 (2026-09-15): Lista progetti.
+- ✅ T5.2 (2026-09-15): Inbox e Task base.
+- ✅ T5.3 (2026-09-15): Task Timer & Abitudini.
+
+## FASE 6 - Review e Pulizia
+- ⏳ T6.1: Check finale PWA.
