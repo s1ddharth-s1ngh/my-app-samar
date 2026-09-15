@@ -1,15 +1,17 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { GlobalErrorBoundary } from './app/ErrorBoundary';
 import { Layout } from './app/Layout';
 import TodayScreen from './features/today/TodayScreen';
 import FinanceScreen from './features/finance/FinanceScreen';
 import ProjectsScreen from './features/projects/ProjectsScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
+import { DevUIScreen } from './features/dev/DevUIScreen';
+import { ToastContainer } from './ui/Toast';
 
 export default function App() {
   return (
-    <GlobalErrorBoundary>
-      <BrowserRouter>
+    <Router>
+      <GlobalErrorBoundary>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<TodayScreen />} />
@@ -17,8 +19,10 @@ export default function App() {
             <Route path="progetti" element={<ProjectsScreen />} />
             <Route path="impostazioni" element={<SettingsScreen />} />
           </Route>
+          {import.meta.env.DEV && <Route path="/dev/ui" element={<DevUIScreen />} />}
         </Routes>
-      </BrowserRouter>
-    </GlobalErrorBoundary>
+        <ToastContainer />
+      </GlobalErrorBoundary>
+    </Router>
   );
 }
