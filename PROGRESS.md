@@ -8,4 +8,5 @@
 - ✅ T0.6 (2026-09-15): Router e scheletro di navigazione.
 - ✅ T1.1 (2026-09-15): Tipi del dominio.
 - ✅ T1.2 (2026-09-15): Schemi zod.
-- ⏳ T1.3: Interfaccia DataAdapter.
+- ✅ T1.3 (2026-09-15): Interfaccia DataAdapter.
+- ⏳ T1.4: Implementazione IndexedDB.
