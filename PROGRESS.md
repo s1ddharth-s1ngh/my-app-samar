@@ -15,4 +15,5 @@
 - ✅ T1.7 (2026-09-15): Dati di esempio.
 
 ## FASE 2 - Sistema visivo e guscio
-- ⏳ T2.1: Primitivi UI.
+- ✅ T2.1 (2026-09-15): Primitivi UI.
+- ⏳ T2.2: Componenti del denaro.
