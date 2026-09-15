@@ -16,33 +16,38 @@ export function runMigrationV1(db: IDBPDatabase<any>) {
     'shoppingItems',
     'scheduledNotifications',
     'settings',
+    'outbox',
   ];
 
   for (const storeName of stores) {
     if (!db.objectStoreNames.contains(storeName)) {
       const store = db.createObjectStore(storeName, { keyPath: 'id' });
-      store.createIndex('deletedAt', 'deletedAt');
-      if (
-        storeName === 'transactions' ||
-        storeName === 'allocations' ||
-        storeName === 'shoppingItems' ||
-        storeName === 'incomeEntries'
-      ) {
-        store.createIndex('cycleId', 'cycleId');
-      }
-      if (
-        storeName === 'taskOccurrences' ||
-        storeName === 'timerSessions' ||
-        storeName === 'transactions'
-      ) {
-        store.createIndex('taskId', 'taskId');
-      }
-      if (
-        storeName === 'transactions' ||
-        storeName === 'incomeEntries' ||
-        storeName === 'taskOccurrences'
-      ) {
-        store.createIndex('date', 'date');
+      if (storeName === 'outbox') {
+        store.createIndex('syncedAt', 'syncedAt');
+      } else {
+        store.createIndex('deletedAt', 'deletedAt');
+        if (
+          storeName === 'transactions' ||
+          storeName === 'allocations' ||
+          storeName === 'shoppingItems' ||
+          storeName === 'incomeEntries'
+        ) {
+          store.createIndex('cycleId', 'cycleId');
+        }
+        if (
+          storeName === 'taskOccurrences' ||
+          storeName === 'timerSessions' ||
+          storeName === 'transactions'
+        ) {
+          store.createIndex('taskId', 'taskId');
+        }
+        if (
+          storeName === 'transactions' ||
+          storeName === 'incomeEntries' ||
+          storeName === 'taskOccurrences'
+        ) {
+          store.createIndex('date', 'date');
+        }
       }
     }
   }

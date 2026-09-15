@@ -72,4 +72,9 @@ export interface Schema extends DBSchema {
     value: T.Settings;
     indexes: { deletedAt: string };
   };
+  outbox: {
+    key: string;
+    value: T.OutboxEntry;
+    indexes: { syncedAt: string };
+  };
 }

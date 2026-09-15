@@ -185,3 +185,13 @@ export interface Settings extends Base {
   notificationsEnabled: boolean;
   quietHours: { from: Clock; to: Clock } | null;
 }
+
+export interface OutboxEntry {
+  id: ID;
+  entity: string;
+  entityId: ID;
+  op: 'create' | 'update' | 'remove';
+  payload: any;
+  createdAt: Instant;
+  syncedAt: Instant | null;
+}

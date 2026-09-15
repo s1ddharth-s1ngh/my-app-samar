@@ -40,12 +40,23 @@ export class IndexedDBRepository<T extends Base> implements Repository<T> {
   }
 
   async create(data: T): Promise<T> {
-    await this.db.add(this.storeName as any, data as any);
+    const tx = this.db.transaction([this.storeName as any, 'outbox'], 'readwrite');
+    await tx.objectStore(this.storeName as any).add(data as any);
+    await tx.objectStore('outbox').add({
+      id: crypto.randomUUID(),
+      entity: this.storeName,
+      entityId: data.id,
+      op: 'create',
+      payload: data,
+      createdAt: new Date().toISOString(),
+      syncedAt: null,
+    });
+    await tx.done;
     return data;
   }
 
   async update(id: ID, data: Partial<Omit<T, 'id'>>): Promise<T> {
-    const tx = this.db.transaction(this.storeName as any, 'readwrite');
+    const tx = this.db.transaction([this.storeName as any, 'outbox'], 'readwrite');
     const store = tx.objectStore(this.storeName as any);
     const existing = await store.get(id);
 
@@ -55,12 +66,23 @@ export class IndexedDBRepository<T extends Base> implements Repository<T> {
 
     const updated = { ...existing, ...data } as any;
     await store.put(updated);
+
+    await tx.objectStore('outbox').add({
+      id: crypto.randomUUID(),
+      entity: this.storeName,
+      entityId: id,
+      op: 'update',
+      payload: data,
+      createdAt: new Date().toISOString(),
+      syncedAt: null,
+    });
+
     await tx.done;
     return updated as T;
   }
 
   async remove(id: ID): Promise<T | null> {
-    const tx = this.db.transaction(this.storeName as any, 'readwrite');
+    const tx = this.db.transaction([this.storeName as any, 'outbox'], 'readwrite');
     const store = tx.objectStore(this.storeName as any);
     const existing = await store.get(id);
 
@@ -70,6 +92,17 @@ export class IndexedDBRepository<T extends Base> implements Repository<T> {
 
     const updated = { ...existing, deletedAt: new Date().toISOString() } as any;
     await store.put(updated);
+
+    await tx.objectStore('outbox').add({
+      id: crypto.randomUUID(),
+      entity: this.storeName,
+      entityId: id,
+      op: 'remove',
+      payload: null,
+      createdAt: new Date().toISOString(),
+      syncedAt: null,
+    });
+
     await tx.done;
     return updated as T;
   }
