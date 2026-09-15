@@ -5,4 +5,4 @@
 - ✅ T0.3 (2026-09-15): Lint, format, pre-commit (ESLint, Prettier, Husky, lint-staged).
 - ✅ T0.4 (2026-09-15): Vitest (testing-library, test configurati).
 - 🏗️ T0.5 (2026-09-15): Documenti di progetto.
-- ⏳ T0.6: Router e scheletro di navigazione.
+- ✅ T0.6 (2026-09-15): Router e scheletro di navigazione.
