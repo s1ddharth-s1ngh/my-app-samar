@@ -1,5 +1,12 @@
 import { Link } from 'react-router-dom';
-import { ChevronRight, CalendarClock, Layers, SlidersHorizontal, Wallet } from 'lucide-react';
+import {
+  ChevronRight,
+  CalendarClock,
+  Layers,
+  SlidersHorizontal,
+  TrendingUp,
+  Wallet,
+} from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Card, KpiCard, Money, PageHeader } from '@/ui';
 import { useCycleTotals } from './useCycleTotals';
@@ -12,6 +19,12 @@ interface SectionLink {
 }
 
 const SECTIONS: SectionLink[] = [
+  {
+    to: '/soldi/entrate',
+    icon: TrendingUp,
+    title: 'Entrate del ciclo',
+    description: 'Cosa è arrivato e cosa aspetti',
+  },
   {
     to: '/soldi/fonti',
     icon: Wallet,
