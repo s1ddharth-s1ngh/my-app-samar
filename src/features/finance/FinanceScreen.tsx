@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import {
-  ChevronRight,
   Boxes,
   CalendarClock,
+  ChevronRight,
   Layers,
   Receipt,
   SlidersHorizontal,
@@ -10,8 +10,10 @@ import {
   Wallet,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { Card, KpiCard, Money, PageHeader } from '@/ui';
+import { Card, EmptyState, KpiCard, Money, PageHeader } from '@/ui';
+import { useDataStore } from '@/stores/useDataStore';
 import { useCycleTotals } from './useCycleTotals';
+import { ActiveCycleRing } from '../today/ActiveCycleRing';
 
 interface SectionLink {
   to: string;
@@ -28,16 +30,16 @@ const SECTIONS: SectionLink[] = [
     description: 'Cosa è arrivato e cosa aspetti',
   },
   {
-    to: '/soldi/ripartizione',
-    icon: Layers,
-    title: 'Ripartizione del ciclo',
-    description: 'Quanto ha ogni bucket, e cosa resta',
-  },
-  {
     to: '/soldi/movimenti',
     icon: Receipt,
     title: 'Movimenti',
     description: 'Ogni spesa del ciclo, filtrabile',
+  },
+  {
+    to: '/soldi/ripartizione',
+    icon: Layers,
+    title: 'Ripartizione del ciclo',
+    description: 'Correggi a mano quello che serve',
   },
   {
     to: '/soldi/fonti',
@@ -67,6 +69,29 @@ const SECTIONS: SectionLink[] = [
 
 export default function FinanceScreen() {
   const totals = useCycleTotals();
+  const buckets = useDataStore((state) => state.buckets);
+  const allocations = useDataStore((state) => state.allocations);
+
+  const cycleId = totals.cycle?.id;
+
+  const rows = cycleId
+    ? allocations
+        .filter((item) => item.cycleId === cycleId && !item.deletedAt)
+        .map((allocation) => {
+          const bucket = buckets.find((item) => item.id === allocation.bucketId);
+          return {
+            id: allocation.id,
+            bucketId: allocation.bucketId,
+            name: bucket?.name ?? 'Bucket rimosso',
+            color: bucket?.color ?? 'var(--ink-faint)',
+            priority: bucket?.priority ?? 99,
+            planned: allocation.plannedAmount,
+            spent: allocation.actualAmount,
+            available: allocation.plannedAmount - allocation.actualAmount,
+          };
+        })
+        .sort((a, b) => a.priority - b.priority)
+    : [];
 
   return (
     <div className="space-y-6">
@@ -75,23 +100,100 @@ export default function FinanceScreen() {
         subtitle={totals.cycle ? totals.cycle.label : 'Nessun ciclo aperto'}
       />
 
-      {totals.cycle && (
-        <div className="grid grid-cols-2 gap-3">
-          <KpiCard
-            label="Entrate del ciclo"
-            value={<Money cents={totals.income} compact />}
-            tone="accent"
-          />
-          <KpiCard
-            label="Disponibile"
-            value={<Money cents={totals.available} compact />}
-            tone={totals.available < 0 ? 'alert' : 'success'}
-            progress={totals.allocated > 0 ? totals.spent / totals.allocated : undefined}
-          />
-        </div>
+      {totals.cycle ? (
+        <>
+          <ActiveCycleRing />
+
+          <div className="grid grid-cols-2 gap-3">
+            <KpiCard
+              label="Entrate"
+              value={<Money cents={totals.income} compact />}
+              tone="accent"
+              hint={
+                totals.income === totals.incomeReceived
+                  ? 'Tutte confermate'
+                  : 'Incluse quelle previste'
+              }
+            />
+            <KpiCard label="Allocato" value={<Money cents={totals.allocated} compact />} />
+            <KpiCard
+              label="Speso"
+              value={<Money cents={totals.spent} compact />}
+              progress={totals.allocated > 0 ? totals.spent / totals.allocated : undefined}
+              tone={totals.spent > totals.allocated ? 'alert' : 'neutral'}
+            />
+            <KpiCard
+              label="Disponibile"
+              value={<Money cents={totals.available} compact />}
+              tone={totals.available < 0 ? 'alert' : 'success'}
+            />
+          </div>
+
+          <section className="space-y-2">
+            <h2 className="kpi-label">Bucket</h2>
+            {rows.length === 0 ? (
+              <EmptyState
+                icon={Boxes}
+                title="Nessun bucket allocato"
+                description="Registra un’entrata e il motore ripartirà i soldi tra i bucket attivi."
+              />
+            ) : (
+              <ul className="space-y-2">
+                {rows.map((row) => (
+                  <li key={row.id}>
+                    <Card padding="sm" className="space-y-2">
+                      <div className="flex items-center gap-3">
+                        <span
+                          className="h-2.5 w-2.5 rounded-full shrink-0"
+                          style={{ backgroundColor: row.color }}
+                          aria-hidden="true"
+                        />
+                        <span className="min-w-0 flex-1 font-medium text-ink truncate">
+                          {row.name}
+                        </span>
+                        <Money
+                          cents={row.available}
+                          className={`font-semibold shrink-0 ${
+                            row.available < 0 ? 'text-alert' : 'text-ink'
+                          }`}
+                        />
+                      </div>
+
+                      <div className="h-1 rounded-full bg-surface-3 overflow-hidden">
+                        <div
+                          className={`h-full rounded-full ${
+                            row.available < 0 ? 'bg-alert' : 'bg-accent'
+                          }`}
+                          style={{
+                            width:
+                              row.planned > 0
+                                ? `${Math.min(100, (row.spent / row.planned) * 100)}%`
+                                : '0%',
+                          }}
+                        />
+                      </div>
+
+                      <p className="text-sm text-ink-faint">
+                        <Money cents={row.spent} compact /> spesi su{' '}
+                        <Money cents={row.planned} compact /> allocati
+                      </p>
+                    </Card>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </>
+      ) : (
+        <EmptyState
+          icon={Wallet}
+          title="Nessun ciclo aperto"
+          description="Apri il primo ciclo dalla schermata Oggi: da lì entrate, bucket e movimenti prendono senso."
+        />
       )}
 
-      <nav aria-label="Sezioni denaro">
+      <nav aria-label="Gestione denaro" className="space-y-2">
+        <h2 className="kpi-label">Gestisci</h2>
         <ul className="space-y-2">
           {SECTIONS.map(({ to, icon: Icon, title, description }) => (
             <li key={to}>

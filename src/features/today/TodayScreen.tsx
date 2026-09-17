@@ -1,7 +1,6 @@
 import { ArrowDownRight, Layers, PiggyBank, Wallet } from 'lucide-react';
 import { KpiCard, Money, PageHeader } from '@/ui';
 import { CycleBanner } from '../cycles/CycleBanner';
-import { ActiveCycleRing } from './ActiveCycleRing';
 import { QuickSpendForm } from './QuickSpendForm';
 import { useCycleTotals } from '../finance/useCycleTotals';
 import { daysElapsed, cycleLengthInDays, todayCalendarDate } from '@/domain/cycles';
@@ -68,8 +67,6 @@ export default function TodayScreen() {
           />
         </div>
       )}
-
-      <ActiveCycleRing />
 
       <QuickSpendForm />
     </div>

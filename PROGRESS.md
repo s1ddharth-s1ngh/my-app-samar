@@ -47,7 +47,7 @@ Tracking allineato alla numerazione del MEGA PROMPT. Legenda: ✅ fatto · 🏗�
 - ✅ T4.6 (2026-09-17) Correzione manuale di un’allocazione: modifica a mano → `isLocked` con indicatore visibile e azione "Sblocca".
 
 ## FASE 5 — Denaro: la vista
-- 🏗️ T5.1 Schermata Soldi.
+- ✅ T5.1 (2026-09-17) Schermata Soldi: anello del ciclo, i quattro numeri chiave e la lista dei bucket con barra, speso/allocato e rosso se scoperto.
 - ⬜ T5.2 Dettaglio bucket.
 - ⬜ T5.3 Storico e grafici.
 - ⬜ T5.4 Previsione del ciclo.
