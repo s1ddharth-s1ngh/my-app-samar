@@ -1,6 +1,7 @@
 export * from './Button';
 export * from './IconButton';
 export * from './Field';
+export * from './inputStyles';
 export * from './Select';
 export * from './Toggle';
 export * from './Chip';

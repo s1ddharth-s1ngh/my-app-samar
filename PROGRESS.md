@@ -41,7 +41,7 @@ Tracking allineato alla numerazione del MEGA PROMPT. Legenda: ✅ fatto · 🏗�
 ## FASE 4 — Denaro: motore e cicli
 - ✅ T4.1 (2026-09-17) Motore di allocazione puro: locked → fixed → percent gross → percent afterFixed → remainder, con `underfunded` e polvere di arrotondamento. 14 test.
 - ✅ T4.2 (2026-09-17) Motore dei cicli spostato in `domain/cycles.ts`: confini, ciclo successivo, clamp dell’ancoraggio, geometria e stato. 25 test su anno bisestile, ancoraggio 31 e cambio d’anno.
-- 🏗️ T4.3 Apertura e chiusura di un ciclo — flusso parziale, senza riepilogo né riporto.
+- ✅ T4.3 (2026-09-17) Apertura e chiusura di un ciclo: allocazioni generate dal motore, schermata di riepilogo bucket per bucket, riporto calcolato, operazione idempotente.
 - ⬜ T4.4 Registrazione delle entrate.
 - 🏗️ T4.5 Movimenti — esiste solo la spesa rapida in Oggi.
 - ⬜ T4.6 Correzione manuale di un'allocazione.

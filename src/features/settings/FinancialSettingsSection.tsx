@@ -4,27 +4,12 @@ import { useToastStore } from '@/stores/toast';
 import { Card, Field, Select, Toggle } from '@/ui';
 import type { Settings } from '@/data/types';
 import { computeCycleBounds, todayCalendarDate } from '@/domain/cycles';
-import { newBase } from '@/lib/record';
+import { defaultSettings } from '@/data/defaults';
 
 const CYCLE_MODE_OPTIONS = [
   { value: 'calendarMonth', label: 'Mese solare (dal 1 all’ultimo giorno)' },
   { value: 'paydayToPayday', label: 'Stipendio → stipendio' },
 ];
-
-/** Settings the app falls back to before the user has saved anything. */
-export function defaultSettings(): Settings {
-  return {
-    ...newBase(),
-    currency: 'EUR',
-    locale: 'it-IT',
-    weekStartsOn: 1,
-    cycleMode: 'calendarMonth',
-    paydayAnchor: 27,
-    theme: 'system',
-    notificationsEnabled: false,
-    quietHours: null,
-  };
-}
 
 function isCycleMode(value: string): value is Settings['cycleMode'] {
   return value === 'calendarMonth' || value === 'paydayToPayday';

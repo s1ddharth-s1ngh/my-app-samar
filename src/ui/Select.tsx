@@ -1,6 +1,6 @@
 import { type SelectHTMLAttributes, forwardRef, useId } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { inputClasses } from './Field';
+import { inputClasses } from './inputStyles';
 
 export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
   label: string;
