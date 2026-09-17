@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { GlobalErrorBoundary } from './app/ErrorBoundary';
 import { Layout } from './app/Layout';
@@ -17,6 +18,13 @@ import { IncomeEntriesScreen } from './features/finance/income/IncomeEntriesScre
 import { TransactionsScreen } from './features/finance/transactions/TransactionsScreen';
 import { CycleAllocationsScreen } from './features/finance/allocations/CycleAllocationsScreen';
 import { CycleCloseScreen } from './features/cycles/CycleCloseScreen';
+
+// Charts pull in Recharts: loaded only when the history screen is opened.
+const HistoryScreen = lazy(() =>
+  import('./features/finance/history/HistoryScreen').then((module) => ({
+    default: module.HistoryScreen,
+  }))
+);
 import { ProjectDetailsScreen } from './features/projects/ProjectDetailsScreen';
 
 export default function App() {
@@ -36,6 +44,14 @@ export default function App() {
               <Route path="entrate" element={<IncomeEntriesScreen />} />
               <Route path="movimenti" element={<TransactionsScreen />} />
               <Route path="ripartizione" element={<CycleAllocationsScreen />} />
+              <Route
+                path="storico"
+                element={
+                  <Suspense fallback={<p className="text-sm text-ink-muted">Carico lo storico…</p>}>
+                    <HistoryScreen />
+                  </Suspense>
+                }
+              />
               <Route path="chiusura" element={<CycleCloseScreen />} />
             </Route>
             <Route path="progetti">

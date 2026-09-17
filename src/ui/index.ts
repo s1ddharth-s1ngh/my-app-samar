@@ -15,3 +15,5 @@ export * from './Sheet';
 export * from './Money';
 export * from './MoneyInput';
 export * from './CycleRing';
+export * from './ChartFrame';
+export * from './chartPalette';

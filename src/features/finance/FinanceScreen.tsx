@@ -4,6 +4,7 @@ import {
   CalendarClock,
   ChevronRight,
   Layers,
+  LineChart,
   Receipt,
   SlidersHorizontal,
   TrendingUp,
@@ -40,6 +41,12 @@ const SECTIONS: SectionLink[] = [
     icon: Layers,
     title: 'Ripartizione del ciclo',
     description: 'Correggi a mano quello che serve',
+  },
+  {
+    to: '/soldi/storico',
+    icon: LineChart,
+    title: 'Storico',
+    description: 'Come vanno i cicli, a confronto',
   },
   {
     to: '/soldi/fonti',

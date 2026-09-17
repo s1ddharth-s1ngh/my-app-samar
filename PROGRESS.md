@@ -49,7 +49,7 @@ Tracking allineato alla numerazione del MEGA PROMPT. Legenda: ✅ fatto · 🏗�
 ## FASE 5 — Denaro: la vista
 - ✅ T5.1 (2026-09-17) Schermata Soldi: anello del ciclo, i quattro numeri chiave e la lista dei bucket con barra, speso/allocato e rosso se scoperto.
 - ✅ T5.2 (2026-09-17) Dettaglio bucket: movimenti del ciclo, acquisti che lo impegnano, avanzamento verso l’obiettivo e andamento sugli ultimi 6 cicli.
-- ⬜ T5.3 Storico e grafici.
+- ✅ T5.3 (2026-09-17) Storico e grafici: barre entrate/spese per ciclo, torta della ripartizione media, linea del risparmio cumulato. Palette validata, ogni grafico con riepilogo testuale e tabella dati.
 - ⬜ T5.4 Previsione del ciclo.
 
 ## FASE 6 — Progetti e task
