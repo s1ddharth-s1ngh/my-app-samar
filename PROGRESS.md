@@ -34,7 +34,7 @@ Tracking allineato alla numerazione del MEGA PROMPT. Legenda: ✅ fatto · 🏗�
 ## FASE 3 — Denaro: anagrafiche
 - ✅ T3.1 (2026-09-15) Fonti di entrata: CRUD.
 - ✅ T3.2 (2026-09-15) Bucket: CRUD con regole di allocazione.
-- ⬜ T3.3 Spese ricorrenti: CRUD.
+- ✅ T3.3 (2026-09-17) Spese ricorrenti: CRUD, con bucket di uscita e flag "crea un task".
 - ⬜ T3.4 Impostazioni finanziarie.
 - ⬜ T3.5 `domain/money.ts` + property test.
 

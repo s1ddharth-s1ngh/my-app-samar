@@ -43,6 +43,17 @@ export default function FinanceScreen() {
             </Button>
           </Link>
         </Card>
+        <Card className="flex flex-col space-y-4">
+          <div>
+            <h2 className="text-lg font-semibold">Spese Ricorrenti</h2>
+            <p className="text-sm text-zinc-500">Affitto, bollette e abbonamenti mensili</p>
+          </div>
+          <Link to="/soldi/ricorrenti">
+            <Button variant="secondary" fullWidth>
+              Gestisci Spese
+            </Button>
+          </Link>
+        </Card>
       </div>
     </div>
   );
