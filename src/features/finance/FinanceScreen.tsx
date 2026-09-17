@@ -15,6 +15,7 @@ import { Card, EmptyState, KpiCard, Money, PageHeader } from '@/ui';
 import { useDataStore } from '@/stores/useDataStore';
 import { useCycleTotals } from './useCycleTotals';
 import { ActiveCycleRing } from '../today/ActiveCycleRing';
+import { CycleForecast } from './CycleForecast';
 
 interface SectionLink {
   to: string;
@@ -135,6 +136,8 @@ export default function FinanceScreen() {
               tone={totals.available < 0 ? 'alert' : 'success'}
             />
           </div>
+
+          <CycleForecast />
 
           <section className="space-y-2">
             <h2 className="kpi-label">Bucket</h2>
