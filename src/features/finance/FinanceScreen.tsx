@@ -141,43 +141,45 @@ export default function FinanceScreen() {
               <ul className="space-y-2">
                 {rows.map((row) => (
                   <li key={row.id}>
-                    <Card padding="sm" className="space-y-2">
-                      <div className="flex items-center gap-3">
-                        <span
-                          className="h-2.5 w-2.5 rounded-full shrink-0"
-                          style={{ backgroundColor: row.color }}
-                          aria-hidden="true"
-                        />
-                        <span className="min-w-0 flex-1 font-medium text-ink truncate">
-                          {row.name}
-                        </span>
-                        <Money
-                          cents={row.available}
-                          className={`font-semibold shrink-0 ${
-                            row.available < 0 ? 'text-alert' : 'text-ink'
-                          }`}
-                        />
-                      </div>
+                    <Link to={`/soldi/bucket/${row.bucketId}`} className="block rounded-[18px]">
+                      <Card interactive padding="sm" className="space-y-2">
+                        <div className="flex items-center gap-3">
+                          <span
+                            className="h-2.5 w-2.5 rounded-full shrink-0"
+                            style={{ backgroundColor: row.color }}
+                            aria-hidden="true"
+                          />
+                          <span className="min-w-0 flex-1 font-medium text-ink truncate">
+                            {row.name}
+                          </span>
+                          <Money
+                            cents={row.available}
+                            className={`font-semibold shrink-0 ${
+                              row.available < 0 ? 'text-alert' : 'text-ink'
+                            }`}
+                          />
+                        </div>
 
-                      <div className="h-1 rounded-full bg-surface-3 overflow-hidden">
-                        <div
-                          className={`h-full rounded-full ${
-                            row.available < 0 ? 'bg-alert' : 'bg-accent'
-                          }`}
-                          style={{
-                            width:
-                              row.planned > 0
-                                ? `${Math.min(100, (row.spent / row.planned) * 100)}%`
-                                : '0%',
-                          }}
-                        />
-                      </div>
+                        <div className="h-1 rounded-full bg-surface-3 overflow-hidden">
+                          <div
+                            className={`h-full rounded-full ${
+                              row.available < 0 ? 'bg-alert' : 'bg-accent'
+                            }`}
+                            style={{
+                              width:
+                                row.planned > 0
+                                  ? `${Math.min(100, (row.spent / row.planned) * 100)}%`
+                                  : '0%',
+                            }}
+                          />
+                        </div>
 
-                      <p className="text-sm text-ink-faint">
-                        <Money cents={row.spent} compact /> spesi su{' '}
-                        <Money cents={row.planned} compact /> allocati
-                      </p>
-                    </Card>
+                        <p className="text-sm text-ink-faint">
+                          <Money cents={row.spent} compact /> spesi su{' '}
+                          <Money cents={row.planned} compact /> allocati
+                        </p>
+                      </Card>
+                    </Link>
                   </li>
                 ))}
               </ul>

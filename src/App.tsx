@@ -10,6 +10,7 @@ import { ToastContainer } from './ui/Toast';
 
 import { IncomeSourcesScreen } from './features/finance/sources/IncomeSourcesScreen';
 import { BucketsScreen } from './features/finance/buckets/BucketsScreen';
+import { BucketDetailScreen } from './features/finance/buckets/BucketDetailScreen';
 import { AllocationRulesScreen } from './features/finance/allocations/AllocationRulesScreen';
 import { RecurringExpensesScreen } from './features/finance/recurring/RecurringExpensesScreen';
 import { IncomeEntriesScreen } from './features/finance/income/IncomeEntriesScreen';
@@ -29,6 +30,7 @@ export default function App() {
               <Route index element={<FinanceScreen />} />
               <Route path="fonti" element={<IncomeSourcesScreen />} />
               <Route path="bucket" element={<BucketsScreen />} />
+              <Route path="bucket/:bucketId" element={<BucketDetailScreen />} />
               <Route path="allocazioni" element={<AllocationRulesScreen />} />
               <Route path="ricorrenti" element={<RecurringExpensesScreen />} />
               <Route path="entrate" element={<IncomeEntriesScreen />} />
