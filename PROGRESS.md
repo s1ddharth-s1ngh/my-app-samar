@@ -44,7 +44,7 @@ Tracking allineato alla numerazione del MEGA PROMPT. Legenda: ✅ fatto · 🏗�
 - ✅ T4.3 (2026-09-17) Apertura e chiusura di un ciclo: allocazioni generate dal motore, schermata di riepilogo bucket per bucket, riporto calcolato, operazione idempotente.
 - ✅ T4.4 (2026-09-17) Registrazione delle entrate: prevista o ricevuta, precompilata dalla fonte, ricalcola le allocazioni non bloccate.
 - ✅ T4.5 (2026-09-17) Movimenti: spesa rapida corretta (il bucket si sceglie) e schermata con filtri per bucket e periodo, raggruppata per giorno.
-- ⬜ T4.6 Correzione manuale di un'allocazione.
+- ✅ T4.6 (2026-09-17) Correzione manuale di un’allocazione: modifica a mano → `isLocked` con indicatore visibile e azione "Sblocca".
 
 ## FASE 5 — Denaro: la vista
 - 🏗️ T5.1 Schermata Soldi.

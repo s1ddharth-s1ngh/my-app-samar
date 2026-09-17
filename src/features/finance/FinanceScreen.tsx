@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import {
   ChevronRight,
+  Boxes,
   CalendarClock,
   Layers,
   Receipt,
@@ -27,6 +28,12 @@ const SECTIONS: SectionLink[] = [
     description: 'Cosa è arrivato e cosa aspetti',
   },
   {
+    to: '/soldi/ripartizione',
+    icon: Layers,
+    title: 'Ripartizione del ciclo',
+    description: 'Quanto ha ogni bucket, e cosa resta',
+  },
+  {
     to: '/soldi/movimenti',
     icon: Receipt,
     title: 'Movimenti',
@@ -40,7 +47,7 @@ const SECTIONS: SectionLink[] = [
   },
   {
     to: '/soldi/bucket',
-    icon: Layers,
+    icon: Boxes,
     title: 'Bucket',
     description: 'Dove finiscono i soldi ogni ciclo',
   },

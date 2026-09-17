@@ -14,6 +14,7 @@ import { AllocationRulesScreen } from './features/finance/allocations/Allocation
 import { RecurringExpensesScreen } from './features/finance/recurring/RecurringExpensesScreen';
 import { IncomeEntriesScreen } from './features/finance/income/IncomeEntriesScreen';
 import { TransactionsScreen } from './features/finance/transactions/TransactionsScreen';
+import { CycleAllocationsScreen } from './features/finance/allocations/CycleAllocationsScreen';
 import { CycleCloseScreen } from './features/cycles/CycleCloseScreen';
 import { ProjectDetailsScreen } from './features/projects/ProjectDetailsScreen';
 
@@ -32,6 +33,7 @@ export default function App() {
               <Route path="ricorrenti" element={<RecurringExpensesScreen />} />
               <Route path="entrate" element={<IncomeEntriesScreen />} />
               <Route path="movimenti" element={<TransactionsScreen />} />
+              <Route path="ripartizione" element={<CycleAllocationsScreen />} />
               <Route path="chiusura" element={<CycleCloseScreen />} />
             </Route>
             <Route path="progetti">
