@@ -39,7 +39,7 @@ Tracking allineato alla numerazione del MEGA PROMPT. Legenda: ✅ fatto · 🏗�
 - ✅ T3.5 (2026-09-17) `domain/money.ts`: somma, sottrazione, percentuale, `split` con resto esatto, formattazione. 21 test, incluso il property test su 1000 casi.
 
 ## FASE 4 — Denaro: motore e cicli
-- ⬜ T4.1 Motore di allocazione (`domain/allocation.ts`).
+- ✅ T4.1 (2026-09-17) Motore di allocazione puro: locked → fixed → percent gross → percent afterFixed → remainder, con `underfunded` e polvere di arrotondamento. 14 test.
 - 🏗️ T4.2 Motore dei cicli — esiste `features/cycles/engine.ts`, va spostato in `domain/cycles.ts` e testato.
 - 🏗️ T4.3 Apertura e chiusura di un ciclo — flusso parziale, senza riepilogo né riporto.
 - ⬜ T4.4 Registrazione delle entrate.
