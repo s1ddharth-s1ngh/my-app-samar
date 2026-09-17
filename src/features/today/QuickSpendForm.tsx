@@ -1,113 +1,120 @@
 import { useState } from 'react';
 import { useDataStore } from '@/stores/useDataStore';
 import { useToastStore } from '@/stores/toast';
-import { Button, Card, Field, MoneyInput } from '@/ui';
+import { Button, Card, Field, MoneyInput, Select } from '@/ui';
 import { todayCalendarDate } from '@/domain/cycles';
+import { formatCents } from '@/domain/money';
+import { newBase } from '@/lib/record';
+import { syncAllocations } from '@/stores/cycleOperations';
 
+/**
+ * Registering a spend without leaving the Today screen. The bucket is chosen
+ * explicitly: guessing which one pays would hide the decision that matters.
+ */
 export function QuickSpendForm() {
   const cycles = useDataStore((state) => state.cycles);
-  const buckets = useDataStore((state) => state.buckets).sort((a, b) => a.priority - b.priority);
-  const createItem = useDataStore((state) => state.createItem);
-  const updateItem = useDataStore((state) => state.updateItem);
-  const addToast = useToastStore((state) => state.addToast);
+  const buckets = useDataStore((state) => state.buckets);
   const allocations = useDataStore((state) => state.allocations);
+  const createItem = useDataStore((state) => state.createItem);
+  const addToast = useToastStore((state) => state.addToast);
 
   const [amount, setAmount] = useState<number | null>(null);
   const [description, setDescription] = useState('');
+  const [bucketId, setBucketId] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
-  const activeCycle = cycles.find((c) => c.status === 'active');
+  const activeCycle = cycles.find((item) => item.status === 'active' && !item.deletedAt);
+  const activeBuckets = buckets
+    .filter((bucket) => bucket.isActive && !bucket.deletedAt)
+    .sort((a, b) => a.priority - b.priority);
+
+  if (!activeCycle || activeBuckets.length === 0) return null;
+
+  const selectedId = bucketId || (activeBuckets[0]?.id ?? '');
+
+  const remainingOn = (id: string): number => {
+    const allocation = allocations.find(
+      (item) => item.cycleId === activeCycle.id && item.bucketId === id && !item.deletedAt
+    );
+    if (!allocation) return 0;
+    return allocation.plannedAmount - allocation.actualAmount;
+  };
 
   const handleSpend = async () => {
-    if (!activeCycle || !amount || amount <= 0 || !description.trim()) {
-      addToast('Inserisci importo e descrizione.', 'error');
+    if (amount === null || amount <= 0) {
+      addToast('Inserisci un importo maggiore di zero.', 'error');
+      return;
+    }
+    if (description.trim() === '') {
+      addToast('Scrivi una descrizione: fra un mese non ricorderai cos’era.', 'error');
       return;
     }
 
-    // Logic: find a bucket with enough funds, in priority order
-    // In Ciclo, you usually select a bucket, or it takes from the "remainder" / lowest priority or first available?
-    // "scala i soldi dal primo bucket disponibile in ordine"
-
-    const cycleAllocations = allocations.filter((a) => a.cycleId === activeCycle.id);
-    let chosenBucketId: string | null = null;
-    let chosenAllocationId: string | null = null;
-    let availableAmount = 0;
-
-    for (const bucket of buckets) {
-      if (!bucket.isActive) continue;
-      const alloc = cycleAllocations.find((a) => a.bucketId === bucket.id);
-      if (alloc && alloc.actualAmount >= amount) {
-        chosenBucketId = bucket.id;
-        chosenAllocationId = alloc.id;
-        availableAmount = alloc.actualAmount;
-        break; // found the first bucket that can cover it
-      }
-    }
-
-    if (!chosenBucketId) {
-      addToast('Nessun bucket ha fondi sufficienti!', 'error');
-      return;
-    }
-
+    setIsSaving(true);
     try {
-      // 1. Create Transaction
       await createItem('transactions', {
-        id: crypto.randomUUID(),
+        ...newBase(),
         cycleId: activeCycle.id,
-        bucketId: chosenBucketId,
+        bucketId: selectedId,
         type: 'expense',
-        amount: amount,
+        amount,
         date: todayCalendarDate(),
         description: description.trim(),
         category: null,
         shoppingItemId: null,
         taskId: null,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
       });
 
-      // 2. Reduce the allocation
-      await updateItem('allocations', chosenAllocationId!, {
-        actualAmount: availableAmount - amount,
-      });
+      // The bucket's `actualAmount` is always the sum of its real movements.
+      await syncAllocations(activeCycle.id);
 
-      addToast(
-        `Spesi ${(amount / 100).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })} da ${buckets.find((b) => b.id === chosenBucketId)?.name}`,
-        'success'
-      );
+      const bucketName = activeBuckets.find((bucket) => bucket.id === selectedId)?.name ?? 'bucket';
+      addToast(`${formatCents(amount)} da ${bucketName}.`, 'success');
       setAmount(null);
       setDescription('');
     } catch {
-      addToast('Errore durante la registrazione della spesa.', 'error');
+      // The store already reported the failure.
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  if (!activeCycle) return null;
-
   return (
-    <Card className="p-4 space-y-4">
-      <h3 className="font-semibold text-lg">Spesa rapida</h3>
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1">
-          <MoneyInput label="Importo" value={amount ?? 0} onChange={(val) => setAmount(val)} />
-        </div>
-        <div className="flex-[2]">
-          <Field
-            label="Descrizione"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="es. Pizza margherita"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleSpend();
-            }}
-          />
-        </div>
-        <div className="flex items-end">
-          <Button onClick={handleSpend} className="w-full sm:w-auto h-12">
-            Spendi
-          </Button>
-        </div>
+    <Card padding="sm" className="space-y-3">
+      <h2 className="kpi-label">Spesa rapida</h2>
+
+      <div className="flex gap-3">
+        <MoneyInput
+          label="Importo"
+          className="w-36 shrink-0"
+          value={amount ?? 0}
+          onChange={setAmount}
+        />
+        <Field
+          label="Descrizione"
+          className="flex-1"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="es. Spesa al mercato"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') void handleSpend();
+          }}
+        />
       </div>
+
+      <Select
+        label="Bucket"
+        value={selectedId}
+        onChange={(e) => setBucketId(e.target.value)}
+        options={activeBuckets.map((bucket) => ({
+          value: bucket.id,
+          label: `${bucket.name} — ${formatCents(remainingOn(bucket.id), { compact: true })}`,
+        }))}
+      />
+
+      <Button onClick={() => void handleSpend()} disabled={isSaving} fullWidth>
+        Registra la spesa
+      </Button>
     </Card>
   );
 }

@@ -43,7 +43,7 @@ Tracking allineato alla numerazione del MEGA PROMPT. Legenda: ✅ fatto · 🏗�
 - ✅ T4.2 (2026-09-17) Motore dei cicli spostato in `domain/cycles.ts`: confini, ciclo successivo, clamp dell’ancoraggio, geometria e stato. 25 test su anno bisestile, ancoraggio 31 e cambio d’anno.
 - ✅ T4.3 (2026-09-17) Apertura e chiusura di un ciclo: allocazioni generate dal motore, schermata di riepilogo bucket per bucket, riporto calcolato, operazione idempotente.
 - ✅ T4.4 (2026-09-17) Registrazione delle entrate: prevista o ricevuta, precompilata dalla fonte, ricalcola le allocazioni non bloccate.
-- 🏗️ T4.5 Movimenti — esiste solo la spesa rapida in Oggi.
+- ✅ T4.5 (2026-09-17) Movimenti: spesa rapida corretta (il bucket si sceglie) e schermata con filtri per bucket e periodo, raggruppata per giorno.
 - ⬜ T4.6 Correzione manuale di un'allocazione.
 
 ## FASE 5 — Denaro: la vista

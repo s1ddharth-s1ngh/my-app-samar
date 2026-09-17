@@ -3,6 +3,7 @@ import {
   ChevronRight,
   CalendarClock,
   Layers,
+  Receipt,
   SlidersHorizontal,
   TrendingUp,
   Wallet,
@@ -24,6 +25,12 @@ const SECTIONS: SectionLink[] = [
     icon: TrendingUp,
     title: 'Entrate del ciclo',
     description: 'Cosa è arrivato e cosa aspetti',
+  },
+  {
+    to: '/soldi/movimenti',
+    icon: Receipt,
+    title: 'Movimenti',
+    description: 'Ogni spesa del ciclo, filtrabile',
   },
   {
     to: '/soldi/fonti',
