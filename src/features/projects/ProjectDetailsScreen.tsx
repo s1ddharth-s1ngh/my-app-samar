@@ -1,314 +1,244 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { Check, Clock, Plus } from 'lucide-react';
 import { useDataStore } from '@/stores/useDataStore';
-import { Button, Field, IconButton, Card, EmptyState, Sheet, Select } from '@/ui';
-import { Plus, Check, ChevronLeft, Trash2, GripVertical, Clock, Play } from 'lucide-react';
-import type { TaskKind } from '@/data/types';
+import { useToastStore } from '@/stores/toast';
+import { Button, EmptyState, Field, PageHeader, Select, Sheet } from '@/ui';
+import type { Task, TaskKind } from '@/data/types';
+import { nowInstant } from '@/lib/record';
+import { TaskRow } from '../tasks/TaskRow';
+import { TaskEditorSheet } from '../tasks/TaskEditorSheet';
+import { newTask, nextOrder } from '../tasks/taskModel';
 import { TimerModal } from './TimerModal';
 
+const INBOX = 'inbox';
+
+function isTimedKind(value: string): value is Extract<TaskKind, 'timed' | 'habit'> {
+  return value === 'timed' || value === 'habit';
+}
+
 export function ProjectDetailsScreen() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const projects = useDataStore((state) => state.projects);
   const tasks = useDataStore((state) => state.tasks);
   const createItem = useDataStore((state) => state.createItem);
   const updateItem = useDataStore((state) => state.updateItem);
   const removeItem = useDataStore((state) => state.removeItem);
+  const restoreItem = useDataStore((state) => state.restoreItem);
+  const addToast = useToastStore((state) => state.addToast);
 
-  const [newTaskTitle, setNewTaskTitle] = useState('');
-  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [quickTitle, setQuickTitle] = useState('');
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
+  const [timerTaskId, setTimerTaskId] = useState<string | null>(null);
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+  const [advanced, setAdvanced] = useState({ title: '', kind: 'timed' as TaskKind, minutes: 25 });
 
-  const [isAdvancedSheetOpen, setIsAdvancedSheetOpen] = useState(false);
-  const [advForm, setAdvForm] = useState<{ title: string; kind: TaskKind; minutes: number }>({
-    title: '',
-    kind: 'timed',
-    minutes: 25,
-  });
-
-  const [activeTimerTaskId, setActiveTimerTaskId] = useState<string | null>(null);
-
-  const isInbox = id === 'inbox';
-  const project = isInbox ? null : projects.find((p) => p.id === id);
+  const isInbox = id === INBOX;
+  const project = isInbox ? null : projects.find((item) => item.id === id && !item.deletedAt);
+  const projectId = isInbox ? null : (id ?? null);
 
   if (!isInbox && !project) {
-    return <div className="p-4">Progetto non trovato.</div>;
+    return (
+      <div className="space-y-6">
+        <PageHeader title="Progetto" backTo="/progetti" backLabel="Progetti" />
+        <EmptyState
+          icon={Check}
+          title="Progetto non trovato"
+          description="Potrebbe essere stato archiviato o eliminato."
+        />
+      </div>
+    );
   }
 
   const projectTasks = tasks
-    .filter((t) => (isInbox ? t.projectId === null : t.projectId === id))
+    .filter((task) => task.projectId === projectId && !task.deletedAt)
     .sort((a, b) => a.order - b.order);
 
-  const handleCreateTask = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (!newTaskTitle.trim()) return;
+  const open = projectTasks.filter((task) => task.status !== 'done');
+  const done = projectTasks.filter((task) => task.status === 'done');
 
-    await createItem('tasks', {
-      id: crypto.randomUUID(),
-      projectId: isInbox ? null : id!,
-      title: newTaskTitle.trim(),
-      notes: null,
-      kind: 'simple',
-      status: 'todo',
-      priority: 0,
-      dueAt: null,
-      order: projectTasks.length,
-      tags: [],
-      recurrence: null,
-      timer: null,
-      shoppingItemId: null,
-      reminders: [],
-      completedAt: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      deletedAt: null,
-    });
+  const handleQuickCreate = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (quickTitle.trim() === '') return;
 
-    setNewTaskTitle('');
+    await createItem(
+      'tasks',
+      newTask({
+        title: quickTitle.trim(),
+        projectId,
+        order: nextOrder(tasks, projectId),
+      })
+    );
+    setQuickTitle('');
   };
 
-  const handleCreateAdvancedTask = async () => {
-    if (!advForm.title.trim()) return;
+  const handleAdvancedCreate = async () => {
+    if (advanced.title.trim() === '') return;
+    const seconds = Math.max(1, advanced.minutes) * 60;
 
-    await createItem('tasks', {
-      id: crypto.randomUUID(),
-      projectId: isInbox ? null : id!,
-      title: advForm.title.trim(),
-      notes: null,
-      kind: advForm.kind,
-      status: 'todo',
-      priority: 0,
-      dueAt: null,
-      order: projectTasks.length,
-      tags: [],
-      recurrence: null,
-      timer: {
-        targetSeconds: advForm.minutes * 60,
-        minSeconds: advForm.kind === 'habit' ? advForm.minutes * 60 : advForm.minutes * 60,
-      },
-      shoppingItemId: null,
-      reminders: [],
-      completedAt: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      deletedAt: null,
-    });
+    await createItem(
+      'tasks',
+      newTask({
+        title: advanced.title.trim(),
+        projectId,
+        kind: advanced.kind,
+        order: nextOrder(tasks, projectId),
+        timer: { targetSeconds: seconds, minSeconds: seconds },
+      })
+    );
 
-    setAdvForm({ title: '', kind: 'timed', minutes: 25 });
-    setIsAdvancedSheetOpen(false);
+    setAdvanced({ title: '', kind: 'timed', minutes: 25 });
+    setIsAdvancedOpen(false);
   };
 
-  const handleToggleStatus = async (taskId: string, currentStatus: string) => {
-    const newStatus = currentStatus === 'done' ? 'todo' : 'done';
-    await updateItem('tasks', taskId, {
-      status: newStatus,
-      completedAt: newStatus === 'done' ? new Date().toISOString() : null,
+  const handleToggle = async (task: Task) => {
+    const done = task.status !== 'done';
+    await updateItem('tasks', task.id, {
+      status: done ? 'done' : 'todo',
+      completedAt: done ? nowInstant() : null,
+      updatedAt: nowInstant(),
     });
   };
 
-  const handleRemove = async (taskId: string) => {
-    await removeItem('tasks', taskId);
-  };
-
-  const handleDragStart = (e: React.DragEvent, taskId: string) => {
-    setDraggedId(taskId);
-    e.dataTransfer.effectAllowed = 'move';
-    setTimeout(() => {
-      const el = document.getElementById(`task-${taskId}`);
-      if (el) el.classList.add('opacity-50');
-    }, 0);
-  };
-
-  const handleDragEnd = (_e: React.DragEvent, taskId: string) => {
-    setDraggedId(null);
-    const el = document.getElementById(`task-${taskId}`);
-    if (el) el.classList.remove('opacity-50');
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
-
-  const handleDrop = async (e: React.DragEvent, dropId: string) => {
-    e.preventDefault();
-    if (!draggedId || draggedId === dropId) return;
-
-    const dragIndex = projectTasks.findIndex((t) => t.id === draggedId);
-    const dropIndex = projectTasks.findIndex((t) => t.id === dropId);
-
-    if (dragIndex === -1 || dropIndex === -1) return;
-
-    const newTasks = [...projectTasks];
-    const [removed] = newTasks.splice(dragIndex, 1);
-    if (!removed) return;
-    newTasks.splice(dropIndex, 0, removed);
-
-    for (let i = 0; i < newTasks.length; i++) {
-      const task = newTasks[i];
-      if (task && task.order !== i) {
-        await updateItem('tasks', task.id, { order: i });
-      }
+  const handleRemove = async (task: Task) => {
+    try {
+      await removeItem('tasks', task.id);
+      addToast(`Hai eliminato "${task.title}".`, 'info', {
+        label: 'Annulla',
+        onClick: () => {
+          void restoreItem('tasks', task.id);
+        },
+      });
+    } catch {
+      // The store already reported the failure.
     }
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <IconButton icon={ChevronLeft} label="Indietro" onClick={() => navigate('/progetti')} />
-        <div className="flex items-center gap-3">
-          {project && (
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
-              style={{ backgroundColor: `${project.color}20`, color: project.color }}
-            >
-              {project.icon}
-            </div>
-          )}
-          <div>
-            <h1 className="text-2xl font-bold">{isInbox ? 'Inbox' : project?.name}</h1>
-            {!isInbox && project?.description && (
-              <p className="text-sm text-ink-muted">{project.description}</p>
-            )}
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        title={isInbox ? 'Inbox' : (project?.name ?? '')}
+        subtitle={
+          isInbox ? 'Task senza progetto' : (project?.description ?? `${open.length} da fare`)
+        }
+        backTo="/progetti"
+        backLabel="Progetti"
+      />
 
-      <form onSubmit={handleCreateTask} className="flex gap-2 items-end">
-        <div className="flex-1">
-          <Field
-            label="Nuovo task rapido"
-            placeholder="Aggiungi un nuovo task..."
-            value={newTaskTitle}
-            onChange={(e) => setNewTaskTitle(e.target.value)}
-          />
-        </div>
-        <Button type="submit" disabled={!newTaskTitle.trim()} className="shrink-0 h-12">
-          <Plus size={20} />
+      <form onSubmit={(event) => void handleQuickCreate(event)} className="flex gap-2 items-end">
+        <Field
+          label="Nuovo task"
+          className="flex-1"
+          placeholder="Scrivi e premi Invio"
+          value={quickTitle}
+          onChange={(e) => setQuickTitle(e.target.value)}
+        />
+        <Button type="submit" disabled={quickTitle.trim() === ''} aria-label="Aggiungi il task">
+          <Plus size={18} aria-hidden="true" />
         </Button>
         <Button
           type="button"
           variant="secondary"
-          className="shrink-0 h-12 px-3"
-          onClick={() => setIsAdvancedSheetOpen(true)}
+          onClick={() => setIsAdvancedOpen(true)}
+          aria-label="Nuovo task a tempo"
         >
-          <Clock size={20} />
+          <Clock size={18} aria-hidden="true" />
         </Button>
       </form>
 
+      {open.length === 0 && done.length === 0 ? (
+        <EmptyState
+          icon={Check}
+          title="Nessun task"
+          description="Scrivi il primo qui sopra: bastano il titolo e Invio."
+        />
+      ) : (
+        <ul className="space-y-2">
+          {open.map((task) => (
+            <li key={task.id}>
+              <TaskRow
+                task={task}
+                onToggle={(item) => void handleToggle(item)}
+                onEdit={setEditingTask}
+                onRemove={(item) => void handleRemove(item)}
+                onStartTimer={(item) => setTimerTaskId(item.id)}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {done.length > 0 && (
+        <details className="space-y-2">
+          <summary className="kpi-label cursor-pointer py-2">Completati ({done.length})</summary>
+          <ul className="space-y-2">
+            {done.map((task) => (
+              <li key={task.id}>
+                <TaskRow
+                  task={task}
+                  onToggle={(item) => void handleToggle(item)}
+                  onRemove={(item) => void handleRemove(item)}
+                />
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+
       <Sheet
-        isOpen={isAdvancedSheetOpen}
-        onClose={() => setIsAdvancedSheetOpen(false)}
-        title="Nuovo Task Avanzato"
+        isOpen={isAdvancedOpen}
+        onClose={() => setIsAdvancedOpen(false)}
+        title="Nuovo task a tempo"
       >
-        <div className="space-y-4 py-4">
+        <div className="space-y-4 py-2">
           <Field
             label="Titolo"
-            value={advForm.title}
-            onChange={(e) => setAdvForm({ ...advForm, title: e.target.value })}
+            value={advanced.title}
+            onChange={(e) => setAdvanced({ ...advanced, title: e.target.value })}
           />
           <Select
             label="Tipo"
-            value={advForm.kind}
-            onChange={(e) => setAdvForm({ ...advForm, kind: e.target.value as any })}
+            value={advanced.kind}
+            onChange={(e) => {
+              if (isTimedKind(e.target.value)) setAdvanced({ ...advanced, kind: e.target.value });
+            }}
             options={[
-              { value: 'timed', label: 'A Tempo (es. Pomodoro)' },
-              { value: 'habit', label: 'Abitudine (Target minimo)' },
+              { value: 'timed', label: 'A tempo (es. pomodoro)' },
+              { value: 'habit', label: 'Abitudine con minimo giornaliero' },
             ]}
           />
           <Field
-            label={advForm.kind === 'habit' ? 'Minuti minimi' : 'Minuti target'}
+            label={advanced.kind === 'habit' ? 'Minuti minimi al giorno' : 'Minuti obiettivo'}
             type="number"
             min={1}
-            value={advForm.minutes}
-            onChange={(e) => setAdvForm({ ...advForm, minutes: parseInt(e.target.value) || 1 })}
+            value={advanced.minutes}
+            onChange={(e) => setAdvanced({ ...advanced, minutes: Number(e.target.value) || 1 })}
           />
-          <div className="pt-4 flex gap-3">
+          <div className="pt-2 flex gap-3">
             <Button
               className="flex-1"
-              onClick={handleCreateAdvancedTask}
-              disabled={!advForm.title.trim()}
+              onClick={() => void handleAdvancedCreate()}
+              disabled={advanced.title.trim() === ''}
             >
-              Crea
+              Crea il task
             </Button>
-            <Button variant="secondary" onClick={() => setIsAdvancedSheetOpen(false)}>
+            <Button variant="secondary" onClick={() => setIsAdvancedOpen(false)}>
               Annulla
             </Button>
           </div>
         </div>
       </Sheet>
 
-      {projectTasks.length === 0 ? (
-        <EmptyState
-          icon={Check}
-          title="Tutto fatto!"
-          description="Non ci sono task in questa lista."
-        />
-      ) : (
-        <div className="space-y-2">
-          {projectTasks.map((task) => (
-            <Card
-              key={task.id}
-              id={`task-${task.id}`}
-              draggable
-              onDragStart={(e) => handleDragStart(e, task.id)}
-              onDragEnd={(e) => handleDragEnd(e, task.id)}
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, task.id)}
-              className={`flex items-center p-3 gap-3 transition-colors ${
-                task.status === 'done' ? 'opacity-60 bg-surface-2/50' : 'hover:border-line-strong'
-              }`}
-            >
-              <div className="text-ink-faint cursor-grab active:cursor-grabbing shrink-0">
-                <GripVertical size={20} />
-              </div>
+      <TaskEditorSheet
+        key={editingTask?.id ?? 'none'}
+        task={editingTask}
+        onClose={() => setEditingTask(null)}
+      />
 
-              <button
-                onClick={() => handleToggleStatus(task.id, task.status)}
-                className={`w-6 h-6 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${
-                  task.status === 'done'
-                    ? 'bg-accent border-accent text-white'
-                    : 'border-line-strong hover:border-accent'
-                }`}
-              >
-                {task.status === 'done' && <Check size={14} strokeWidth={3} />}
-              </button>
-
-              <div
-                className={`flex-1 ${task.status === 'done' ? 'line-through text-ink-muted' : ''}`}
-              >
-                {task.title}
-              </div>
-
-              {task.kind !== 'simple' && task.timer && (
-                <div className="shrink-0">
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="h-8 w-8 p-0 rounded-full"
-                    onClick={() => setActiveTimerTaskId(task.id)}
-                  >
-                    <Play size={14} className="ml-0.5" />
-                  </Button>
-                </div>
-              )}
-
-              <div className="shrink-0">
-                <IconButton
-                  icon={Trash2}
-                  label="Elimina"
-                  size="sm"
-                  variant="destructive"
-                  onClick={() => handleRemove(task.id)}
-                />
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
       <TimerModal
-        key={activeTimerTaskId || 'none'}
-        taskId={activeTimerTaskId}
-        onClose={() => setActiveTimerTaskId(null)}
+        key={timerTaskId ?? 'none'}
+        taskId={timerTaskId}
+        onClose={() => setTimerTaskId(null)}
       />
     </div>
   );
