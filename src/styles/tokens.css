@@ -1,43 +1,182 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+/*
+ * Design tokens — "dark enterprise", the visual language of NexSuite.
+ *
+ * Near-black page, a small ladder of elevated surfaces, hairline borders at low
+ * white alpha, one blue accent, and a single type family. Dark is the primary
+ * theme; the light one mirrors the same roles for daylight use.
+ */
 
 @theme {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
   --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
   --color-signal: var(--signal);
   --color-alert: var(--alert);
+  --color-success: var(--success);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
 
-  --font-sans: "Inter", sans-serif;
-  --font-heading: "Bricolage Grotesque", sans-serif;
+  --font-sans: 'Urbanist Variable', 'Urbanist', system-ui, sans-serif;
+  --font-heading: 'Urbanist Variable', 'Urbanist', system-ui, sans-serif;
+
+  --radius-panel: 24px;
+  --radius-card: 18px;
+  --radius-control: 12px;
+  --radius-chip: 10px;
 }
 
+/* --- dark: the default --- */
 :root {
-  --bg: #F1F4F2;
-  --surface: #FFFFFF;
-  --ink: #16262A;
-  --ink-muted: #63777B;
-  --accent: #2F6F5E;
-  --signal: #B5852B;
-  --alert: #8C2F39;
-  --line: #D9E0DC;
+  color-scheme: dark;
+
+  --bg: #070707;
+  --surface: #101114;
+  --surface-2: #14161a;
+  --surface-3: #1d2128;
+
+  --ink: rgb(255 255 255 / 0.96);
+  --ink-muted: rgb(255 255 255 / 0.66);
+  --ink-faint: rgb(255 255 255 / 0.38);
+
+  --accent: #2563eb;
+  --accent-strong: #3b82f6;
+  --accent-soft: rgb(37 99 235 / 0.14);
+  --accent-wash: rgb(37 99 235 / 0.08);
+
+  --signal: #f59e0b;
+  --alert: #ef4444;
+  --success: #22c55e;
+
+  --line: rgb(255 255 255 / 0.07);
+  --line-strong: rgb(255 255 255 / 0.14);
+
+  --shadow-panel: 0 18px 40px rgb(0 0 0 / 0.34);
+  --shadow-focus:
+    0 0 0 1px rgb(59 130 246 / 0.22),
+    0 0 0 4px rgb(59 130 246 / 0.08);
 }
 
-:root.dark {
-  --bg: #10191B;
-  --surface: #162326;
-  --ink: #E8EFEA;
-  --ink-muted: #8A9D9F;
-  --accent: #3DA28A;
-  --signal: #D9A036;
-  --alert: #B5424F;
-  --line: #2E3E41;
+/* --- light: same roles, daylight values --- */
+:root.light {
+  color-scheme: light;
+
+  --bg: #f4f5f7;
+  --surface: #ffffff;
+  --surface-2: #f8f9fb;
+  --surface-3: #eef0f4;
+
+  --ink: rgb(9 10 12 / 0.96);
+  --ink-muted: rgb(9 10 12 / 0.62);
+  --ink-faint: rgb(9 10 12 / 0.4);
+
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-soft: rgb(37 99 235 / 0.1);
+  --accent-wash: rgb(37 99 235 / 0.05);
+
+  --signal: #b45309;
+  --alert: #dc2626;
+  --success: #15803d;
+
+  --line: rgb(9 10 12 / 0.09);
+  --line-strong: rgb(9 10 12 / 0.16);
+
+  --shadow-panel: 0 18px 40px rgb(9 10 12 / 0.08);
+}
+
+html {
+  background-color: var(--bg);
 }
 
 body {
   background-color: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans);
+  /* 14px keeps the dense enterprise feel; inputs go back up to 16px so iOS
+     does not zoom when a field takes focus. */
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
+/* Amounts and counters line up in columns. */
+.tabular,
+[data-numeric] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- the KPI block: uppercase micro-label over a big number --- */
+.kpi-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.kpi-number {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 40px rounded tile that carries a section's icon. */
+.icon-tile {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-chip);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  flex-shrink: 0;
+}
+
+/* --- scrollbars: thin, present, never loud --- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-strong);
+  outline-offset: 2px;
 }

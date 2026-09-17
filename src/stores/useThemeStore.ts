@@ -2,53 +2,55 @@ import { create } from 'zustand';
 
 export type Theme = 'light' | 'dark' | 'system';
 
+const STORAGE_KEY = 'ciclo-theme';
+
+/**
+ * Dark is the base theme: the palette is defined on `:root` and the light one
+ * is opted into with a `.light` class. Default is `dark`, not `system`, because
+ * the design is built dark-first.
+ */
+export function applyTheme(theme: Theme): void {
+  const prefersLight =
+    theme === 'light' ||
+    (theme === 'system' &&
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-color-scheme: light)').matches);
+
+  document.documentElement.classList.toggle('light', prefersLight);
+}
+
+function readStoredTheme(): Theme {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === 'light' || stored === 'dark' || stored === 'system') return stored;
+  } catch {
+    // Private mode or blocked storage: fall through to the default.
+  }
+  return 'dark';
+}
+
 interface ThemeState {
   theme: Theme;
   setTheme: (theme: Theme) => void;
 }
 
-const getInitialTheme = (): Theme => {
-  try {
-    return (localStorage.getItem('ciclo-theme') as Theme) || 'system';
-  } catch {
-    return 'system';
-  }
-};
-
 export const useThemeStore = create<ThemeState>((set) => ({
-  theme: getInitialTheme(),
+  theme: readStoredTheme(),
   setTheme: (theme) => {
     set({ theme });
+    applyTheme(theme);
     try {
-      localStorage.setItem('ciclo-theme', theme);
-
-      const isDark =
-        theme === 'dark' ||
-        (theme === 'system' &&
-          window.matchMedia &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches);
-
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    } catch (e) {
-      console.error('Failed to save theme', e);
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch {
+      // The theme still applies for this session even if we cannot persist it.
     }
   },
 }));
 
-// Listener per cambiamenti di sistema quando è su "system"
-if (typeof window !== 'undefined' && window.matchMedia) {
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-    const { theme } = useThemeStore.getState();
-    if (theme === 'system') {
-      if (e.matches) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    }
+// Follow the system only while the user asked us to.
+if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+  window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => {
+    if (useThemeStore.getState().theme === 'system') applyTheme('system');
   });
 }

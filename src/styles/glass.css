@@ -1,5 +1,6 @@
 /*
- * Liquid Glass — web translation of Apple's WWDC25 material.
+ * Liquid Glass — web translation of Apple's WWDC25 material, tuned for the
+ * dark-enterprise base.
  *
  * Rules of the material (same as the native one):
  *  - glass belongs to the navigation layer only: bars, sheets, toasts, controls.
@@ -11,26 +12,26 @@
  */
 
 :root {
-  --glass-blur: 20px;
-  --glass-saturate: 180%;
-  /* Base veil. Alpha stays low enough to read the content moving underneath. */
-  --glass-bg: rgb(255 255 255 / 0.6);
-  --glass-bg-clear: rgb(255 255 255 / 0.28);
-  --glass-border: rgb(255 255 255 / 0.55);
+  --glass-blur: 22px;
+  --glass-saturate: 165%;
+  /* On near-black, the veil is a lifted surface rather than a white wash. */
+  --glass-bg: rgb(23 25 30 / 0.72);
+  --glass-bg-clear: rgb(23 25 30 / 0.4);
+  --glass-border: rgb(255 255 255 / 0.1);
   /* Specular highlight along the top edge, the way light catches a lens. */
-  --glass-highlight: rgb(255 255 255 / 0.7);
-  --glass-lowlight: rgb(22 38 42 / 0.06);
-  --glass-shadow: 0 8px 32px -10px rgb(22 38 42 / 0.25);
+  --glass-highlight: rgb(255 255 255 / 0.14);
+  --glass-lowlight: rgb(0 0 0 / 0.3);
+  --glass-shadow: 0 18px 40px rgb(0 0 0 / 0.45);
   --glass-tint: transparent;
 }
 
-:root.dark {
-  --glass-bg: rgb(22 35 38 / 0.62);
-  --glass-bg-clear: rgb(22 35 38 / 0.3);
-  --glass-border: rgb(255 255 255 / 0.12);
-  --glass-highlight: rgb(255 255 255 / 0.18);
-  --glass-lowlight: rgb(0 0 0 / 0.25);
-  --glass-shadow: 0 8px 32px -10px rgb(0 0 0 / 0.55);
+:root.light {
+  --glass-bg: rgb(255 255 255 / 0.68);
+  --glass-bg-clear: rgb(255 255 255 / 0.36);
+  --glass-border: rgb(255 255 255 / 0.7);
+  --glass-highlight: rgb(255 255 255 / 0.8);
+  --glass-lowlight: rgb(9 10 12 / 0.05);
+  --glass-shadow: 0 18px 40px rgb(9 10 12 / 0.12);
 }
 
 /* --- regular: the default, for bars and controls over mixed content --- */
@@ -50,18 +51,18 @@
 /* --- clear: for bold or media-rich backdrops, lets more through --- */
 .glass-clear {
   --glass-bg: var(--glass-bg-clear);
-  --glass-blur: 32px;
+  --glass-blur: 34px;
 }
 
 /* --- tints: only the accents from the design tokens --- */
 .glass-tint-accent {
-  --glass-tint: color-mix(in srgb, var(--accent) 22%, transparent);
+  --glass-tint: color-mix(in srgb, var(--accent) 26%, transparent);
 }
 .glass-tint-signal {
-  --glass-tint: color-mix(in srgb, var(--signal) 22%, transparent);
+  --glass-tint: color-mix(in srgb, var(--signal) 24%, transparent);
 }
 .glass-tint-alert {
-  --glass-tint: color-mix(in srgb, var(--alert) 22%, transparent);
+  --glass-tint: color-mix(in srgb, var(--alert) 24%, transparent);
 }
 
 /* --- interactive: responds to touch, never animates on its own --- */
@@ -69,11 +70,15 @@
   transition:
     transform 150ms ease,
     background-color 150ms ease,
-    box-shadow 150ms ease;
+    border-color 150ms ease;
   will-change: transform;
 }
 .glass-interactive:hover {
-  --glass-bg: color-mix(in srgb, var(--surface) 78%, transparent);
+  --glass-bg: rgb(29 33 40 / 0.82);
+  border-color: var(--line-strong);
+}
+:root.light .glass-interactive:hover {
+  --glass-bg: rgb(255 255 255 / 0.84);
 }
 .glass-interactive:active {
   transform: scale(0.97);
@@ -92,14 +97,14 @@
 /* --- graceful degradation --- */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass {
-    background-color: var(--surface);
+    background-color: var(--surface-2);
     border-color: var(--line);
   }
 }
 
 @media (prefers-reduced-transparency: reduce) {
   .glass {
-    background-color: var(--surface);
+    background-color: var(--surface-2);
     background-image: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
@@ -113,7 +118,7 @@
     background-color: var(--surface);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    border-color: var(--ink);
+    border-color: var(--ink-muted);
   }
 }
 
