@@ -2,24 +2,33 @@ import { type HTMLAttributes, forwardRef } from 'react';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   padding?: 'none' | 'sm' | 'md' | 'lg';
+  /** `raised` adds the panel shadow; `flat` is the default hairline card. */
+  elevation?: 'flat' | 'raised';
+  /** Lifts the border on hover — only for cards that are actually clickable. */
+  interactive?: boolean;
 }
 
-export const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className = '', padding = 'md', ...props }, ref) => {
-    const paddings = {
-      none: '',
-      sm: 'p-3 sm:p-4',
-      md: 'p-4 sm:p-6',
-      lg: 'p-6 sm:p-8',
-    };
+const PADDINGS = {
+  none: '',
+  sm: 'p-3 sm:p-4',
+  md: 'p-4 sm:p-5',
+  lg: 'p-5 sm:p-7',
+} as const;
 
-    return (
-      <div
-        ref={ref}
-        className={`bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800 overflow-hidden ${paddings[padding]} ${className}`}
-        {...props}
-      />
-    );
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ className = '', padding = 'md', elevation = 'flat', interactive = false, ...props }, ref) => {
+    const classes = [
+      'bg-surface border border-line rounded-[18px] overflow-hidden',
+      'transition-colors duration-200 motion-reduce:transition-none',
+      elevation === 'raised' ? 'shadow-[var(--shadow-panel)]' : '',
+      interactive ? 'hover:border-line-strong hover:bg-surface-2 cursor-pointer' : '',
+      PADDINGS[padding],
+      className,
+    ]
+      .join(' ')
+      .trim();
+
+    return <div ref={ref} className={classes} {...props} />;
   }
 );
 

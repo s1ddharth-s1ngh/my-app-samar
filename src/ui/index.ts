@@ -5,6 +5,8 @@ export * from './Select';
 export * from './Toggle';
 export * from './Chip';
 export * from './Card';
+export * from './KpiCard';
+export * from './PageHeader';
 export * from './Divider';
 export * from './EmptyState';
 export * from './Toast';

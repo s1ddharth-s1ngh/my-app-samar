@@ -10,12 +10,13 @@ export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 const VARIANTS: Record<NonNullable<IconButtonProps['variant']>, string> = {
-  primary: 'bg-ink text-bg hover:opacity-90 focus-visible:outline-ink',
-  secondary: 'bg-line/50 text-ink hover:bg-line focus-visible:outline-ink-muted',
+  primary: 'bg-accent text-white border border-accent hover:bg-accent-strong',
+  secondary: 'bg-surface-3 text-ink border border-line hover:border-line-strong',
   ghost:
-    'bg-transparent text-ink-muted hover:bg-line/40 hover:text-ink focus-visible:outline-ink-muted',
-  destructive: 'bg-alert/10 text-alert hover:bg-alert/20 focus-visible:outline-alert',
-  glass: 'glass glass-interactive text-ink focus-visible:outline-accent',
+    'bg-transparent text-ink-muted border border-transparent hover:text-ink hover:bg-surface-2',
+  destructive:
+    'bg-transparent text-ink-muted border border-transparent hover:text-alert hover:bg-alert/10',
+  glass: 'glass glass-interactive text-ink',
 };
 
 // 44px minimum touch target on every size, per the mobile polish rules.
@@ -25,14 +26,14 @@ const SIZES = {
   lg: 'h-12 w-12',
 } as const;
 
-const ICON_SIZES = { sm: 16, md: 20, lg: 24 } as const;
+const ICON_SIZES = { sm: 16, md: 18, lg: 22 } as const;
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ icon: Icon, variant = 'ghost', size = 'md', className = '', label, ...props }, ref) => {
     const classes = [
-      'inline-flex items-center justify-center rounded-full',
-      'transition-colors focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2',
-      'disabled:opacity-50 disabled:pointer-events-none',
+      'inline-flex items-center justify-center rounded-[12px]',
+      'transition-colors duration-200 motion-reduce:transition-none',
+      'disabled:opacity-40 disabled:pointer-events-none',
       VARIANTS[variant],
       SIZES[size],
       className,

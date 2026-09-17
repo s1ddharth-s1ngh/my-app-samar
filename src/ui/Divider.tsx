@@ -11,17 +11,13 @@ export const Divider = forwardRef<HTMLHRElement, DividerProps>(
         <div
           role="separator"
           aria-orientation="vertical"
-          className={`h-full w-px bg-zinc-200 dark:bg-zinc-800 ${className}`}
+          className={`h-full w-px bg-line ${className}`}
         />
       );
     }
 
     return (
-      <hr
-        ref={ref}
-        className={`border-t border-zinc-200 dark:border-zinc-800 w-full ${className}`}
-        {...props}
-      />
+      <hr ref={ref} className={`w-full border-0 border-t border-line ${className}`} {...props} />
     );
   }
 );

@@ -1,34 +1,30 @@
 import { type HTMLAttributes, forwardRef } from 'react';
+import { formatCents } from '@/domain/money';
 
 export interface MoneyProps extends HTMLAttributes<HTMLSpanElement> {
   cents: number;
   showSign?: boolean;
+  /** Green above zero, red below. Off by default: most amounts are neutral. */
   semanticColor?: boolean;
+  /** Hides the decimals on whole euros, for dense lists. */
+  compact?: boolean;
 }
 
-export const formatCents = (cents: number, showSign: boolean = false) => {
-  const amount = cents / 100;
-  const formatter = new Intl.NumberFormat('it-IT', {
-    style: 'currency',
-    currency: 'EUR',
-    signDisplay: showSign ? 'always' : 'auto',
-  });
-  return formatter.format(amount);
-};
-
 export const Money = forwardRef<HTMLSpanElement, MoneyProps>(
-  ({ cents, showSign = false, semanticColor = false, className = '', ...props }, ref) => {
-    const formatted = formatCents(cents, showSign);
-
-    let colorClass = '';
-    if (semanticColor) {
-      if (cents > 0) colorClass = 'text-green-600 dark:text-green-500';
-      else if (cents < 0) colorClass = 'text-red-600 dark:text-red-500';
-    }
+  (
+    { cents, showSign = false, semanticColor = false, compact = false, className = '', ...props },
+    ref
+  ) => {
+    const color = !semanticColor ? '' : cents > 0 ? 'text-success' : cents < 0 ? 'text-alert' : '';
 
     return (
-      <span ref={ref} className={`tabular-nums ${colorClass} ${className}`} {...props}>
-        {formatted}
+      <span
+        ref={ref}
+        data-numeric=""
+        className={`tabular-nums ${color} ${className}`.trim()}
+        {...props}
+      >
+        {formatCents(cents, { showSign, compact })}
       </span>
     );
   }

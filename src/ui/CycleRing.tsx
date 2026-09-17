@@ -84,7 +84,7 @@ export function CycleRing({
         r={outerRadius}
         fill="transparent"
         stroke="currentColor"
-        className="text-zinc-100 dark:text-zinc-800"
+        className="text-surface-3"
         strokeWidth={strokeWidth}
       />
       {/* Progresso giorni */}
@@ -94,7 +94,7 @@ export function CycleRing({
         r={outerRadius}
         fill="transparent"
         stroke="currentColor"
-        className="text-zinc-400 dark:text-zinc-500 transition-all duration-1000 ease-out motion-reduce:transition-none"
+        className="text-ink-faint transition-all duration-1000 ease-out motion-reduce:transition-none"
         strokeWidth={strokeWidth}
         strokeLinecap="round"
         strokeDasharray={calculateDashArray(outerRadius, isMounted ? daysPercent : 0)}
@@ -109,7 +109,7 @@ export function CycleRing({
           r={innerRadius}
           fill="transparent"
           stroke="currentColor"
-          className="text-zinc-100 dark:text-zinc-800"
+          className="text-surface-3"
           strokeWidth={strokeWidth}
         />
       )}

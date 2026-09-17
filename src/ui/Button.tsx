@@ -8,28 +8,28 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const VARIANTS: Record<NonNullable<ButtonProps['variant']>, string> = {
-  primary: 'bg-ink text-bg hover:opacity-90 focus-visible:outline-ink',
-  secondary: 'bg-line/50 text-ink hover:bg-line focus-visible:outline-ink-muted',
+  primary:
+    'bg-accent text-white border border-accent hover:bg-accent-strong hover:border-accent-strong',
+  secondary: 'bg-surface-3 text-ink border border-line hover:border-line-strong hover:bg-surface-2',
   ghost:
-    'bg-transparent text-ink-muted hover:bg-line/40 hover:text-ink focus-visible:outline-ink-muted',
-  destructive: 'bg-alert text-white hover:opacity-90 focus-visible:outline-alert',
-  glass: 'glass glass-interactive text-ink focus-visible:outline-accent',
-  glassProminent:
-    'glass glass-interactive glass-tint-accent text-accent font-semibold focus-visible:outline-accent',
+    'bg-transparent text-ink-muted border border-transparent hover:text-ink hover:bg-surface-2',
+  destructive: 'bg-alert text-white border border-alert hover:opacity-90',
+  glass: 'glass glass-interactive text-ink',
+  glassProminent: 'glass glass-interactive glass-tint-accent text-ink font-semibold',
 };
 
 const SIZES = {
   sm: 'h-9 px-3 text-sm',
-  md: 'h-11 px-4 text-base',
-  lg: 'h-14 px-6 text-lg',
+  md: 'h-11 px-4 text-[15px]',
+  lg: 'h-13 px-6 text-base',
 } as const;
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = '', variant = 'primary', size = 'md', fullWidth = false, ...props }, ref) => {
     const classes = [
-      'inline-flex items-center justify-center font-medium rounded-2xl',
-      'transition-colors focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2',
-      'disabled:opacity-50 disabled:pointer-events-none',
+      'inline-flex items-center justify-center gap-2 font-medium rounded-[12px]',
+      'transition-[background-color,border-color,color,transform] duration-200 motion-reduce:transition-none',
+      'disabled:opacity-40 disabled:pointer-events-none',
       VARIANTS[variant],
       SIZES[size],
       fullWidth ? 'w-full' : '',
