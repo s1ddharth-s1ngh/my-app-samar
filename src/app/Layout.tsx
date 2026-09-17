@@ -38,8 +38,8 @@ export function Layout() {
   const minimized = useMinimizeOnScrollDown();
 
   return (
-    <div className="max-w-[560px] mx-auto min-h-screen bg-surface flex flex-col relative pb-[calc(env(safe-area-inset-bottom,0px)+108px)]">
-      <main className="flex-1">
+    <div className="max-w-[560px] mx-auto min-h-screen flex flex-col relative pb-[calc(env(safe-area-inset-bottom,0px)+108px)]">
+      <main className="flex-1 px-4 pt-5 sm:px-6 sm:pt-8">
         <Outlet />
       </main>
 

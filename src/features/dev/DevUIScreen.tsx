@@ -27,7 +27,7 @@ export function DevUIScreen() {
     <div className="p-4 sm:p-8 max-w-3xl mx-auto space-y-12 pb-32">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">Design System</h1>
-        <p className="text-zinc-500">Preview di tutti i componenti UI (Responsive)</p>
+        <p className="text-ink-muted">Preview di tutti i componenti UI (Responsive)</p>
       </div>
 
       <section className="space-y-4">
@@ -60,7 +60,7 @@ export function DevUIScreen() {
 
       <section className="space-y-4">
         <h2 className="text-xl font-bold border-b pb-2">Anello del Ciclo (CycleRing)</h2>
-        <div className="flex justify-center p-8 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800">
+        <div className="flex justify-center p-8 bg-surface rounded-2xl shadow-sm border border-line">
           <CycleRing
             daysTotal={30}
             daysPassed={12}
@@ -77,21 +77,21 @@ export function DevUIScreen() {
       <section className="space-y-4">
         <h2 className="text-xl font-bold border-b pb-2">Denaro (Money & MoneyInput)</h2>
         <div className="flex flex-col gap-4 max-w-md">
-          <div className="flex gap-4 items-center p-4 bg-zinc-50 dark:bg-zinc-800 rounded-xl">
+          <div className="flex gap-4 items-center p-4 bg-surface-2 rounded-xl">
             <div className="flex flex-col">
-              <span className="text-xs text-zinc-500">Base</span>
+              <span className="text-xs text-ink-muted">Base</span>
               <Money cents={123456} className="text-lg font-medium" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs text-zinc-500">Con Segno</span>
+              <span className="text-xs text-ink-muted">Con Segno</span>
               <Money cents={123456} showSign className="text-lg font-medium" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs text-zinc-500">Semantico (+)</span>
+              <span className="text-xs text-ink-muted">Semantico (+)</span>
               <Money cents={123456} semanticColor showSign className="text-lg font-bold" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs text-zinc-500">Semantico (-)</span>
+              <span className="text-xs text-ink-muted">Semantico (-)</span>
               <Money cents={-5000} semanticColor showSign className="text-lg font-bold" />
             </div>
           </div>
@@ -201,7 +201,7 @@ export function DevUIScreen() {
         <h2 className="text-xl font-bold border-b pb-2">Card</h2>
         <Card>
           <h3 className="font-bold text-lg mb-2">Titolo Card</h3>
-          <p className="text-zinc-500">
+          <p className="text-ink-muted">
             Contenuto interno della card. La card ha padding e shadow. È responsive.
           </p>
         </Card>
@@ -246,7 +246,7 @@ export function DevUIScreen() {
 
       <Sheet isOpen={isSheetOpen} onClose={() => setIsSheetOpen(false)} title="Modifica Dati">
         <div className="space-y-4 py-4">
-          <p className="text-zinc-600 dark:text-zinc-400">
+          <p className="text-ink-muted">
             Questo componente si comporta come una Bottom Sheet su mobile e come una Dialog modale
             centrata su schermi desktop (sm:).
           </p>

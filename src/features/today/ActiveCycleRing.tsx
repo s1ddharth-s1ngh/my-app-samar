@@ -1,86 +1,79 @@
 import { useDataStore } from '@/stores/useDataStore';
-import { CycleRing } from '@/ui';
-import { parseCalendarDate, todayCalendarDate } from '@/domain/cycles';
+import { Card, CycleRing, Money } from '@/ui';
+import { cycleLengthInDays, daysElapsed, todayCalendarDate } from '@/domain/cycles';
+
+interface RingBucket {
+  id: string;
+  color: string;
+  amount: number;
+  name: string;
+}
 
 export function ActiveCycleRing() {
   const cycles = useDataStore((state) => state.cycles);
   const allBuckets = useDataStore((state) => state.buckets);
   const allocations = useDataStore((state) => state.allocations);
 
-  const activeCycle = cycles.find((c) => c.status === 'active');
+  const activeCycle = cycles.find((item) => item.status === 'active' && !item.deletedAt);
   if (!activeCycle) return null;
 
-  // Calculate days
-  const today = parseCalendarDate(todayCalendarDate());
-  const start = parseCalendarDate(activeCycle.startDate);
-  const end = parseCalendarDate(activeCycle.endDate);
+  const bounds = { startDate: activeCycle.startDate, endDate: activeCycle.endDate };
+  const daysTotal = cycleLengthInDays(bounds);
+  const daysPassed = daysElapsed(bounds, todayCalendarDate());
 
-  const daysTotal = Math.max(
-    1,
-    Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
-  );
-  const daysPassed = Math.max(
-    0,
-    Math.round((today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+  const cycleAllocations = allocations.filter(
+    (item) => item.cycleId === activeCycle.id && !item.deletedAt
   );
 
-  // Calculate budget
-  // Get allocations for this cycle
-  const cycleAllocations = allocations.filter((a) => a.cycleId === activeCycle.id);
-
-  // Combine with buckets to get colors
+  const buckets: RingBucket[] = [];
   let totalBudget = 0;
-  const bucketsMap = new Map<string, { id: string; color: string; amount: number; name: string }>();
 
-  // Initialize all active buckets to 0
-  allBuckets.forEach((b) => {
-    if (b.isActive) {
-      bucketsMap.set(b.id, { id: b.id, color: b.color, amount: 0, name: b.name });
-    }
-  });
-
-  // Add allocation amounts
-  cycleAllocations.forEach((a) => {
-    const b = bucketsMap.get(a.bucketId);
-    if (b) {
-      b.amount += a.actualAmount;
-      totalBudget += a.actualAmount;
-    }
-  });
-
-  const buckets = Array.from(bucketsMap.values()).filter((b) => b.amount > 0);
+  for (const bucket of allBuckets) {
+    if (!bucket.isActive || bucket.deletedAt) continue;
+    const amount = cycleAllocations
+      .filter((item) => item.bucketId === bucket.id)
+      .reduce((acc, item) => acc + item.actualAmount, 0);
+    if (amount <= 0) continue;
+    buckets.push({ id: bucket.id, color: bucket.color, amount, name: bucket.name });
+    totalBudget += amount;
+  }
 
   return (
-    <div className="flex flex-col items-center p-6 bg-surface border border-line rounded-2xl shadow-sm">
-      <div className="text-center mb-6">
-        <h2 className="text-xl font-bold">{activeCycle.label}</h2>
-        <p className="text-sm text-zinc-500">
-          Giorno {Math.min(daysPassed, daysTotal)} di {daysTotal}
+    <Card className="flex flex-col items-center" padding="lg">
+      <div className="text-center">
+        <p className="kpi-label">Ciclo in corso</p>
+        <h2 className="mt-1 text-lg font-semibold text-ink">{activeCycle.label}</h2>
+        <p className="text-sm text-ink-faint tabular-nums">
+          Giorno {daysPassed} di {daysTotal}
         </p>
       </div>
 
-      <CycleRing
-        daysTotal={daysTotal}
-        daysPassed={daysPassed}
-        totalBudget={totalBudget}
-        buckets={buckets}
-      />
+      <div className="my-6">
+        <CycleRing
+          daysTotal={daysTotal}
+          daysPassed={daysPassed}
+          totalBudget={totalBudget}
+          buckets={buckets}
+        />
+      </div>
 
-      {totalBudget > 0 && (
-        <div className="mt-6 w-full max-w-xs space-y-2">
-          {buckets.map((b) => (
-            <div key={b.id} className="flex justify-between items-center text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: b.color }} />
-                <span>{b.name}</span>
-              </div>
-              <span className="font-medium tabular-nums">
-                {(b.amount / 100).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}
+      {buckets.length > 0 && (
+        <ul className="w-full max-w-xs space-y-2">
+          {buckets.map((bucket) => (
+            <li key={bucket.id} className="flex items-center justify-between gap-3 text-sm">
+              <span className="flex items-center gap-2 min-w-0">
+                <span
+                  className="h-2.5 w-2.5 rounded-full shrink-0"
+                  style={{ backgroundColor: bucket.color }}
+                  aria-hidden="true"
+                />
+                <span className="truncate text-ink-muted">{bucket.name}</span>
               </span>
-            </div>
+              <Money cents={bucket.amount} className="font-medium text-ink" />
+            </li>
           ))}
-        </div>
+        </ul>
       )}
-    </div>
+    </Card>
   );
 }

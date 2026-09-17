@@ -166,11 +166,11 @@ export function BucketsScreen() {
   };
 
   return (
-    <div className="p-4 sm:p-8 space-y-6">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Bucket</h1>
-          <p className="text-sm text-zinc-500">I tuoi contenitori di spesa e risparmio</p>
+          <p className="text-sm text-ink-muted">I tuoi contenitori di spesa e risparmio</p>
         </div>
         <Button onClick={handleOpenCreate} size="sm" className="hidden sm:inline-flex">
           <Plus size={16} className="mr-2" /> Nuovo
@@ -190,14 +190,14 @@ export function BucketsScreen() {
             <Card
               id={`bucket-${bucket.id}`}
               key={bucket.id}
-              className="flex items-center p-3 gap-3 cursor-move hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
+              className="flex items-center p-3 gap-3 cursor-move hover:border-line-strong transition-colors"
               draggable
               onDragStart={(e) => handleDragStart(e, bucket.id)}
               onDragEnd={(e) => handleDragEnd(e, bucket.id)}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, bucket.id)}
             >
-              <div className="text-zinc-400 cursor-grab active:cursor-grabbing">
+              <div className="text-ink-faint cursor-grab active:cursor-grabbing">
                 <GripVertical size={20} />
               </div>
               <div
@@ -208,7 +208,7 @@ export function BucketsScreen() {
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold">{bucket.name}</h3>
-                <p className="text-xs text-zinc-500 capitalize">{bucket.kind}</p>
+                <p className="text-xs text-ink-muted capitalize">{bucket.kind}</p>
               </div>
               <div className="flex gap-1 shrink-0">
                 <IconButton

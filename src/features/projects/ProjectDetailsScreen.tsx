@@ -152,7 +152,7 @@ export function ProjectDetailsScreen() {
   };
 
   return (
-    <div className="p-4 sm:p-8 space-y-6 pb-32">
+    <div className="space-y-6">
       <div className="flex items-center gap-4">
         <IconButton icon={ChevronLeft} label="Indietro" onClick={() => navigate('/progetti')} />
         <div className="flex items-center gap-3">
@@ -167,7 +167,7 @@ export function ProjectDetailsScreen() {
           <div>
             <h1 className="text-2xl font-bold">{isInbox ? 'Inbox' : project?.name}</h1>
             {!isInbox && project?.description && (
-              <p className="text-sm text-zinc-500">{project.description}</p>
+              <p className="text-sm text-ink-muted">{project.description}</p>
             )}
           </div>
         </div>
@@ -255,12 +255,10 @@ export function ProjectDetailsScreen() {
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, task.id)}
               className={`flex items-center p-3 gap-3 transition-colors ${
-                task.status === 'done'
-                  ? 'opacity-60 bg-zinc-50 dark:bg-zinc-900/50'
-                  : 'hover:border-zinc-300 dark:hover:border-zinc-700'
+                task.status === 'done' ? 'opacity-60 bg-surface-2/50' : 'hover:border-line-strong'
               }`}
             >
-              <div className="text-zinc-300 cursor-grab active:cursor-grabbing shrink-0">
+              <div className="text-ink-faint cursor-grab active:cursor-grabbing shrink-0">
                 <GripVertical size={20} />
               </div>
 
@@ -269,14 +267,14 @@ export function ProjectDetailsScreen() {
                 className={`w-6 h-6 rounded-md border-2 flex items-center justify-center shrink-0 transition-colors ${
                   task.status === 'done'
                     ? 'bg-accent border-accent text-white'
-                    : 'border-zinc-300 dark:border-zinc-600 hover:border-accent'
+                    : 'border-line-strong hover:border-accent'
                 }`}
               >
                 {task.status === 'done' && <Check size={14} strokeWidth={3} />}
               </button>
 
               <div
-                className={`flex-1 ${task.status === 'done' ? 'line-through text-zinc-500' : ''}`}
+                className={`flex-1 ${task.status === 'done' ? 'line-through text-ink-muted' : ''}`}
               >
                 {task.title}
               </div>

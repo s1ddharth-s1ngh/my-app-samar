@@ -59,7 +59,7 @@ export function TimerModal({ taskId, onClose }: { taskId: string | null; onClose
         <div className="text-6xl font-bold tabular-nums font-heading">
           {mins}:{secs}
         </div>
-        <div className="text-sm text-zinc-500">Target: {targetMins} min</div>
+        <div className="text-sm text-ink-muted">Target: {targetMins} min</div>
 
         <div className="flex gap-4">
           <Button size="lg" onClick={() => setIsRunning(!isRunning)} className="w-32">

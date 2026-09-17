@@ -38,7 +38,7 @@ export function SettingsScreen() {
   };
 
   return (
-    <div className="p-4 sm:p-8 space-y-8">
+    <div className="space-y-6">
       <h1 className="font-heading text-2xl font-bold text-ink">Impostazioni</h1>
 
       <section className="space-y-4">

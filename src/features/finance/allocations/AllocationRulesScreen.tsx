@@ -71,10 +71,10 @@ export function AllocationRulesScreen() {
   }
 
   return (
-    <div className="p-4 sm:p-8 space-y-6">
+    <div className="space-y-6">
       <div className="space-y-2">
         <h1 className="text-2xl font-bold">Regole di Allocazione</h1>
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-ink-muted">
           Quando ricevi un'entrata (es. Stipendio), i soldi scendono a cascata nei bucket in base
           all'ordine e a queste regole.
         </p>
@@ -90,7 +90,7 @@ export function AllocationRulesScreen() {
           return (
             <Card key={bucket.id} className="p-4 flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="flex items-center gap-3 w-48 shrink-0">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-zinc-100 text-zinc-500">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-surface-3 text-ink-muted">
                   {index + 1}
                 </div>
                 <div
@@ -171,7 +171,7 @@ export function AllocationRulesScreen() {
                   </div>
                 </div>
               ) : (
-                <div className="flex-1 flex justify-between items-center bg-zinc-50 dark:bg-zinc-800 p-3 rounded-lg">
+                <div className="flex-1 flex justify-between items-center bg-surface-2 p-3 rounded-lg">
                   <div className="text-sm font-medium">
                     {rule.type === 'fixed' &&
                       `Importo fisso: ${(rule.value / 100).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}`}

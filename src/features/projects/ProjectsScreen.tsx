@@ -159,11 +159,11 @@ export default function ProjectsScreen() {
   };
 
   return (
-    <div className="p-4 sm:p-8 space-y-6 pb-32">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Progetti</h1>
-          <p className="text-sm text-zinc-500">Gestisci i tuoi obiettivi e task</p>
+          <p className="text-sm text-ink-muted">Gestisci i tuoi obiettivi e task</p>
         </div>
         <Button onClick={handleOpenCreate} size="sm" className="hidden sm:inline-flex">
           <Plus size={16} className="mr-2" /> Nuovo
@@ -183,7 +183,7 @@ export default function ProjectsScreen() {
             <Card
               id={`proj-${proj.id}`}
               key={proj.id}
-              className="flex items-center p-3 gap-3 cursor-move hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors"
+              className="flex items-center p-3 gap-3 cursor-move hover:border-line-strong transition-colors"
               draggable
               onDragStart={(e) => handleDragStart(e, proj.id)}
               onDragEnd={(e) => handleDragEnd(e, proj.id)}
@@ -192,7 +192,7 @@ export default function ProjectsScreen() {
               onClick={() => navigate(`/progetti/${proj.id}`)}
             >
               <div
-                className="text-zinc-400 cursor-grab active:cursor-grabbing shrink-0"
+                className="text-ink-faint cursor-grab active:cursor-grabbing shrink-0"
                 onClick={(e) => e.stopPropagation()}
               >
                 <GripVertical size={20} />
@@ -207,7 +207,7 @@ export default function ProjectsScreen() {
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold">{proj.name}</h3>
                   {proj.status === 'paused' && (
-                    <span className="text-[10px] uppercase font-bold bg-zinc-100 text-zinc-500 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] uppercase font-bold bg-surface-3 text-ink-muted px-1.5 py-0.5 rounded">
                       In pausa
                     </span>
                   )}
@@ -218,7 +218,7 @@ export default function ProjectsScreen() {
                   )}
                 </div>
                 {proj.description && (
-                  <p className="text-xs text-zinc-500 line-clamp-1 mt-0.5">{proj.description}</p>
+                  <p className="text-xs text-ink-muted line-clamp-1 mt-0.5">{proj.description}</p>
                 )}
               </div>
               <div className="flex gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
