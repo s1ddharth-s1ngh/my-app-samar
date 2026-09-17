@@ -3,44 +3,46 @@ import type { LucideIcon } from 'lucide-react';
 
 export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: LucideIcon;
-  variant?: 'primary' | 'secondary' | 'ghost' | 'destructive';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'destructive' | 'glass';
   size?: 'sm' | 'md' | 'lg';
-  label: string; // Required for accessibility
+  /** Required: the button carries no visible text. */
+  label: string;
 }
+
+const VARIANTS: Record<NonNullable<IconButtonProps['variant']>, string> = {
+  primary: 'bg-ink text-bg hover:opacity-90 focus-visible:outline-ink',
+  secondary: 'bg-line/50 text-ink hover:bg-line focus-visible:outline-ink-muted',
+  ghost:
+    'bg-transparent text-ink-muted hover:bg-line/40 hover:text-ink focus-visible:outline-ink-muted',
+  destructive: 'bg-alert/10 text-alert hover:bg-alert/20 focus-visible:outline-alert',
+  glass: 'glass glass-interactive text-ink focus-visible:outline-accent',
+};
+
+// 44px minimum touch target on every size, per the mobile polish rules.
+const SIZES = {
+  sm: 'h-11 w-11',
+  md: 'h-11 w-11',
+  lg: 'h-12 w-12',
+} as const;
+
+const ICON_SIZES = { sm: 16, md: 20, lg: 24 } as const;
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ icon: Icon, variant = 'ghost', size = 'md', className = '', label, ...props }, ref) => {
-    const baseStyles =
-      'inline-flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none rounded-full';
-
-    const variants = {
-      primary:
-        'bg-zinc-900 text-white hover:bg-zinc-800 focus:ring-zinc-900 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200',
-      secondary:
-        'bg-zinc-100 text-zinc-900 hover:bg-zinc-200 focus:ring-zinc-500 dark:bg-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-700',
-      ghost:
-        'bg-transparent text-zinc-700 hover:bg-zinc-100 focus:ring-zinc-500 dark:text-zinc-300 dark:hover:bg-zinc-800',
-      destructive:
-        'bg-red-50 text-red-600 hover:bg-red-100 focus:ring-red-500 dark:bg-red-950 dark:hover:bg-red-900',
-    };
-
-    const sizes = {
-      sm: 'h-8 w-8',
-      md: 'h-10 w-10',
-      lg: 'h-12 w-12',
-    };
-
-    const iconSizes = {
-      sm: 16,
-      md: 20,
-      lg: 24,
-    };
-
-    const classes = [baseStyles, variants[variant], sizes[size], className].join(' ').trim();
+    const classes = [
+      'inline-flex items-center justify-center rounded-full',
+      'transition-colors focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2',
+      'disabled:opacity-50 disabled:pointer-events-none',
+      VARIANTS[variant],
+      SIZES[size],
+      className,
+    ]
+      .join(' ')
+      .trim();
 
     return (
       <button ref={ref} className={classes} aria-label={label} title={label} {...props}>
-        <Icon size={iconSizes[size]} />
+        <Icon size={ICON_SIZES[size]} aria-hidden="true" />
       </button>
     );
   }

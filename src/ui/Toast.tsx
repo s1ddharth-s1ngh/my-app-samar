@@ -8,22 +8,23 @@ export function ToastContainer() {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 p-4 sm:p-6 flex flex-col items-center sm:items-end gap-2 z-50 pointer-events-none">
+    <div
+      className="fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+96px)] p-4 flex flex-col items-center gap-2 z-50 pointer-events-none"
+      aria-live="polite"
+    >
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`pointer-events-auto flex items-start gap-3 w-full max-w-sm rounded-xl p-4 shadow-lg border transition-all animate-in slide-in-from-bottom-5 fade-in duration-300 ${
-            toast.type === 'error'
-              ? 'bg-red-50 text-red-900 border-red-200 dark:bg-red-950 dark:border-red-900 dark:text-red-200'
-              : 'bg-white text-zinc-900 border-zinc-200 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-100'
-          }`}
+          className={`glass pointer-events-auto flex items-start gap-3 w-full max-w-sm rounded-2xl p-4 text-ink
+            animate-in slide-in-from-bottom-5 fade-in duration-300 motion-reduce:animate-none
+            ${toast.type === 'error' ? 'glass-tint-alert' : ''}`}
           role="alert"
         >
           <div className="shrink-0 mt-0.5">
             {toast.type === 'error' ? (
-              <AlertCircle size={18} className="text-red-500" />
+              <AlertCircle size={18} className="text-alert" aria-hidden="true" />
             ) : (
-              <Info size={18} className="text-blue-500" />
+              <Info size={18} className="text-accent" aria-hidden="true" />
             )}
           </div>
           <div className="flex-1 text-sm font-medium pr-2">{toast.message}</div>
@@ -40,10 +41,10 @@ export function ToastContainer() {
           )}
           <button
             onClick={() => removeToast(toast.id)}
-            className="shrink-0 opacity-50 hover:opacity-100 transition-opacity p-1"
+            className="shrink-0 opacity-60 hover:opacity-100 transition-opacity p-1"
             aria-label="Chiudi"
           >
-            <X size={18} />
+            <X size={18} aria-hidden="true" />
           </button>
         </div>
       ))}
