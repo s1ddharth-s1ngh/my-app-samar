@@ -31,6 +31,34 @@ export function DevUIScreen() {
       </div>
 
       <section className="space-y-4">
+        <h2 className="text-xl font-bold border-b pb-2">Liquid Glass</h2>
+        <p className="text-sm text-ink-muted">
+          Il vetro sta solo sul livello di navigazione: barre, sheet, toast, controlli. Mai sul
+          contenuto. Lo sfondo colorato qui sotto serve a far vedere cosa filtra.
+        </p>
+        <div className="rounded-2xl p-6 bg-gradient-to-br from-accent via-signal to-alert">
+          <div className="glass-group glass rounded-[28px] p-4 flex flex-wrap gap-3 justify-center">
+            <span className="glass-item rounded-2xl px-4 py-2 text-sm">In un container</span>
+            <span className="glass-item glass-tint-accent rounded-2xl px-4 py-2 text-sm">
+              Con tinta
+            </span>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3 justify-center">
+            <span className="glass rounded-2xl px-4 py-2 text-sm text-ink">regular</span>
+            <span className="glass glass-clear rounded-2xl px-4 py-2 text-sm text-ink">clear</span>
+            <span className="glass glass-interactive rounded-2xl px-4 py-2 text-sm text-ink">
+              interactive
+            </span>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-3 justify-center">
+            <Button variant="glass">Vetro</Button>
+            <Button variant="glassProminent">Vetro in evidenza</Button>
+            <IconButton icon={Star} label="Preferito" variant="glass" />
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-4">
         <h2 className="text-xl font-bold border-b pb-2">Anello del Ciclo (CycleRing)</h2>
         <div className="flex justify-center p-8 bg-white dark:bg-zinc-900 rounded-2xl shadow-sm border border-zinc-200 dark:border-zinc-800">
           <CycleRing
