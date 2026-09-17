@@ -1,6 +1,18 @@
 import { useDataStore } from '@/stores/useDataStore';
 import { useThemeStore } from '@/stores/useThemeStore';
-import { Select } from '@/ui';
+import type { Theme } from '@/stores/useThemeStore';
+import { Button, Card, Select, Divider } from '@/ui';
+import { FinancialSettingsSection } from './FinancialSettingsSection';
+
+const THEME_OPTIONS = [
+  { value: 'light', label: 'Chiaro' },
+  { value: 'dark', label: 'Scuro' },
+  { value: 'system', label: 'Sistema' },
+];
+
+function isTheme(value: string): value is Theme {
+  return value === 'light' || value === 'dark' || value === 'system';
+}
 
 export function SettingsScreen() {
   const loadSeed = useDataStore((state) => state.loadSeed);
@@ -12,7 +24,7 @@ export function SettingsScreen() {
       confirm('Vuoi davvero caricare i dati di esempio? Tutti i dati attuali verranno sostituiti.')
     ) {
       await loadSeed();
-      window.location.reload(); // Hard reload for simplicity in this demo
+      window.location.reload();
     }
   };
 
@@ -26,40 +38,42 @@ export function SettingsScreen() {
   };
 
   return (
-    <div className="p-4 space-y-8 max-w-[560px] mx-auto">
-      <h1 className="text-2xl font-bold">Impostazioni</h1>
+    <div className="p-4 sm:p-8 space-y-8">
+      <h1 className="font-heading text-2xl font-bold text-ink">Impostazioni</h1>
 
       <section className="space-y-4">
-        <h2 className="text-xl font-bold">Aspetto</h2>
+        <h2 className="font-heading text-lg font-semibold text-ink">Aspetto</h2>
         <Select
           label="Tema dell'applicazione"
           value={theme}
-          onChange={(e) => setTheme(e.target.value as any)}
-          options={[
-            { value: 'light', label: 'Chiaro' },
-            { value: 'dark', label: 'Scuro' },
-            { value: 'system', label: 'Sistema' },
-          ]}
+          onChange={(e) => {
+            if (isTheme(e.target.value)) setTheme(e.target.value);
+          }}
+          options={THEME_OPTIONS}
         />
       </section>
 
-      <section className="space-y-4 border p-4 rounded-xl bg-red-50 text-red-900 border-red-200 dark:bg-red-950/30 dark:text-red-300 dark:border-red-900/50">
-        <h2 className="font-semibold text-lg">Area Pericolosa (Sviluppo)</h2>
-        <div className="flex gap-4">
-          <button
-            onClick={handleLoadSeed}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 font-medium"
-          >
-            Carica dati di esempio
-          </button>
+      <Divider />
 
-          <button
-            onClick={handleReset}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 font-medium"
-          >
-            Svuota tutto
-          </button>
-        </div>
+      <FinancialSettingsSection />
+
+      <Divider />
+
+      <section className="space-y-4">
+        <h2 className="font-heading text-lg font-semibold text-ink">Dati</h2>
+        <Card className="space-y-4" padding="sm">
+          <p className="text-sm text-ink-muted">
+            I dati di esempio sostituiscono tutto quello che hai adesso. Svuotare è irreversibile.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button variant="secondary" onClick={() => void handleLoadSeed()}>
+              Carica i dati di esempio
+            </Button>
+            <Button variant="destructive" onClick={() => void handleReset()}>
+              Svuota tutto
+            </Button>
+          </div>
+        </Card>
       </section>
     </div>
   );
