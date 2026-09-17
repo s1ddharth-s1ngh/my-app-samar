@@ -36,7 +36,7 @@ Tracking allineato alla numerazione del MEGA PROMPT. Legenda: ✅ fatto · 🏗�
 - ✅ T3.2 (2026-09-15) Bucket: CRUD con regole di allocazione.
 - ✅ T3.3 (2026-09-17) Spese ricorrenti: CRUD, con bucket di uscita e flag "crea un task".
 - ✅ T3.4 (2026-09-17) Impostazioni finanziarie: modalità ciclo, ancoraggio, valuta, riporto, con anteprima del ciclo corrente.
-- ⬜ T3.5 `domain/money.ts` + property test.
+- ✅ T3.5 (2026-09-17) `domain/money.ts`: somma, sottrazione, percentuale, `split` con resto esatto, formattazione. 21 test, incluso il property test su 1000 casi.
 
 ## FASE 4 — Denaro: motore e cicli
 - ⬜ T4.1 Motore di allocazione (`domain/allocation.ts`).
