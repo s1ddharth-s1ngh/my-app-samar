@@ -1,4 +1,4 @@
-import type { CalendarDate, Cycle, Settings } from '@/data/types';
+import type { BucketKind, CalendarDate, Cents, Cycle, ID, Settings } from '@/data/types';
 
 /**
  * Cycles are the temporal container of every money movement. This module is
@@ -182,4 +182,55 @@ export function evaluateCycleState(
   }
 
   return { action: 'none', activeCycle, suggestedBounds: bounds, suggestedLabel };
+}
+
+/**
+ * For v1 every bucket carries its unspent money into the next cycle except the
+ * day-to-day spending one: what you did not spend this month is not pocket
+ * money for the next.
+ */
+export function bucketCarriesOver(kind: BucketKind): boolean {
+  return kind !== 'spending';
+}
+
+export interface BucketBalance {
+  bucketId: ID;
+  planned: Cents;
+  spent: Cents;
+  carriesOver: boolean;
+}
+
+export interface CarryOverSummary {
+  /** What the next cycle opens with. */
+  openingBalance: Cents;
+  /** Per bucket, what is left over — negative when the bucket overspent. */
+  leftovers: { bucketId: ID; amount: Cents }[];
+  /** Money left in buckets that do not carry over: it simply expires. */
+  forfeited: Cents;
+}
+
+/**
+ * Closing a cycle turns the unspent money of the carrying buckets into the next
+ * cycle's opening balance. An overspent bucket subtracts, so the carry-over
+ * tells the truth rather than flattering the next cycle.
+ */
+export function computeCarryOver(balances: BucketBalance[]): CarryOverSummary {
+  let openingBalance = 0;
+  let forfeited = 0;
+  const leftovers: { bucketId: ID; amount: Cents }[] = [];
+
+  for (const balance of balances) {
+    const amount = balance.planned - balance.spent;
+    leftovers.push({ bucketId: balance.bucketId, amount });
+    if (balance.carriesOver) {
+      openingBalance += amount;
+    } else if (amount > 0) {
+      forfeited += amount;
+    } else {
+      // An overspent non-carrying bucket still eats into the next cycle.
+      openingBalance += amount;
+    }
+  }
+
+  return { openingBalance, leftovers, forfeited };
 }

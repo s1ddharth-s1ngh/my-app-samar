@@ -12,6 +12,8 @@ import {
   nextCycleBounds,
   parseCalendarDate,
   todayCalendarDate,
+  bucketCarriesOver,
+  computeCarryOver,
 } from './cycles';
 
 function cycle(partial: Partial<Cycle>): Cycle {
@@ -235,5 +237,58 @@ describe('evaluateCycleState', () => {
       '2026-10-20'
     );
     expect(state.action).toBe('createFirst');
+  });
+});
+
+describe('carry over', () => {
+  it('carries every bucket except day-to-day spending', () => {
+    expect(bucketCarriesOver('savings')).toBe(true);
+    expect(bucketCarriesOver('rent')).toBe(true);
+    expect(bucketCarriesOver('spending')).toBe(false);
+  });
+
+  it('sums what the carrying buckets did not spend', () => {
+    const summary = computeCarryOver([
+      { bucketId: 'a', planned: 65000, spent: 65000, carriesOver: true },
+      { bucketId: 'b', planned: 20000, spent: 12000, carriesOver: true },
+    ]);
+
+    expect(summary.openingBalance).toBe(8000);
+    expect(summary.forfeited).toBe(0);
+  });
+
+  it('forfeits the leftover of a bucket that does not carry over', () => {
+    const summary = computeCarryOver([
+      { bucketId: 'spending', planned: 40000, spent: 25000, carriesOver: false },
+    ]);
+
+    expect(summary.openingBalance).toBe(0);
+    expect(summary.forfeited).toBe(15000);
+  });
+
+  it('carries an overspend forward even from a non-carrying bucket', () => {
+    const summary = computeCarryOver([
+      { bucketId: 'spending', planned: 40000, spent: 52000, carriesOver: false },
+    ]);
+
+    expect(summary.openingBalance).toBe(-12000);
+    expect(summary.forfeited).toBe(0);
+  });
+
+  it('reports the leftover of every bucket', () => {
+    const summary = computeCarryOver([
+      { bucketId: 'a', planned: 100, spent: 40, carriesOver: true },
+      { bucketId: 'b', planned: 100, spent: 140, carriesOver: true },
+    ]);
+
+    expect(summary.leftovers).toEqual([
+      { bucketId: 'a', amount: 60 },
+      { bucketId: 'b', amount: -40 },
+    ]);
+    expect(summary.openingBalance).toBe(20);
+  });
+
+  it('opens at zero with nothing to carry', () => {
+    expect(computeCarryOver([])).toEqual({ openingBalance: 0, leftovers: [], forfeited: 0 });
   });
 });
