@@ -1,6 +1,6 @@
 import { useDataStore } from '@/stores/useDataStore';
 import { CycleRing } from '@/ui';
-import { getTodayDate, parseDate } from '../cycles/engine';
+import { parseCalendarDate, todayCalendarDate } from '@/domain/cycles';
 
 export function ActiveCycleRing() {
   const cycles = useDataStore((state) => state.cycles);
@@ -11,9 +11,9 @@ export function ActiveCycleRing() {
   if (!activeCycle) return null;
 
   // Calculate days
-  const today = parseDate(getTodayDate());
-  const start = parseDate(activeCycle.startDate);
-  const end = parseDate(activeCycle.endDate);
+  const today = parseCalendarDate(todayCalendarDate());
+  const start = parseCalendarDate(activeCycle.startDate);
+  const end = parseCalendarDate(activeCycle.endDate);
 
   const daysTotal = Math.max(
     1,

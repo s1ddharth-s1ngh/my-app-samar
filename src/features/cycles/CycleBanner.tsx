@@ -1,9 +1,14 @@
+import { CalendarClock } from 'lucide-react';
 import { useDataStore } from '@/stores/useDataStore';
 import { useToastStore } from '@/stores/toast';
 import { Button } from '@/ui';
-import { checkCycleState, getTodayDate } from './engine';
-import { CalendarClock } from 'lucide-react';
+import { evaluateCycleState, todayCalendarDate } from '@/domain/cycles';
+import { newBase, nowInstant } from '@/lib/record';
 
+/**
+ * Opening or closing a cycle is always proposed, never automatic: the banner
+ * only appears when the active cycle no longer covers today.
+ */
 export function CycleBanner() {
   const cycles = useDataStore((state) => state.cycles);
   const settings = useDataStore((state) => state.settings);
@@ -13,59 +18,52 @@ export function CycleBanner() {
 
   if (!settings) return null;
 
-  const state = checkCycleState(cycles, settings, getTodayDate());
+  const state = evaluateCycleState(cycles, settings, todayCalendarDate());
+  if (state.action === 'none') return null;
 
-  if (!state.needsAction) {
-    return null;
-  }
+  const isFirst = state.action === 'createFirst';
 
   const handleExecute = async () => {
     try {
-      if (state.actionType === 'close_and_open' && state.activeCycle) {
-        // Close current
+      if (state.action === 'closeAndOpen' && state.activeCycle) {
         await updateItem('cycles', state.activeCycle.id, {
           status: 'closed',
-          closedAt: new Date().toISOString(),
+          closedAt: nowInstant(),
+          updatedAt: nowInstant(),
         });
       }
 
-      // Open new
-      if (state.suggestedBounds && state.suggestedLabel) {
-        await createItem('cycles', {
-          id: crypto.randomUUID(),
-          label: state.suggestedLabel,
-          startDate: state.suggestedBounds.startDate,
-          endDate: state.suggestedBounds.endDate,
-          status: 'active',
-          openingBalance: 0, // Should be computed based on previous cycle, but for now 0
-          closedAt: null,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          deletedAt: null,
-        });
-        addToast('Nuovo ciclo aperto con successo!', 'success');
-      }
+      await createItem('cycles', {
+        ...newBase(),
+        label: state.suggestedLabel,
+        startDate: state.suggestedBounds.startDate,
+        endDate: state.suggestedBounds.endDate,
+        status: 'active',
+        openingBalance: 0,
+        closedAt: null,
+      });
+      addToast(`Hai aperto il ciclo ${state.suggestedLabel}.`, 'success');
     } catch {
-      addToast("Errore durante l'apertura del ciclo.", 'error');
+      addToast('Non è stato possibile aprire il ciclo. Riprova.', 'error');
     }
   };
 
   return (
-    <div className="bg-accent/10 dark:bg-accent/20 border border-accent/20 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+    <div className="bg-accent/10 border border-accent/25 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
       <div className="flex gap-3">
-        <CalendarClock className="text-accent shrink-0 mt-0.5" />
+        <CalendarClock className="text-accent shrink-0 mt-0.5" aria-hidden="true" />
         <div>
-          <h3 className="font-semibold text-accent">
-            {state.actionType === 'create_first' ? 'Benvenuto!' : 'Ciclo concluso'}
-          </h3>
-          <p className="text-sm text-zinc-700 dark:text-zinc-300">
-            {state.actionType === 'create_first'
-              ? 'Inizia aprendo il tuo primo ciclo finanziario.'
-              : 'È ora di chiudere il ciclo precedente e aprirne uno nuovo.'}
+          <h2 className="font-heading font-semibold text-accent">
+            {isFirst ? 'Nessun ciclo aperto' : 'Il ciclo è finito'}
+          </h2>
+          <p className="text-sm text-ink-muted">
+            {isFirst
+              ? 'Apri il primo ciclo per iniziare a registrare entrate e spese.'
+              : 'Chiudi quello precedente e apri il successivo: niente viene fatto senza di te.'}
           </p>
         </div>
       </div>
-      <Button onClick={handleExecute} className="shrink-0 w-full sm:w-auto">
+      <Button onClick={() => void handleExecute()} className="shrink-0 w-full sm:w-auto">
         Apri {state.suggestedLabel}
       </Button>
     </div>

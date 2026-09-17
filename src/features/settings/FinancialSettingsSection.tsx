@@ -3,7 +3,7 @@ import { useDataStore } from '@/stores/useDataStore';
 import { useToastStore } from '@/stores/toast';
 import { Card, Field, Select, Toggle } from '@/ui';
 import type { Settings } from '@/data/types';
-import { computeCycleBounds, getTodayDate } from '@/features/cycles/engine';
+import { computeCycleBounds, todayCalendarDate } from '@/domain/cycles';
 import { newBase } from '@/lib/record';
 
 const CYCLE_MODE_OPTIONS = [
@@ -47,7 +47,7 @@ export function FinancialSettingsSection() {
 
   // Preview of the cycle the current configuration would produce today.
   const preview = useMemo(
-    () => computeCycleBounds(getTodayDate(), current.cycleMode, current.paydayAnchor),
+    () => computeCycleBounds(todayCalendarDate(), current.cycleMode, current.paydayAnchor),
     [current.cycleMode, current.paydayAnchor]
   );
 

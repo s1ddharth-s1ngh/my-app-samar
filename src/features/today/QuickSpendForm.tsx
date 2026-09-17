@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useDataStore } from '@/stores/useDataStore';
 import { useToastStore } from '@/stores/toast';
 import { Button, Card, Field, MoneyInput } from '@/ui';
-import { fmtDate } from '../cycles/engine';
+import { todayCalendarDate } from '@/domain/cycles';
 
 export function QuickSpendForm() {
   const cycles = useDataStore((state) => state.cycles);
@@ -56,7 +56,7 @@ export function QuickSpendForm() {
         bucketId: chosenBucketId,
         type: 'expense',
         amount: amount,
-        date: fmtDate(new Date()),
+        date: todayCalendarDate(),
         description: description.trim(),
         category: null,
         shoppingItemId: null,
