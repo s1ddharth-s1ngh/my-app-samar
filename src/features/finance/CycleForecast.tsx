@@ -19,12 +19,12 @@ export function CycleForecast() {
   return (
     <Card className="space-y-3">
       <div className="flex items-center gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/45">
-          <TrendingUp size={18} aria-hidden="true" />
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/50">
+          <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
         </span>
         <div className="min-w-0">
-          <h2 className="kpi-label">Previsione di fine ciclo</h2>
-          <p className="text-sm text-white/45">
+          <h2 className="text-[13px] font-semibold text-white">Previsione di fine ciclo</h2>
+          <p className="text-[11px] text-white/40">
             <Money cents={pending} /> di entrate previste non sono ancora arrivate.
           </p>
         </div>
@@ -36,7 +36,7 @@ export function CycleForecast() {
           <dd className="kpi-number mt-1">
             <Money cents={confirmedAvailable} compact />
           </dd>
-          <p className="mt-1 text-sm text-white/45">Solo entrate ricevute</p>
+          <p className="mt-1 text-[10.5px] text-white/35">Solo entrate ricevute</p>
         </div>
 
         <div className="rounded-xl border border-dashed border-amber-500/50 bg-amber-400/5 p-3">
@@ -44,7 +44,7 @@ export function CycleForecast() {
           <dd className="kpi-number mt-1 text-amber-300">
             <Money cents={projectedAvailable} compact />
           </dd>
-          <p className="mt-1 text-sm text-white/45">Incluse le previste</p>
+          <p className="mt-1 text-[10.5px] text-white/35">Incluse le previste</p>
         </div>
       </dl>
     </Card>

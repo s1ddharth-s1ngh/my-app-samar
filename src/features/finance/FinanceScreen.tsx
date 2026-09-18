@@ -1,230 +1,436 @@
-import { Link } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
-  Boxes,
-  CalendarClock,
-  ChevronRight,
-  Layers,
-  LineChart,
-  Receipt,
-  SlidersHorizontal,
-  TrendingUp,
-  Wallet,
-} from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-import { Card, EmptyState, StatCard, Money, PageHeader } from '@/ui';
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Wallet } from 'lucide-react';
+import { Card, CardHeader, EmptyState, MetricCard, Money, PageHeader, TabPills } from '@/ui';
+import { LINK_SOFT, PILL_QUIET, ROW_DIVIDE } from '@/lib/surfaces';
+import { formatCents } from '@/domain/money';
+import {
+  cycleLengthInDays,
+  daysElapsed,
+  parseCalendarDate,
+  todayCalendarDate,
+} from '@/domain/cycles';
 import { useDataStore } from '@/stores/useDataStore';
 import { useCycleTotals } from './useCycleTotals';
-import { ActiveCycleRing } from '../today/ActiveCycleRing';
+import { deltaPct, useCycleSeries } from './useCycleSeries';
 import { CycleForecast } from './CycleForecast';
 
-interface SectionLink {
-  to: string;
-  icon: LucideIcon;
-  title: string;
-  description: string;
-}
-
-const SECTIONS: SectionLink[] = [
-  {
-    to: '/soldi/entrate',
-    icon: TrendingUp,
-    title: 'Entrate del ciclo',
-    description: 'Cosa è arrivato e cosa aspetti',
-  },
-  {
-    to: '/soldi/movimenti',
-    icon: Receipt,
-    title: 'Movimenti',
-    description: 'Ogni spesa del ciclo, filtrabile',
-  },
-  {
-    to: '/soldi/ripartizione',
-    icon: Layers,
-    title: 'Ripartizione del ciclo',
-    description: 'Correggi a mano quello che serve',
-  },
-  {
-    to: '/soldi/storico',
-    icon: LineChart,
-    title: 'Storico',
-    description: 'Come vanno i cicli, a confronto',
-  },
-  {
-    to: '/soldi/fonti',
-    icon: Wallet,
-    title: 'Fonti di entrata',
-    description: 'Stipendio, freelance, rendite',
-  },
-  {
-    to: '/soldi/bucket',
-    icon: Boxes,
-    title: 'Bucket',
-    description: 'Dove finiscono i soldi ogni ciclo',
-  },
-  {
-    to: '/soldi/allocazioni',
-    icon: SlidersHorizontal,
-    title: 'Regole di allocazione',
-    description: 'Come si divide quello che entra',
-  },
-  {
-    to: '/soldi/ricorrenti',
-    icon: CalendarClock,
-    title: 'Spese ricorrenti',
-    description: 'Affitto, bollette, abbonamenti',
-  },
+const QUICK_LINKS: [string, string][] = [
+  ['Entrate', '/soldi/entrate'],
+  ['Movimenti', '/soldi/movimenti'],
+  ['Ripartizione', '/soldi/ripartizione'],
+  ['Bucket', '/soldi/bucket'],
+  ['Storico', '/soldi/storico'],
 ];
 
+const TABS = [
+  { id: 'panoramica', label: 'Panoramica' },
+  { id: 'bucket', label: 'Bucket' },
+  { id: 'movimenti', label: 'Movimenti' },
+] as const;
+
+type Tab = (typeof TABS)[number]['id'];
+
+const DAY_FORMAT = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short' });
+
+function euro(value: unknown): string {
+  return typeof value === 'number' ? formatCents(Math.round(value), { compact: true }) : '';
+}
+
+/**
+ * The money cockpit. Two rich metric cards carry the story, a wide chart carries
+ * the trend, and the narrow column carries what needs doing — the shape of the
+ * commercial dashboard it is modelled on.
+ */
 export default function FinanceScreen() {
+  const navigate = useNavigate();
+  const [tab, setTab] = useState<Tab>('panoramica');
+
   const totals = useCycleTotals();
+  const series = useCycleSeries();
   const buckets = useDataStore((state) => state.buckets);
   const allocations = useDataStore((state) => state.allocations);
+  const transactions = useDataStore((state) => state.transactions);
+  const shoppingItems = useDataStore((state) => state.shoppingItems);
 
   const cycleId = totals.cycle?.id;
 
-  const rows = cycleId
-    ? allocations
-        .filter((item) => item.cycleId === cycleId && !item.deletedAt)
-        .map((allocation) => {
-          const bucket = buckets.find((item) => item.id === allocation.bucketId);
-          return {
-            id: allocation.id,
-            bucketId: allocation.bucketId,
-            name: bucket?.name ?? 'Bucket rimosso',
-            color: bucket?.color ?? 'hsl(var(--muted-foreground))',
-            priority: bucket?.priority ?? 99,
-            planned: allocation.plannedAmount,
-            spent: allocation.actualAmount,
-            available: allocation.plannedAmount - allocation.actualAmount,
-          };
-        })
-        .sort((a, b) => a.priority - b.priority)
-    : [];
+  const rows = useMemo(() => {
+    if (!cycleId) return [];
+    return allocations
+      .filter((item) => item.cycleId === cycleId && !item.deletedAt)
+      .map((allocation) => {
+        const bucket = buckets.find((item) => item.id === allocation.bucketId);
+        return {
+          id: allocation.id,
+          bucketId: allocation.bucketId,
+          name: bucket?.name ?? 'Bucket rimosso',
+          color: bucket?.color ?? '#3b8bff',
+          priority: bucket?.priority ?? 99,
+          planned: allocation.plannedAmount,
+          spent: allocation.actualAmount,
+          available: allocation.plannedAmount - allocation.actualAmount,
+        };
+      })
+      .sort((a, b) => a.priority - b.priority);
+  }, [allocations, buckets, cycleId]);
+
+  const recent = useMemo(() => {
+    if (!cycleId) return [];
+    return transactions
+      .filter((item) => item.cycleId === cycleId && !item.deletedAt)
+      .sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt))
+      .slice(0, 6);
+  }, [transactions, cycleId]);
+
+  /** Money a planned purchase has already claimed but not yet spent. */
+  const committed = useMemo(() => {
+    if (!cycleId) return 0;
+    return shoppingItems
+      .filter((item) => item.status === 'planned' && item.cycleId === cycleId && !item.deletedAt)
+      .reduce((acc, item) => acc + item.estimatedCost, 0);
+  }, [shoppingItems, cycleId]);
+
+  if (!totals.cycle) {
+    return (
+      <div className="space-y-3">
+        <PageHeader title="Soldi" subtitle="Nessun ciclo aperto" />
+        <Card>
+          <EmptyState
+            icon={Wallet}
+            title="Nessun ciclo aperto"
+            description="Apri il primo ciclo dalla schermata Oggi: entrate, bucket e movimenti nascono da lì."
+          />
+        </Card>
+      </div>
+    );
+  }
+
+  const bounds = { startDate: totals.cycle.startDate, endDate: totals.cycle.endDate };
+  const elapsed = daysElapsed(bounds, todayCalendarDate());
+  const length = cycleLengthInDays(bounds);
+
+  const incomeDelta = series.previous ? deltaPct(totals.income, series.previous.income) : null;
+  const spentDelta = series.previous ? deltaPct(totals.spent, series.previous.spent) : null;
+  const overspent = rows.filter((row) => row.available < 0).length;
+  const cycleTransactions = transactions.filter(
+    (item) => item.cycleId === cycleId && !item.deletedAt
+  ).length;
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Soldi"
-        subtitle={totals.cycle ? totals.cycle.label : 'Nessun ciclo aperto'}
-      />
+    <div className="space-y-3">
+      {/* ── Header + quick access ── */}
+      <div className="mb-1 flex flex-wrap items-end justify-between gap-4">
+        <PageHeader
+          title="Soldi"
+          subtitle={
+            <>
+              Ciclo <span className="font-medium text-white/70">{totals.cycle.label}</span> · giorno{' '}
+              {elapsed} di {length}
+            </>
+          }
+        />
+        <div className="flex flex-wrap items-center gap-1.5">
+          {QUICK_LINKS.map(([label, href]) => (
+            <button key={href} type="button" onClick={() => navigate(href)} className={PILL_QUIET}>
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      {totals.cycle ? (
-        <>
-          <ActiveCycleRing />
+      <div className="flex flex-wrap items-center gap-3">
+        <TabPills items={TABS} value={tab} onChange={setTab} ariaLabel="Vista" />
+        <Link to="/soldi/storico" className={`ml-auto ${LINK_SOFT}`}>
+          Storico completo →
+        </Link>
+      </div>
 
-          <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-            <StatCard
-              label="Entrate"
-              value={<Money cents={totals.income} compact />}
-              tone="brand"
-              hint={
-                totals.income === totals.incomeReceived
-                  ? 'Tutte confermate'
-                  : 'Incluse quelle previste'
-              }
+      {overspent > 0 && (
+        <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-4 py-3 text-[12px] text-white/70">
+          <span className="font-semibold text-white">
+            {overspent} {overspent === 1 ? 'bucket è' : 'bucket sono'} oltre il budget
+          </span>{' '}
+          in questo ciclo. Correggi la ripartizione o rimanda una spesa al ciclo successivo.
+        </div>
+      )}
+
+      {tab === 'panoramica' && (
+        <div className="space-y-3">
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+            <MetricCard
+              label="Entrate del ciclo"
+              value={formatCents(totals.income, { compact: true })}
+              delta={incomeDelta}
+              deltaSuffix=" vs prec."
+              chartData={series.points}
+              chartKey="income"
+              subs={[
+                {
+                  label: 'Confermate',
+                  value: formatCents(totals.incomeReceived, { compact: true }),
+                },
+                {
+                  label: 'Previste',
+                  value: formatCents(totals.income - totals.incomeReceived, { compact: true }),
+                  tone: totals.income > totals.incomeReceived ? 'warn' : 'default',
+                },
+                { label: 'Allocato', value: formatCents(totals.allocated, { compact: true }) },
+              ]}
             />
-            <StatCard label="Allocato" value={<Money cents={totals.allocated} compact />} />
-            <StatCard
-              label="Speso"
-              value={<Money cents={totals.spent} compact />}
-              progress={totals.allocated > 0 ? totals.spent / totals.allocated : undefined}
-              tone={totals.spent > totals.allocated ? 'bad' : 'neutral'}
-            />
-            <StatCard
+            <MetricCard
               label="Disponibile"
-              value={<Money cents={totals.available} compact />}
-              tone={totals.available < 0 ? 'bad' : 'good'}
+              value={formatCents(totals.available, { compact: true })}
+              // Spending less than last cycle is the good direction, so the sign flips.
+              delta={spentDelta === null ? null : -spentDelta}
+              deltaSuffix=" di spesa"
+              chartData={series.points}
+              chartKey="saved"
+              alert={totals.available < 0}
+              subs={[
+                { label: 'Speso', value: formatCents(totals.spent, { compact: true }) },
+                {
+                  label: 'Bucket scoperti',
+                  value: String(overspent),
+                  tone: overspent > 0 ? 'bad' : 'good',
+                },
+                { label: 'Giorni rimasti', value: String(Math.max(0, length - elapsed)) },
+              ]}
             />
           </div>
 
-          <CycleForecast />
-
-          <section className="space-y-2">
-            <h2 className="kpi-label">Bucket</h2>
-            {rows.length === 0 ? (
-              <EmptyState
-                icon={Boxes}
-                title="Nessun bucket allocato"
-                description="Registra un’entrata e il motore ripartirà i soldi tra i bucket attivi."
+          <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
+            <Card className="xl:col-span-2">
+              <CardHeader
+                title="Entrate e spese per ciclo"
+                subtitle="confronto sui cicli registrati"
+                action={
+                  <Link to="/soldi/storico" className={LINK_SOFT}>
+                    Dettaglio →
+                  </Link>
+                }
               />
-            ) : (
-              <ul className="grid gap-2 md:grid-cols-2">
-                {rows.map((row) => (
-                  <li key={row.id}>
-                    <Link to={`/soldi/bucket/${row.bucketId}`} className="block rounded-xl">
-                      <Card className="cursor-pointer transition-colors hover:bg-white/[0.03] space-y-2">
-                        <div className="flex items-center gap-3">
-                          <span
-                            className="h-2.5 w-2.5 rounded-full shrink-0"
-                            style={{ backgroundColor: row.color }}
-                            aria-hidden="true"
-                          />
-                          <span className="min-w-0 flex-1 font-medium text-white truncate">
-                            {row.name}
-                          </span>
-                          <Money
-                            cents={row.available}
-                            className={`font-semibold shrink-0 ${
-                              row.available < 0 ? 'text-red-300' : 'text-white'
-                            }`}
-                          />
-                        </div>
+              {series.points.length < 2 ? (
+                <p className="py-6 text-center text-[12px] text-white/35">
+                  Serve almeno un secondo ciclo per un confronto.
+                </p>
+              ) : (
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart
+                    data={series.points}
+                    margin={{ top: 4, right: 4, bottom: 0, left: -14 }}
+                  >
+                    <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
+                    <XAxis
+                      dataKey="short"
+                      tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={euro}
+                      width={62}
+                    />
+                    <Tooltip
+                      cursor={{ fill: 'rgba(255,255,255,0.04)' }}
+                      contentStyle={{
+                        background: '#111111',
+                        border: '1px solid rgba(255,255,255,0.08)',
+                        borderRadius: 12,
+                        fontSize: 12,
+                      }}
+                      formatter={euro}
+                    />
+                    <Legend wrapperStyle={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }} />
+                    <Bar dataKey="income" name="Entrate" fill="#1E6FFF" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="spent" name="Spese" fill="#d97706" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
+            </Card>
 
-                        <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${
-                              row.available < 0 ? 'bg-red-500' : 'bg-[#1E6FFF]'
-                            }`}
-                            style={{
-                              width:
-                                row.planned > 0
-                                  ? `${Math.min(100, (row.spent / row.planned) * 100)}%`
-                                  : '0%',
-                            }}
-                          />
-                        </div>
+            <div className="flex flex-col gap-3">
+              <CycleForecast />
 
-                        <p className="text-sm text-white/45">
-                          <Money cents={row.spent} compact /> spesi su{' '}
-                          <Money cents={row.planned} compact /> allocati
-                        </p>
-                      </Card>
+              <Card className="flex-1">
+                <CardHeader
+                  title="Ultimi movimenti"
+                  action={
+                    <Link to="/soldi/movimenti" className={LINK_SOFT}>
+                      Tutti →
                     </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        </>
-      ) : (
-        <EmptyState
-          icon={Wallet}
-          title="Nessun ciclo aperto"
-          description="Apri il primo ciclo dalla schermata Oggi: da lì entrate, bucket e movimenti prendono senso."
-        />
+                  }
+                />
+                {recent.length === 0 ? (
+                  <p className="py-4 text-center text-[12px] text-white/35">Nessun movimento.</p>
+                ) : (
+                  <div className={ROW_DIVIDE}>
+                    {recent.map((item) => (
+                      <div key={item.id} className="flex min-w-0 items-center gap-3 py-2">
+                        <span className="min-w-0 flex-1 truncate text-[12px] text-white/85">
+                          {item.description}
+                        </span>
+                        <span className="hidden shrink-0 text-[11px] text-white/35 tabular-nums sm:inline">
+                          {DAY_FORMAT.format(parseCalendarDate(item.date))}
+                        </span>
+                        <Money
+                          cents={item.amount}
+                          className="shrink-0 text-[12px] font-semibold"
+                          compact
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Card>
+            </div>
+          </div>
+        </div>
       )}
 
-      <nav aria-label="Gestione denaro" className="space-y-2">
-        <h2 className="kpi-label">Gestisci</h2>
-        <ul className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
-          {SECTIONS.map(({ to, icon: Icon, title, description }) => (
-            <li key={to}>
-              <Link to={to} className="block rounded-xl">
-                <Card className="cursor-pointer transition-colors hover:bg-white/[0.03] flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/45">
-                    <Icon size={18} aria-hidden="true" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block font-medium text-white">{title}</span>
-                    <span className="block text-sm text-white/45 truncate">{description}</span>
-                  </span>
-                  <ChevronRight size={18} className="text-white/45 shrink-0" aria-hidden="true" />
-                </Card>
+      {tab === 'bucket' && <BucketTable rows={rows} committed={committed} />}
+
+      {tab === 'movimenti' && (
+        <Card>
+          <CardHeader
+            title="Movimenti del ciclo"
+            subtitle={`${cycleTransactions} registrati`}
+            action={
+              <Link to="/soldi/movimenti" className={LINK_SOFT}>
+                Apri la lista completa →
               </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
+            }
+          />
+          {recent.length === 0 ? (
+            <p className="py-6 text-center text-[12px] text-white/35">Nessun movimento.</p>
+          ) : (
+            <div className={ROW_DIVIDE}>
+              {recent.map((item) => (
+                <div key={item.id} className="flex min-w-0 items-center gap-3 py-2">
+                  <span className="min-w-0 flex-1 truncate text-[12px] text-white/85">
+                    {item.description}
+                  </span>
+                  <span className="shrink-0 text-[11px] text-white/35 tabular-nums">
+                    {DAY_FORMAT.format(parseCalendarDate(item.date))}
+                  </span>
+                  <Money cents={item.amount} className="shrink-0 text-[12px] font-semibold" />
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      )}
     </div>
+  );
+}
+
+interface BucketRow {
+  id: string;
+  bucketId: string;
+  name: string;
+  color: string;
+  planned: number;
+  spent: number;
+  available: number;
+}
+
+const TH =
+  'px-2 py-1.5 text-[9.5px] uppercase tracking-[0.06em] font-semibold text-white/35 whitespace-nowrap';
+
+/** The split, as a table: one row per bucket, every figure right-aligned. */
+function BucketTable({ rows, committed }: { rows: BucketRow[]; committed: number }) {
+  if (rows.length === 0) {
+    return (
+      <Card>
+        <EmptyState
+          icon={Wallet}
+          title="Nessun bucket allocato"
+          description="Registra un’entrata: il motore ripartirà i soldi tra i bucket attivi."
+        />
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader
+        title="Ripartizione del ciclo"
+        subtitle={committed > 0 ? `${formatCents(committed)} impegnati da acquisti` : undefined}
+        action={
+          <Link to="/soldi/ripartizione" className={LINK_SOFT}>
+            Correggi →
+          </Link>
+        }
+      />
+      <div className="overflow-x-auto">
+        <table className="w-full text-[12px]">
+          <thead>
+            <tr>
+              <th className={`${TH} text-left`}>Bucket</th>
+              <th className={`${TH} w-[140px] text-left`}>Consumo</th>
+              <th className={`${TH} text-right`}>Allocato</th>
+              <th className={`${TH} text-right`}>Speso</th>
+              <th className={`${TH} text-right`}>Resta</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((row) => {
+              const ratio = row.planned > 0 ? Math.min(1, row.spent / row.planned) : 0;
+              return (
+                <tr key={row.id} className="border-t border-white/[0.04]">
+                  <td className="px-2 py-2">
+                    <Link
+                      to={`/soldi/bucket/${row.bucketId}`}
+                      className="flex min-w-0 items-center gap-2 text-white/85 hover:text-white"
+                    >
+                      <span
+                        className="h-2 w-2 shrink-0 rounded-full"
+                        style={{ background: row.color }}
+                        aria-hidden="true"
+                      />
+                      <span className="truncate">{row.name}</span>
+                    </Link>
+                  </td>
+                  <td className="px-2 py-2">
+                    <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                      <div
+                        className={`h-full rounded-full ${row.available < 0 ? 'bg-red-400' : 'bg-[#1E6FFF]'}`}
+                        style={{ width: `${ratio * 100}%` }}
+                      />
+                    </div>
+                  </td>
+                  <td className="px-2 py-2 text-right text-white/60 tabular-nums">
+                    {formatCents(row.planned, { compact: true })}
+                  </td>
+                  <td className="px-2 py-2 text-right text-white/60 tabular-nums">
+                    {formatCents(row.spent, { compact: true })}
+                  </td>
+                  <td
+                    className={`px-2 py-2 text-right font-semibold tabular-nums ${
+                      row.available < 0 ? 'text-red-300' : 'text-white'
+                    }`}
+                  >
+                    {formatCents(row.available, { compact: true })}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </Card>
   );
 }

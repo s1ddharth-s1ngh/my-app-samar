@@ -28,7 +28,7 @@ export default function TodayScreen() {
   const subtitle = GREETING_FORMAT.format(today);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <PageHeader title="Oggi" subtitle={subtitle.charAt(0).toUpperCase() + subtitle.slice(1)} />
 
       <CycleBanner />
@@ -68,8 +68,10 @@ export default function TodayScreen() {
         </div>
       )}
 
-      <div className="grid gap-6 xl:grid-cols-2">
-        <QuickSpendForm />
+      <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
+        <div className="xl:col-span-2">
+          <QuickSpendForm />
+        </div>
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ export interface TabPillItem<T extends string = string> {
 }
 
 export interface TabPillsProps<T extends string = string> {
-  items: TabPillItem<T>[];
+  items: readonly TabPillItem<T>[];
   value: T;
   onChange: (value: T) => void;
   ariaLabel: string;
