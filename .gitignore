@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Agent skills: the real files live in .agents/skills and are committed.
+# `.claude/skills` holds absolute symlinks into them, regenerated per machine
+# by `npx skills add supabase/agent-skills` — they would not survive a clone.
+.claude/skills/
