@@ -97,4 +97,5 @@ Tracking allineato alla numerazione del MEGA PROMPT. Legenda: ✅ fatto · 🏗�
 - ⬜ T14.1 … T14.5
 
 ## FASE 15 — Preparazione a Supabase
+- 🏗️ T15.0 (2026-09-18) Collegamento: `@supabase/supabase-js`, client in `src/data/supabase/client.ts` sullo schema `samar`, sonda di connessione e stato in Impostazioni. Nessuna tabella, nessuna migrazione. *Bloccante aperto: lo schema `samar` non è fra gli Exposed schemas del progetto.*
 - ⬜ T15.1 … T15.3

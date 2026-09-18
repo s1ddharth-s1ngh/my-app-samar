@@ -3,6 +3,7 @@ import { useThemeStore } from '@/stores/useThemeStore';
 import { Button, Card, CardHeader, PageHeader, TabPills } from '@/ui';
 import { GLASS_TRANSPARENCY_PRESETS } from '@/lib/glass';
 import { FinancialSettingsSection } from './FinancialSettingsSection';
+import { SupabaseSection } from './SupabaseSection';
 
 export function SettingsScreen() {
   const loadSeed = useDataStore((state) => state.loadSeed);
@@ -56,6 +57,10 @@ export function SettingsScreen() {
 
       <Card>
         <FinancialSettingsSection />
+      </Card>
+
+      <Card>
+        <SupabaseSection />
       </Card>
 
       <Card>

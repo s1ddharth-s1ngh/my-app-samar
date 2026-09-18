@@ -27,3 +27,7 @@ dist-ssr
 # `.claude/skills` holds absolute symlinks into them, regenerated per machine
 # by `npx skills add supabase/agent-skills` — they would not survive a clone.
 .claude/skills/
+
+# Local environment. `.env.example` documents the keys; the real values stay here.
+.env
+.env.local
