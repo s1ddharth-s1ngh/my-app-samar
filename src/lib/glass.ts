@@ -45,7 +45,7 @@ export const glassSelectFocusClass =
 export const glassDropdownClass = 'glass rounded-xl';
 
 export const glassDropdownItemClass =
-  'rounded-lg text-foreground focus:bg-foreground/[0.08] focus:text-foreground';
+  'rounded-xl text-foreground focus:bg-foreground/[0.08] focus:text-foreground';
 
 /** Sheets, bars and side panels: the medium iOS 27 glass, container radius. */
 export const glassSurfaceClass = 'glass rounded-xl';

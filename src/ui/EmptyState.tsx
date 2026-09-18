@@ -1,5 +1,6 @@
 import { type HTMLAttributes, type ReactNode } from 'react';
 import type { LucideIcon } from 'lucide-react';
+import { cn } from '@/lib/cn';
 
 export interface EmptyStateProps extends HTMLAttributes<HTMLDivElement> {
   icon: LucideIcon;
@@ -13,19 +14,22 @@ export function EmptyState({
   title,
   description,
   action,
-  className = '',
+  className,
   ...props
 }: EmptyStateProps) {
   return (
     <div
-      className={`flex flex-col items-center justify-center text-center rounded-[18px] border border-dashed border-line bg-surface/50 px-6 py-10 ${className}`}
+      className={cn(
+        'flex min-h-[220px] flex-col items-center justify-center p-10 text-center',
+        className
+      )}
       {...props}
     >
-      <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-[16px] bg-surface-3 text-ink-faint">
-        <Icon size={26} strokeWidth={1.5} aria-hidden="true" />
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-muted/40">
+        <Icon className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
       </div>
-      <h3 className="text-base font-semibold text-ink">{title}</h3>
-      {description && <p className="mt-1.5 max-w-sm text-sm text-ink-muted">{description}</p>}
+      <h3 className="text-base font-medium text-foreground">{title}</h3>
+      {description && <p className="mt-1 max-w-sm text-sm text-muted-foreground">{description}</p>}
       {action && <div className="mt-5">{action}</div>}
     </div>
   );

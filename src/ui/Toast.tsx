@@ -15,16 +15,16 @@ export function ToastContainer() {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`glass pointer-events-auto flex items-start gap-3 w-full max-w-sm rounded-2xl p-4 text-ink
+          className={`glass pointer-events-auto flex items-start gap-3 w-full max-w-sm rounded-xl p-4 text-foreground
             animate-in slide-in-from-bottom-5 fade-in duration-300 motion-reduce:animate-none
             ${toast.type === 'error' ? 'glass-tint-alert' : ''}`}
           role="alert"
         >
           <div className="shrink-0 mt-0.5">
             {toast.type === 'error' ? (
-              <AlertCircle size={18} className="text-alert" aria-hidden="true" />
+              <AlertCircle size={18} className="text-destructive" aria-hidden="true" />
             ) : (
-              <Info size={18} className="text-accent" aria-hidden="true" />
+              <Info size={18} className="text-primary" aria-hidden="true" />
             )}
           </div>
           <div className="flex-1 text-sm font-medium pr-2">{toast.message}</div>

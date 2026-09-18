@@ -39,7 +39,7 @@ export default function TodayScreen() {
             label="Disponibile"
             value={<Money cents={totals.available} compact />}
             icon={Wallet}
-            tone={totals.available < 0 ? 'alert' : 'accent'}
+            tone={totals.available < 0 ? 'destructive' : 'primary'}
             hint={totals.available < 0 ? 'Sei oltre il budget' : 'Su tutti i bucket'}
           />
           <KpiCard
@@ -62,7 +62,7 @@ export default function TodayScreen() {
             value={<Money cents={totals.spent} compact />}
             icon={ArrowDownRight}
             progress={totals.allocated > 0 ? totals.spent / totals.allocated : undefined}
-            tone={totals.spent > totals.allocated ? 'alert' : 'neutral'}
+            tone={totals.spent > totals.allocated ? 'destructive' : 'neutral'}
             hint={length > 0 ? `Giorno ${elapsed} di ${length}` : undefined}
           />
         </div>

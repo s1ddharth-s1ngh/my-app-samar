@@ -26,12 +26,12 @@ export class GlobalErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-xl font-heading text-alert mb-2">Qualcosa è andato storto.</h2>
-          <p className="text-ink-muted mb-6">
+          <h2 className="text-xl text-destructive mb-2">Qualcosa è andato storto.</h2>
+          <p className="text-muted-foreground mb-6">
             L'applicazione ha riscontrato un errore inaspettato.
           </p>
           <button
-            className="bg-ink text-surface px-4 py-2 rounded-lg font-medium"
+            className="bg-ink text-surface px-4 py-2 rounded-xl font-medium"
             onClick={() => window.location.reload()}
           >
             Ricarica

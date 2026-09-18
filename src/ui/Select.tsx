@@ -37,15 +37,15 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           <ChevronDown
             size={16}
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-4 my-auto text-ink-faint"
+            className="pointer-events-none absolute inset-y-0 right-4 my-auto text-muted-foreground"
           />
         </div>
         {error ? (
-          <p id={`${id}-error`} className="text-sm text-alert">
+          <p id={`${id}-error`} className="text-sm text-destructive">
             {error}
           </p>
         ) : helpText ? (
-          <p id={`${id}-help`} className="text-sm text-ink-faint">
+          <p id={`${id}-help`} className="text-sm text-muted-foreground">
             {helpText}
           </p>
         ) : null}

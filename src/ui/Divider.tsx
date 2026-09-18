@@ -1,23 +1,28 @@
 import { type HTMLAttributes, forwardRef } from 'react';
+import { cn } from '@/lib/cn';
 
 export interface DividerProps extends HTMLAttributes<HTMLHRElement> {
   orientation?: 'horizontal' | 'vertical';
 }
 
 export const Divider = forwardRef<HTMLHRElement, DividerProps>(
-  ({ className = '', orientation = 'horizontal', ...props }, ref) => {
+  ({ className, orientation = 'horizontal', ...props }, ref) => {
     if (orientation === 'vertical') {
       return (
         <div
           role="separator"
           aria-orientation="vertical"
-          className={`h-full w-px bg-line ${className}`}
+          className={cn('h-6 w-px bg-border/70', className)}
         />
       );
     }
 
     return (
-      <hr ref={ref} className={`w-full border-0 border-t border-line ${className}`} {...props} />
+      <hr
+        ref={ref}
+        className={cn('w-full border-0 border-t border-border', className)}
+        {...props}
+      />
     );
   }
 );

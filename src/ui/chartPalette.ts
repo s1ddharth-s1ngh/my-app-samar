@@ -29,5 +29,5 @@ export function categoricalColor(index: number): string {
 }
 
 /** Axes, grid and tick labels stay recessive and follow the theme tokens. */
-export const CHART_INK = 'var(--ink-faint)';
-export const CHART_GRID = 'var(--line)';
+export const CHART_INK = 'hsl(var(--muted-foreground))';
+export const CHART_GRID = 'hsl(var(--border))';

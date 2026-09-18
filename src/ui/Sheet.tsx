@@ -73,15 +73,15 @@ export function Sheet({ isOpen, onClose, title, children }: SheetProps) {
       aria-label={title}
       className={`
         backdrop:bg-ink/40 backdrop:backdrop-blur-sm
-        glass fixed m-0 w-full max-w-none p-0 text-ink
+        glass fixed m-0 w-full max-w-none p-0 text-foreground
 
         /* Mobile: bottom sheet */
-        inset-x-0 bottom-0 top-auto rounded-t-[28px] border-x-0 border-b-0
+        inset-x-0 bottom-0 top-auto rounded-t-xl border-x-0 border-b-0
         animate-in slide-in-from-bottom-full motion-reduce:animate-none
 
         /* Desktop: centered modal */
         sm:bottom-auto sm:top-[10vh] sm:left-1/2 sm:-translate-x-1/2 sm:w-full sm:max-w-md
-        sm:rounded-[28px] sm:border
+        sm:rounded-xl sm:border
         sm:animate-in sm:zoom-in-95 sm:slide-in-from-bottom-0 sm:fade-in
       `}
     >
@@ -97,7 +97,7 @@ export function Sheet({ isOpen, onClose, title, children }: SheetProps) {
 
       <div className="px-4 pb-4 sm:p-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-heading text-xl font-bold text-ink">{title}</h2>
+          <h2 className="text-xl font-bold text-foreground">{title}</h2>
           <IconButton icon={X} label="Chiudi" onClick={onClose} className="-mr-2" />
         </div>
         <div className="overflow-y-auto overscroll-contain max-h-[80vh] sm:max-h-[70vh]">

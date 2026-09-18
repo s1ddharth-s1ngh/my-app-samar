@@ -40,10 +40,10 @@ export function SettingsScreen() {
 
   return (
     <div className="space-y-6">
-      <h1 className="font-heading text-2xl font-bold text-ink">Impostazioni</h1>
+      <h1 className="text-2xl font-bold text-foreground">Impostazioni</h1>
 
       <section className="space-y-4">
-        <h2 className="font-heading text-lg font-semibold text-ink">Aspetto</h2>
+        <h2 className="text-lg font-semibold text-foreground">Aspetto</h2>
         <Select
           label="Tema dell'applicazione"
           value={theme}
@@ -78,9 +78,9 @@ export function SettingsScreen() {
       <Divider />
 
       <section className="space-y-4">
-        <h2 className="font-heading text-lg font-semibold text-ink">Dati</h2>
+        <h2 className="text-lg font-semibold text-foreground">Dati</h2>
         <Card className="space-y-4" padding="sm">
-          <p className="text-sm text-ink-muted">
+          <p className="text-sm text-muted-foreground">
             I dati di esempio sostituiscono tutto quello che hai adesso. Svuotare è irreversibile.
           </p>
           <div className="flex flex-col sm:flex-row gap-3">

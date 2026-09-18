@@ -235,8 +235,8 @@ export function TransactionsScreen() {
                   <li key={item.id}>
                     <Card padding="sm" className="flex items-center gap-3">
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium text-ink truncate">{item.description}</p>
-                        <p className="text-sm text-ink-faint truncate">
+                        <p className="font-medium text-foreground truncate">{item.description}</p>
+                        <p className="text-sm text-muted-foreground truncate">
                           {bucketName(item.bucketId)}
                         </p>
                       </div>

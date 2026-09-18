@@ -56,10 +56,10 @@ export function TimerModal({ taskId, onClose }: { taskId: string | null; onClose
   return (
     <Sheet isOpen={!!taskId} onClose={onClose} title={`Timer: ${task.title}`}>
       <div className="flex flex-col items-center py-12 space-y-8">
-        <div className="text-6xl font-bold tabular-nums font-heading">
+        <div className="text-6xl font-bold tabular-nums ">
           {mins}:{secs}
         </div>
-        <div className="text-sm text-ink-muted">Target: {targetMins} min</div>
+        <div className="text-sm text-muted-foreground">Target: {targetMins} min</div>
 
         <div className="flex gap-4">
           <Button size="lg" onClick={() => setIsRunning(!isRunning)} className="w-32">

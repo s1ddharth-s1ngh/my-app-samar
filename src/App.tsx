@@ -47,7 +47,9 @@ export default function App() {
               <Route
                 path="storico"
                 element={
-                  <Suspense fallback={<p className="text-sm text-ink-muted">Carico lo storico…</p>}>
+                  <Suspense
+                    fallback={<p className="text-sm text-muted-foreground">Carico lo storico…</p>}
+                  >
                     <HistoryScreen />
                   </Suspense>
                 }

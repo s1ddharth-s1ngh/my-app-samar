@@ -19,32 +19,32 @@ export function CycleForecast() {
   return (
     <Card padding="sm" className="space-y-3">
       <div className="flex items-center gap-3">
-        <span className="icon-tile">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
           <TrendingUp size={18} aria-hidden="true" />
         </span>
         <div className="min-w-0">
           <h2 className="kpi-label">Previsione di fine ciclo</h2>
-          <p className="text-sm text-ink-muted">
+          <p className="text-sm text-muted-foreground">
             <Money cents={pending} /> di entrate previste non sono ancora arrivate.
           </p>
         </div>
       </div>
 
       <dl className="grid grid-cols-2 gap-3">
-        <div className="rounded-[12px] border border-line bg-surface-2 p-3">
+        <div className="rounded-xl border border-border bg-popover p-3">
           <dt className="kpi-label">Confermato</dt>
           <dd className="kpi-number mt-1">
             <Money cents={confirmedAvailable} compact />
           </dd>
-          <p className="mt-1 text-sm text-ink-faint">Solo entrate ricevute</p>
+          <p className="mt-1 text-sm text-muted-foreground">Solo entrate ricevute</p>
         </div>
 
-        <div className="rounded-[12px] border border-dashed border-signal/50 bg-signal/5 p-3">
+        <div className="rounded-xl border border-dashed border-warning/50 bg-warning/5 p-3">
           <dt className="kpi-label">Se arriva tutto</dt>
-          <dd className="kpi-number mt-1 text-signal">
+          <dd className="kpi-number mt-1 text-warning">
             <Money cents={projectedAvailable} compact />
           </dd>
-          <p className="mt-1 text-sm text-ink-faint">Incluse le previste</p>
+          <p className="mt-1 text-sm text-muted-foreground">Incluse le previste</p>
         </div>
       </dl>
     </Card>

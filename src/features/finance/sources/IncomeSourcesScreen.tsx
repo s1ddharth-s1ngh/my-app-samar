@@ -119,7 +119,7 @@ export function IncomeSourcesScreen() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Fonti di Entrata</h1>
-          <p className="text-sm text-ink-muted">Gestisci da dove arrivano i tuoi soldi</p>
+          <p className="text-sm text-muted-foreground">Gestisci da dove arrivano i tuoi soldi</p>
         </div>
         <Button onClick={handleOpenCreate} size="sm" className="hidden sm:inline-flex">
           <Plus size={16} className="mr-2" /> Nuova
@@ -140,7 +140,9 @@ export function IncomeSourcesScreen() {
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="font-semibold text-lg">{source.name}</h3>
-                  <p className="text-sm text-ink-muted">Giorno {source.expectedDay} del mese</p>
+                  <p className="text-sm text-muted-foreground">
+                    Giorno {source.expectedDay} del mese
+                  </p>
                 </div>
                 <div className="font-bold text-lg tabular-nums text-success">
                   {source.expectedAmount !== null
@@ -151,7 +153,7 @@ export function IncomeSourcesScreen() {
                     : 'Variabile'}
                 </div>
               </div>
-              <div className="flex justify-end gap-2 border-t pt-3 border-line">
+              <div className="flex justify-end gap-2 border-t pt-3 border-border">
                 <IconButton
                   icon={Edit2}
                   label="Modifica"

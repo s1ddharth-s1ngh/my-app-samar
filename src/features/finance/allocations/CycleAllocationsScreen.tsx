@@ -110,11 +110,11 @@ export function CycleAllocationsScreen() {
       />
 
       <div className="grid grid-cols-2 gap-3">
-        <KpiCard label="Allocato" value={<Money cents={totalPlanned} compact />} tone="accent" />
+        <KpiCard label="Allocato" value={<Money cents={totalPlanned} compact />} tone="primary" />
         <KpiCard
           label="Bloccate"
           value={`${lockedCount} su ${rows.length}`}
-          tone={lockedCount > 0 ? 'signal' : 'neutral'}
+          tone={lockedCount > 0 ? 'warning' : 'neutral'}
           hint={lockedCount > 0 ? 'Il motore le lascia stare' : 'Tutte automatiche'}
         />
       </div>
@@ -135,14 +135,14 @@ export function CycleAllocationsScreen() {
                   <div className="flex items-center gap-3">
                     <span
                       className="h-2.5 w-2.5 rounded-full shrink-0"
-                      style={{ backgroundColor: bucket?.color ?? 'var(--ink-faint)' }}
+                      style={{ backgroundColor: bucket?.color ?? 'hsl(var(--muted-foreground))' }}
                       aria-hidden="true"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-ink truncate">
+                      <p className="font-medium text-foreground truncate">
                         {bucket?.name ?? 'Bucket rimosso'}
                       </p>
-                      <p className="text-sm text-ink-faint">
+                      <p className="text-sm text-muted-foreground">
                         Speso <Money cents={allocation.actualAmount} compact /> · resta{' '}
                         <Money cents={available} compact />
                       </p>
@@ -175,10 +175,10 @@ export function CycleAllocationsScreen() {
                   </div>
 
                   {allocation.plannedAmount > 0 && (
-                    <div className="h-1 rounded-full bg-surface-3 overflow-hidden">
+                    <div className="h-1 rounded-full bg-muted overflow-hidden">
                       <div
                         className={`h-full rounded-full ${
-                          available < 0 ? 'bg-alert' : 'bg-accent'
+                          available < 0 ? 'bg-destructive' : 'bg-primary'
                         }`}
                         style={{
                           width: `${Math.min(100, (allocation.actualAmount / allocation.plannedAmount) * 100)}%`,
@@ -199,7 +199,7 @@ export function CycleAllocationsScreen() {
         title="Correggi l’allocazione"
       >
         <div className="space-y-4 py-2">
-          <p className="text-sm text-ink-muted">
+          <p className="text-sm text-muted-foreground">
             Se cambi questo importo a mano, il motore smette di ricalcolarlo: resterà così anche
             quando registri nuove entrate. Potrai sbloccarlo quando vuoi.
           </p>

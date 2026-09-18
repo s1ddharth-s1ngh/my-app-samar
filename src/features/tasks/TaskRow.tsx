@@ -47,21 +47,23 @@ export function TaskRow({
         onClick={() => onToggle(task)}
         aria-pressed={isDone}
         aria-label={isDone ? `Riapri ${task.title}` : `Completa ${task.title}`}
-        className={`h-6 w-6 shrink-0 rounded-[8px] border-2 flex items-center justify-center transition-colors motion-reduce:transition-none ${
-          isDone ? 'bg-accent border-accent text-white' : 'border-line-strong hover:border-accent'
+        className={`h-6 w-6 shrink-0 rounded-full border-2 flex items-center justify-center transition-colors motion-reduce:transition-none ${
+          isDone ? 'bg-primary border-primary text-white' : 'border-border hover:border-primary'
         }`}
       >
         {isDone && <Check size={14} strokeWidth={3} aria-hidden="true" />}
       </button>
 
       <div className="min-w-0 flex-1">
-        <p className={`truncate ${isDone ? 'line-through text-ink-muted' : 'text-ink'}`}>
+        <p
+          className={`truncate ${isDone ? 'line-through text-muted-foreground' : 'text-foreground'}`}
+        >
           {task.title}
         </p>
-        <div className="flex items-center gap-2 text-sm text-ink-faint">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
           {contextLabel && <span className="truncate">{contextLabel}</span>}
           {task.dueAt && (
-            <span className={isOverdue ? 'text-alert' : undefined}>
+            <span className={isOverdue ? 'text-destructive' : undefined}>
               {DUE_FORMAT.format(new Date(task.dueAt))}
             </span>
           )}

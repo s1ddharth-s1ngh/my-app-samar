@@ -91,7 +91,7 @@ export default function FinanceScreen() {
             id: allocation.id,
             bucketId: allocation.bucketId,
             name: bucket?.name ?? 'Bucket rimosso',
-            color: bucket?.color ?? 'var(--ink-faint)',
+            color: bucket?.color ?? 'hsl(var(--muted-foreground))',
             priority: bucket?.priority ?? 99,
             planned: allocation.plannedAmount,
             spent: allocation.actualAmount,
@@ -116,7 +116,7 @@ export default function FinanceScreen() {
             <KpiCard
               label="Entrate"
               value={<Money cents={totals.income} compact />}
-              tone="accent"
+              tone="primary"
               hint={
                 totals.income === totals.incomeReceived
                   ? 'Tutte confermate'
@@ -128,12 +128,12 @@ export default function FinanceScreen() {
               label="Speso"
               value={<Money cents={totals.spent} compact />}
               progress={totals.allocated > 0 ? totals.spent / totals.allocated : undefined}
-              tone={totals.spent > totals.allocated ? 'alert' : 'neutral'}
+              tone={totals.spent > totals.allocated ? 'destructive' : 'neutral'}
             />
             <KpiCard
               label="Disponibile"
               value={<Money cents={totals.available} compact />}
-              tone={totals.available < 0 ? 'alert' : 'success'}
+              tone={totals.available < 0 ? 'destructive' : 'success'}
             />
           </div>
 
@@ -151,7 +151,7 @@ export default function FinanceScreen() {
               <ul className="space-y-2">
                 {rows.map((row) => (
                   <li key={row.id}>
-                    <Link to={`/soldi/bucket/${row.bucketId}`} className="block rounded-[18px]">
+                    <Link to={`/soldi/bucket/${row.bucketId}`} className="block rounded-xl">
                       <Card interactive padding="sm" className="space-y-2">
                         <div className="flex items-center gap-3">
                           <span
@@ -159,21 +159,21 @@ export default function FinanceScreen() {
                             style={{ backgroundColor: row.color }}
                             aria-hidden="true"
                           />
-                          <span className="min-w-0 flex-1 font-medium text-ink truncate">
+                          <span className="min-w-0 flex-1 font-medium text-foreground truncate">
                             {row.name}
                           </span>
                           <Money
                             cents={row.available}
                             className={`font-semibold shrink-0 ${
-                              row.available < 0 ? 'text-alert' : 'text-ink'
+                              row.available < 0 ? 'text-destructive' : 'text-foreground'
                             }`}
                           />
                         </div>
 
-                        <div className="h-1 rounded-full bg-surface-3 overflow-hidden">
+                        <div className="h-1 rounded-full bg-muted overflow-hidden">
                           <div
                             className={`h-full rounded-full ${
-                              row.available < 0 ? 'bg-alert' : 'bg-accent'
+                              row.available < 0 ? 'bg-destructive' : 'bg-primary'
                             }`}
                             style={{
                               width:
@@ -184,7 +184,7 @@ export default function FinanceScreen() {
                           />
                         </div>
 
-                        <p className="text-sm text-ink-faint">
+                        <p className="text-sm text-muted-foreground">
                           <Money cents={row.spent} compact /> spesi su{' '}
                           <Money cents={row.planned} compact /> allocati
                         </p>
@@ -209,16 +209,22 @@ export default function FinanceScreen() {
         <ul className="space-y-2">
           {SECTIONS.map(({ to, icon: Icon, title, description }) => (
             <li key={to}>
-              <Link to={to} className="block rounded-[18px]">
+              <Link to={to} className="block rounded-xl">
                 <Card interactive padding="sm" className="flex items-center gap-3">
-                  <span className="icon-tile">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
                     <Icon size={18} aria-hidden="true" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block font-medium text-ink">{title}</span>
-                    <span className="block text-sm text-ink-faint truncate">{description}</span>
+                    <span className="block font-medium text-foreground">{title}</span>
+                    <span className="block text-sm text-muted-foreground truncate">
+                      {description}
+                    </span>
                   </span>
-                  <ChevronRight size={18} className="text-ink-faint shrink-0" aria-hidden="true" />
+                  <ChevronRight
+                    size={18}
+                    className="text-muted-foreground shrink-0"
+                    aria-hidden="true"
+                  />
                 </Card>
               </Link>
             </li>

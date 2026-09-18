@@ -1,35 +1,37 @@
 import { type HTMLAttributes, forwardRef } from 'react';
+import { cn } from '@/lib/cn';
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   padding?: 'none' | 'sm' | 'md' | 'lg';
-  /** `raised` adds the panel shadow; `flat` is the default hairline card. */
-  elevation?: 'flat' | 'raised';
-  /** Lifts the border on hover — only for cards that are actually clickable. */
+  /** Inside a panel the card carries no fill: the border does the separating. */
+  inset?: boolean;
+  /** Neutral hover — only for cards that are actually clickable. */
   interactive?: boolean;
 }
 
 const PADDINGS = {
   none: '',
-  sm: 'p-3 sm:p-4',
-  md: 'p-4 sm:p-5',
-  lg: 'p-5 sm:p-7',
+  sm: 'p-3',
+  md: 'p-4',
+  lg: 'p-5',
 } as const;
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className = '', padding = 'md', elevation = 'flat', interactive = false, ...props }, ref) => {
-    const classes = [
-      'bg-surface border border-line rounded-[18px] overflow-hidden',
-      'transition-colors duration-200 motion-reduce:transition-none',
-      elevation === 'raised' ? 'shadow-[var(--shadow-panel)]' : '',
-      interactive ? 'hover:border-line-strong hover:bg-surface-2 cursor-pointer' : '',
-      PADDINGS[padding],
-      className,
-    ]
-      .join(' ')
-      .trim();
-
-    return <div ref={ref} className={classes} {...props} />;
-  }
+  ({ className, padding = 'md', inset = false, interactive = false, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        // Depth comes from the border and the step between page and card,
+        // never from a shadow.
+        'rounded-xl border border-border',
+        inset ? 'bg-transparent' : 'bg-card',
+        interactive && 'cursor-pointer transition-colors hover:bg-muted/40',
+        PADDINGS[padding],
+        className
+      )}
+      {...props}
+    />
+  )
 );
 
 Card.displayName = 'Card';

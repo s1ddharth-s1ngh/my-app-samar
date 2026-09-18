@@ -30,22 +30,6 @@
   --color-warning: hsl(var(--warning));
   --color-destructive: hsl(var(--destructive));
 
-  /* Aliases kept so screens written before the refactor keep compiling.
-     New code uses the canonical names above. */
-  --color-bg: hsl(var(--background));
-  --color-surface: hsl(var(--card));
-  --color-surface-2: hsl(var(--popover));
-  --color-surface-3: hsl(var(--muted));
-  --color-ink: hsl(var(--foreground));
-  --color-ink-muted: hsl(var(--muted-foreground));
-  --color-ink-faint: hsl(var(--faint-foreground));
-  --color-accent: hsl(var(--primary));
-  --color-accent-strong: hsl(var(--primary-strong));
-  --color-signal: hsl(var(--warning));
-  --color-alert: hsl(var(--destructive));
-  --color-line: hsl(var(--border));
-  --color-line-strong: hsl(var(--border-strong));
-
   --font-sans: 'Urbanist Variable', 'Urbanist', system-ui, sans-serif;
   --font-heading: 'Urbanist Variable', 'Urbanist', system-ui, sans-serif;
 

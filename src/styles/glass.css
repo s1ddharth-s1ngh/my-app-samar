@@ -44,10 +44,7 @@
     calc(var(--ios27-glass-me-alpha) * var(--glass-alpha-scale))
   );
   background-image: linear-gradient(var(--ios27-glass-me-overlay), var(--ios27-glass-me-overlay));
-  box-shadow:
-    var(--ios27-glass-me-shadow),
-    var(--glass-rim-ring),
-    var(--glass-inner-edges);
+  box-shadow: var(--ios27-glass-me-shadow), var(--glass-rim-ring), var(--glass-inner-edges);
 }
 
 /* --- control: pills, buttons, segmented items --- */
@@ -60,10 +57,7 @@
     calc(var(--ios27-glass-sm-alpha) * var(--glass-alpha-scale))
   );
   background-image: linear-gradient(var(--ios27-glass-sm-overlay), var(--ios27-glass-sm-overlay));
-  box-shadow:
-    var(--ios27-glass-sm-shadow),
-    var(--glass-rim-ring-sm),
-    var(--glass-inner-edges);
+  box-shadow: var(--ios27-glass-sm-shadow), var(--glass-rim-ring-sm), var(--glass-inner-edges);
 }
 
 /* --- clear: lets the page through, for bars over dense content --- */

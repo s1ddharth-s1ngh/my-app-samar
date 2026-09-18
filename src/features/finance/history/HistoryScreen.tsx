@@ -23,7 +23,7 @@ import { formatCents } from '@/domain/money';
 /** Buckets beyond this fold into a single "Altro" slice rather than inventing hues. */
 const MAX_SLICES = 6;
 
-const AXIS_STYLE = { fill: 'var(--ink-faint)', fontSize: 11 } as const;
+const AXIS_STYLE = { fill: 'hsl(var(--muted-foreground))', fontSize: 11 } as const;
 
 function euro(value: number): string {
   return formatCents(Math.round(value), { compact: true });
@@ -155,7 +155,7 @@ export function HistoryScreen() {
               cursor={{ fill: 'var(--surface-3)' }}
               contentStyle={{
                 background: 'var(--surface)',
-                border: '1px solid var(--line)',
+                border: '1px solid hsl(var(--border))',
                 borderRadius: 12,
                 color: 'var(--ink)',
               }}
@@ -200,7 +200,7 @@ export function HistoryScreen() {
             <Tooltip
               contentStyle={{
                 background: 'var(--surface)',
-                border: '1px solid var(--line)',
+                border: '1px solid hsl(var(--border))',
                 borderRadius: 12,
                 color: 'var(--ink)',
               }}
@@ -234,7 +234,7 @@ export function HistoryScreen() {
             <Tooltip
               contentStyle={{
                 background: 'var(--surface)',
-                border: '1px solid var(--line)',
+                border: '1px solid hsl(var(--border))',
                 borderRadius: 12,
                 color: 'var(--ink)',
               }}

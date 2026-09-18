@@ -198,11 +198,11 @@ export function IncomeEntriesScreen() {
 
       <div className="grid grid-cols-2 gap-3">
         <KpiCard label="Ricevute" value={<Money cents={received} compact />} tone="success" />
-        <KpiCard label="Previste" value={<Money cents={expected} compact />} tone="signal" />
+        <KpiCard label="Previste" value={<Money cents={expected} compact />} tone="warning" />
       </div>
 
       {activeSources.length === 0 && (
-        <Card padding="sm" className="text-sm text-ink-muted">
+        <Card padding="sm" className="text-sm text-muted-foreground">
           Prima crea una fonte di entrata: un movimento in entrata deve sapere da dove arriva.
         </Card>
       )}
@@ -224,8 +224,10 @@ export function IncomeEntriesScreen() {
             <li key={entry.id}>
               <Card padding="sm" className="flex items-center gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium text-ink truncate">{sourceName(entry.sourceId)}</p>
-                  <p className="text-sm text-ink-faint">
+                  <p className="font-medium text-foreground truncate">
+                    {sourceName(entry.sourceId)}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
                     {DATE_FORMAT.format(parseCalendarDate(entry.date))}
                     {entry.note ? ` · ${entry.note}` : ''}
                   </p>
@@ -235,7 +237,7 @@ export function IncomeEntriesScreen() {
                   <Money
                     cents={entry.amount}
                     className={`font-semibold ${
-                      entry.status === 'expected' ? 'text-ink-muted' : 'text-ink'
+                      entry.status === 'expected' ? 'text-muted-foreground' : 'text-foreground'
                     }`}
                   />
                   <button

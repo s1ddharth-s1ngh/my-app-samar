@@ -15,7 +15,13 @@ export const Money = forwardRef<HTMLSpanElement, MoneyProps>(
     { cents, showSign = false, semanticColor = false, compact = false, className = '', ...props },
     ref
   ) => {
-    const color = !semanticColor ? '' : cents > 0 ? 'text-success' : cents < 0 ? 'text-alert' : '';
+    const color = !semanticColor
+      ? ''
+      : cents > 0
+        ? 'text-success'
+        : cents < 0
+          ? 'text-destructive'
+          : '';
 
     return (
       <span

@@ -129,8 +129,8 @@ export function RecurringExpensesScreen() {
     <div className="space-y-6">
       <header className="flex justify-between items-start gap-4">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-ink">Spese ricorrenti</h1>
-          <p className="text-sm text-ink-muted">
+          <h1 className="text-2xl font-bold text-foreground">Spese ricorrenti</h1>
+          <p className="text-sm text-muted-foreground">
             Le uscite che tornano ogni mese, con il bucket da cui escono.
           </p>
         </div>
@@ -140,7 +140,7 @@ export function RecurringExpensesScreen() {
       </header>
 
       {buckets.length === 0 && (
-        <Card className="text-sm text-ink-muted">
+        <Card className="text-sm text-muted-foreground">
           Prima crea almeno un bucket: una spesa ricorrente deve sapere da dove esce il soldo.
         </Card>
       )}
@@ -162,8 +162,8 @@ export function RecurringExpensesScreen() {
             <li key={expense.id}>
               <Card className="flex items-center justify-between gap-4" padding="sm">
                 <div className="min-w-0">
-                  <h2 className="font-semibold text-ink truncate">{expense.name}</h2>
-                  <p className="text-sm text-ink-muted">
+                  <h2 className="font-semibold text-foreground truncate">{expense.name}</h2>
+                  <p className="text-sm text-muted-foreground">
                     Il {expense.dayOfMonth} · {bucketName(expense.bucketId)}
                     {expense.createsTask ? ' · crea un task' : ''}
                   </p>
@@ -193,7 +193,7 @@ export function RecurringExpensesScreen() {
       <div className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+108px)] right-4 sm:hidden">
         <Button
           onClick={openCreate}
-          variant="glassProminent"
+          variant="primary"
           className="h-14 w-14 rounded-full p-0"
           aria-label="Nuova spesa ricorrente"
         >

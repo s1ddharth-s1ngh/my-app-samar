@@ -31,14 +31,14 @@ export function ChartFrame({ title, summary, caption, table, children }: ChartFr
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="kpi-label">{title}</h3>
-          {caption && <p className="mt-1 text-sm text-ink-muted">{caption}</p>}
+          {caption && <p className="mt-1 text-sm text-muted-foreground">{caption}</p>}
         </div>
         <button
           type="button"
           onClick={() => setShowTable((value) => !value)}
           aria-expanded={showTable}
           aria-controls={tableId}
-          className="inline-flex items-center gap-1.5 shrink-0 rounded-[10px] border border-line px-2.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.04em] text-ink-muted hover:text-ink hover:border-line-strong transition-colors"
+          className="inline-flex items-center gap-1.5 shrink-0 rounded-full border border-border px-2.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.04em] text-muted-foreground hover:text-foreground hover:border-border transition-colors"
         >
           <Table2 size={12} aria-hidden="true" />
           {showTable ? 'Grafico' : 'Dati'}
@@ -49,7 +49,7 @@ export function ChartFrame({ title, summary, caption, table, children }: ChartFr
         <div id={tableId} className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-line">
+              <tr className="border-b border-border">
                 {table.columns.map((column, index) => (
                   <th
                     key={column}
@@ -63,12 +63,14 @@ export function ChartFrame({ title, summary, caption, table, children }: ChartFr
             </thead>
             <tbody>
               {table.rows.map((row) => (
-                <tr key={String(row[0])} className="border-b border-line last:border-0">
+                <tr key={String(row[0])} className="border-b border-border last:border-0">
                   {row.map((cell, index) => (
                     <td
                       key={index}
                       className={`py-2 ${
-                        index === 0 ? 'text-ink' : 'text-right tabular-nums text-ink-muted'
+                        index === 0
+                          ? 'text-foreground'
+                          : 'text-right tabular-nums text-muted-foreground'
                       }`}
                     >
                       {cell}

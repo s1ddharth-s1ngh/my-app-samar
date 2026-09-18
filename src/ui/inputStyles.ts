@@ -1,10 +1,16 @@
-/** The shared look of every text input, select and textarea in the app. */
+import { cn } from '@/lib/cn';
+
+/**
+ * The shared look of every text input and select. A pill, like everything else
+ * interactive on the surface; the fill is the field's own, so it reads as
+ * something you can type into rather than as a chip.
+ */
 export const inputClasses = (hasError: boolean): string =>
-  [
-    'block w-full rounded-[12px] border bg-surface-2 px-4 py-3 text-ink',
-    'placeholder:text-ink-faint',
-    'transition-colors duration-200 motion-reduce:transition-none',
-    'focus:outline-none focus:border-accent-strong focus:shadow-[var(--shadow-focus)]',
+  cn(
+    // One control height across the whole app, as the toolbar demands.
+    'block h-9 w-full rounded-full border bg-muted/60 px-4 text-foreground',
+    'placeholder:text-muted-foreground',
+    'transition-colors focus:outline-none focus:border-primary',
     'disabled:opacity-50 disabled:cursor-not-allowed',
-    hasError ? 'border-alert' : 'border-line',
-  ].join(' ');
+    hasError ? 'border-destructive' : 'border-border'
+  );

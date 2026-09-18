@@ -18,7 +18,7 @@ export function PageHeader({ title, subtitle, backTo, backLabel, action }: PageH
       {backTo && (
         <Link
           to={backTo}
-          className="inline-flex items-center gap-1 text-sm text-ink-muted hover:text-ink transition-colors"
+          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ChevronLeft size={16} aria-hidden="true" />
           {backLabel ?? 'Indietro'}
@@ -26,10 +26,10 @@ export function PageHeader({ title, subtitle, backTo, backLabel, action }: PageH
       )}
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-[22px] font-bold leading-tight text-ink tracking-[-0.02em]">
+          <h1 className="text-[22px] font-bold leading-tight text-foreground tracking-[-0.02em]">
             {title}
           </h1>
-          {subtitle && <p className="mt-1 text-sm text-ink-muted">{subtitle}</p>}
+          {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
         </div>
         {action && <div className="shrink-0">{action}</div>}
       </div>

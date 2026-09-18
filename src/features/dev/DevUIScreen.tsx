@@ -27,40 +27,40 @@ export function DevUIScreen() {
     <div className="p-4 sm:p-8 max-w-3xl mx-auto space-y-12 pb-32">
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">Design System</h1>
-        <p className="text-ink-muted">Preview di tutti i componenti UI (Responsive)</p>
+        <p className="text-muted-foreground">Preview di tutti i componenti UI (Responsive)</p>
       </div>
 
       <section className="space-y-4">
         <h2 className="text-xl font-bold border-b pb-2">Liquid Glass</h2>
-        <p className="text-sm text-ink-muted">
+        <p className="text-sm text-muted-foreground">
           Il vetro sta solo sul livello di navigazione: barre, sheet, toast, controlli. Mai sul
           contenuto. Lo sfondo colorato qui sotto serve a far vedere cosa filtra.
         </p>
-        <div className="rounded-2xl p-6 bg-gradient-to-br from-accent via-signal to-alert">
-          <div className="glass-group glass rounded-[28px] p-4 flex flex-wrap gap-3 justify-center">
-            <span className="glass-item rounded-2xl px-4 py-2 text-sm">In un container</span>
-            <span className="glass-item glass-tint-accent rounded-2xl px-4 py-2 text-sm">
-              Con tinta
-            </span>
+        <div className="rounded-xl p-6 bg-gradient-to-br from-primary via-warning to-destructive">
+          <div className="glass-group glass rounded-xl p-4 flex flex-wrap gap-3 justify-center">
+            <span className="glass-item rounded-xl px-4 py-2 text-sm">In un container</span>
+            <span className="glass-item  rounded-xl px-4 py-2 text-sm">Con tinta</span>
           </div>
           <div className="mt-4 flex flex-wrap gap-3 justify-center">
-            <span className="glass rounded-2xl px-4 py-2 text-sm text-ink">regular</span>
-            <span className="glass glass-clear rounded-2xl px-4 py-2 text-sm text-ink">clear</span>
-            <span className="glass glass-interactive rounded-2xl px-4 py-2 text-sm text-ink">
+            <span className="glass rounded-xl px-4 py-2 text-sm text-foreground">regular</span>
+            <span className="glass glass-clear rounded-xl px-4 py-2 text-sm text-foreground">
+              clear
+            </span>
+            <span className="glass glass-interactive rounded-xl px-4 py-2 text-sm text-foreground">
               interactive
             </span>
           </div>
           <div className="mt-4 flex flex-wrap gap-3 justify-center">
-            <Button variant="glass">Vetro</Button>
-            <Button variant="glassProminent">Vetro in evidenza</Button>
-            <IconButton icon={Star} label="Preferito" variant="glass" />
+            <Button variant="secondary">Vetro</Button>
+            <Button variant="primary">Vetro in evidenza</Button>
+            <IconButton icon={Star} label="Preferito" variant="secondary" />
           </div>
         </div>
       </section>
 
       <section className="space-y-4">
         <h2 className="text-xl font-bold border-b pb-2">Anello del Ciclo (CycleRing)</h2>
-        <div className="flex justify-center p-8 bg-surface rounded-2xl shadow-sm border border-line">
+        <div className="flex justify-center p-8 bg-card rounded-xl border border-border">
           <CycleRing
             daysTotal={30}
             daysPassed={12}
@@ -77,21 +77,21 @@ export function DevUIScreen() {
       <section className="space-y-4">
         <h2 className="text-xl font-bold border-b pb-2">Denaro (Money & MoneyInput)</h2>
         <div className="flex flex-col gap-4 max-w-md">
-          <div className="flex gap-4 items-center p-4 bg-surface-2 rounded-xl">
+          <div className="flex gap-4 items-center p-4 bg-popover rounded-xl">
             <div className="flex flex-col">
-              <span className="text-xs text-ink-muted">Base</span>
+              <span className="text-xs text-muted-foreground">Base</span>
               <Money cents={123456} className="text-lg font-medium" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs text-ink-muted">Con Segno</span>
+              <span className="text-xs text-muted-foreground">Con Segno</span>
               <Money cents={123456} showSign className="text-lg font-medium" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs text-ink-muted">Semantico (+)</span>
+              <span className="text-xs text-muted-foreground">Semantico (+)</span>
               <Money cents={123456} semanticColor showSign className="text-lg font-bold" />
             </div>
             <div className="flex flex-col">
-              <span className="text-xs text-ink-muted">Semantico (-)</span>
+              <span className="text-xs text-muted-foreground">Semantico (-)</span>
               <Money cents={-5000} semanticColor showSign className="text-lg font-bold" />
             </div>
           </div>
@@ -201,7 +201,7 @@ export function DevUIScreen() {
         <h2 className="text-xl font-bold border-b pb-2">Card</h2>
         <Card>
           <h3 className="font-bold text-lg mb-2">Titolo Card</h3>
-          <p className="text-ink-muted">
+          <p className="text-muted-foreground">
             Contenuto interno della card. La card ha padding e shadow. È responsive.
           </p>
         </Card>
@@ -246,7 +246,7 @@ export function DevUIScreen() {
 
       <Sheet isOpen={isSheetOpen} onClose={() => setIsSheetOpen(false)} title="Modifica Dati">
         <div className="space-y-4 py-4">
-          <p className="text-ink-muted">
+          <p className="text-muted-foreground">
             Questo componente si comporta come una Bottom Sheet su mobile e come una Dialog modale
             centrata su schermi desktop (sm:).
           </p>

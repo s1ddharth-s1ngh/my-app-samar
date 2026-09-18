@@ -94,7 +94,7 @@ export function CycleRing({
         r={outerRadius}
         fill="transparent"
         stroke="currentColor"
-        className="text-ink-faint transition-all duration-1000 ease-out motion-reduce:transition-none"
+        className="text-muted-foreground transition-all duration-1000 ease-out motion-reduce:transition-none"
         strokeWidth={strokeWidth}
         strokeLinecap="round"
         strokeDasharray={calculateDashArray(outerRadius, isMounted ? daysPercent : 0)}

@@ -1,51 +1,42 @@
 import { type HTMLAttributes, forwardRef, type ReactNode } from 'react';
 import { X } from 'lucide-react';
+import { cn } from '@/lib/cn';
 
 export interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
   children: ReactNode;
+  /** Status is soft, never a filled badge. Inactive is muted grey, not red. */
   variant?: 'neutral' | 'primary' | 'success' | 'warning' | 'error';
   onDelete?: () => void;
 }
 
 const VARIANTS = {
-  neutral: 'bg-surface-3 text-ink-muted border-line',
-  primary: 'bg-accent/12 text-accent-strong border-accent/25',
-  success: 'bg-success/12 text-success border-success/25',
-  warning: 'bg-signal/12 text-signal border-signal/25',
-  error: 'bg-alert/12 text-alert border-alert/25',
+  neutral: '',
+  primary: 'status-current',
+  success: 'status-active',
+  warning: 'status-warning',
+  error: 'status-error',
 } as const;
 
 export const Chip = forwardRef<HTMLSpanElement, ChipProps>(
-  ({ children, variant = 'neutral', onDelete, className = '', ...props }, ref) => {
-    const classes = [
-      'inline-flex items-center gap-1 px-2.5 py-1 rounded-[10px] border',
-      'text-[11px] font-medium uppercase tracking-[0.04em]',
-      VARIANTS[variant],
-      className,
-    ]
-      .join(' ')
-      .trim();
-
-    return (
-      <span ref={ref} className={classes} {...props}>
-        {children}
-        {onDelete && (
-          <button
-            type="button"
-            onClick={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-              onDelete();
-            }}
-            className="inline-flex items-center justify-center h-4 w-4 rounded-full hover:bg-ink/10"
-            aria-label="Rimuovi"
-          >
-            <X size={10} aria-hidden="true" />
-          </button>
-        )}
-      </span>
-    );
-  }
+  ({ children, variant = 'neutral', onDelete, className, ...props }, ref) => (
+    <span ref={ref} className={cn('status-chip', VARIANTS[variant], className)} {...props}>
+      {children}
+      {onDelete && (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onDelete();
+          }}
+          className="inline-flex h-4 w-4 items-center justify-center rounded-full hover:bg-foreground/10"
+          aria-label="Rimuovi"
+        >
+          <X size={10} aria-hidden="true" />
+        </button>
+      )}
+    </span>
+  )
 );
 
 Chip.displayName = 'Chip';

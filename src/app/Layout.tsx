@@ -46,7 +46,7 @@ export function Layout() {
       {/* The tab bar floats above the content: glass belongs to navigation only. */}
       <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] pointer-events-none">
         <nav
-          className="glass glass-group pointer-events-auto mx-auto max-w-[480px] rounded-[28px]"
+          className="glass glass-group pointer-events-auto mx-auto max-w-[480px] rounded-xl"
           aria-label="Navigazione principale"
         >
           <ul className="flex justify-around items-center px-2">
@@ -76,13 +76,11 @@ function NavItem({ to, icon: Icon, label, minimized }: NavItemProps) {
         className={({ isActive }) =>
           [
             // 44px minimum touch target, whatever the minimized state.
-            'glass-item flex flex-col items-center justify-center gap-1 rounded-[20px]',
+            'glass-item flex flex-col items-center justify-center gap-1 rounded-xl',
             'min-w-[56px] min-h-[44px] px-2 text-xs transition-all duration-200 motion-reduce:transition-none',
-            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
             minimized ? 'py-2' : 'py-2.5',
-            isActive
-              ? 'glass-tint-accent text-accent font-medium'
-              : 'text-ink-muted hover:text-ink',
+            isActive ? ' text-primary font-medium' : 'text-muted-foreground hover:text-foreground',
           ].join(' ')
         }
       >
