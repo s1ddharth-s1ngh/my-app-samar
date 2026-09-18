@@ -42,7 +42,7 @@ export function AllocationRulesScreen() {
   let validationAlert: React.ReactNode;
   if (totalPercent > 100) {
     validationAlert = (
-      <div className="flex items-start gap-3 p-4 bg-red-50 text-red-900 rounded-xl">
+      <div className="flex items-start gap-3 rounded-xl border border-destructive/20 bg-destructive/10 p-4 text-destructive">
         <AlertCircle className="mt-0.5 shrink-0" size={20} />
         <p className="text-sm font-medium">
           La somma delle percentuali ({totalPercent}%) supera il 100%.
@@ -51,7 +51,7 @@ export function AllocationRulesScreen() {
     );
   } else if (!hasRemainder && totalPercent < 100) {
     validationAlert = (
-      <div className="flex items-start gap-3 p-4 bg-yellow-50 text-yellow-900 rounded-xl">
+      <div className="flex items-start gap-3 rounded-xl border border-warning/20 bg-warning/10 p-4 text-warning">
         <AlertCircle className="mt-0.5 shrink-0" size={20} />
         <p className="text-sm font-medium">
           Non hai un bucket per il "resto", e le percentuali non coprono il 100%. I fondi in eccesso
@@ -61,7 +61,7 @@ export function AllocationRulesScreen() {
     );
   } else {
     validationAlert = (
-      <div className="flex items-center gap-3 p-4 bg-green-50 text-green-900 rounded-xl">
+      <div className="flex items-center gap-3 rounded-xl border border-success/20 bg-success/10 p-4 text-success">
         <CheckCircle2 className="shrink-0" size={20} />
         <p className="text-sm font-medium">
           Configurazione valida. I fondi fluiranno correttamente.

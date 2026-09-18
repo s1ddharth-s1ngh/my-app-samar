@@ -206,15 +206,9 @@ export default function ProjectsScreen() {
               <div className="flex-1 cursor-pointer">
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold">{proj.name}</h3>
-                  {proj.status === 'paused' && (
-                    <span className="text-[10px] uppercase font-bold bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
-                      In pausa
-                    </span>
-                  )}
+                  {proj.status === 'paused' && <span className="status-chip">In pausa</span>}
                   {proj.status === 'done' && (
-                    <span className="text-[10px] uppercase font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
-                      Fatto
-                    </span>
+                    <span className="status-chip status-active">Fatto</span>
                   )}
                 </div>
                 {proj.description && (
