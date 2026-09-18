@@ -231,7 +231,7 @@ export function BucketsScreen() {
       )}
 
       {/* Mobile FAB */}
-      <div className="fixed bottom-20 right-4 sm:hidden">
+      <div className="fixed bottom-20 right-4 md:hidden">
         <Button onClick={handleOpenCreate} className="h-14 w-14 rounded-full shadow-lg p-0">
           <Plus size={24} />
         </Button>

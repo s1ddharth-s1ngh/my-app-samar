@@ -112,7 +112,7 @@ export default function FinanceScreen() {
         <>
           <ActiveCycleRing />
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
             <KpiCard
               label="Entrate"
               value={<Money cents={totals.income} compact />}
@@ -148,7 +148,7 @@ export default function FinanceScreen() {
                 description="Registra un’entrata e il motore ripartirà i soldi tra i bucket attivi."
               />
             ) : (
-              <ul className="space-y-2">
+              <ul className="grid gap-2 md:grid-cols-2">
                 {rows.map((row) => (
                   <li key={row.id}>
                     <Link to={`/soldi/bucket/${row.bucketId}`} className="block rounded-xl">
@@ -206,7 +206,7 @@ export default function FinanceScreen() {
 
       <nav aria-label="Gestione denaro" className="space-y-2">
         <h2 className="kpi-label">Gestisci</h2>
-        <ul className="space-y-2">
+        <ul className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
           {SECTIONS.map(({ to, icon: Icon, title, description }) => (
             <li key={to}>
               <Link to={to} className="block rounded-xl">

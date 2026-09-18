@@ -1,18 +1,109 @@
 import { useEffect, useRef, useState } from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import { Calendar, Wallet, ListTodo, Settings } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { cn } from '@/lib/cn';
 
-const NAV_ITEMS = [
+interface NavEntry {
+  to: string;
+  icon: LucideIcon;
+  label: string;
+}
+
+const NAV: NavEntry[] = [
   { to: '/', icon: Calendar, label: 'Oggi' },
   { to: '/soldi', icon: Wallet, label: 'Soldi' },
   { to: '/progetti', icon: ListTodo, label: 'Progetti' },
   { to: '/impostazioni', icon: Settings, label: 'Impostazioni' },
-] as const;
+];
 
 /**
- * Collapses the tab bar to icons only while the user scrolls down, the web
- * equivalent of `tabBarMinimizeBehavior(.onScrollDown)`. Expands again on any
- * upward scroll so the labels are one gesture away.
+ * Three layouts, one tree — the breakpoint does the switching, so there is no
+ * flash on load and no resize listener deciding what to render:
+ *
+ *   < 768px   phone   — single column, floating glass tab bar at the bottom
+ *   768–1279  tablet  — fixed icon rail on the left, wider content, 2 columns
+ *   ≥ 1280px  desktop — labelled sidebar, centred content, up to 4 columns
+ */
+export function Layout() {
+  return (
+    <div className="min-h-screen md:flex">
+      <SideNav />
+
+      <main
+        className={cn(
+          'min-w-0 flex-1',
+          // The phone leaves room for the floating bar; the rail does not.
+          'px-4 pt-5 pb-[calc(env(safe-area-inset-bottom,0px)+104px)]',
+          'md:px-6 md:pt-7 md:pb-10',
+          'xl:px-10 xl:pt-10'
+        )}
+      >
+        <div className="mx-auto w-full max-w-[560px] md:max-w-[760px] xl:max-w-[1100px]">
+          <Outlet />
+        </div>
+      </main>
+
+      <BottomNav />
+    </div>
+  );
+}
+
+/** Tablet and desktop: a rail that grows labels at `xl`. */
+function SideNav() {
+  return (
+    <aside
+      className={cn(
+        'hidden md:flex md:sticky md:top-0 md:h-screen md:shrink-0 md:flex-col',
+        'border-r border-border bg-card/60 backdrop-blur-xl',
+        'md:w-[72px] md:px-2 md:py-4',
+        'xl:w-[248px] xl:px-3'
+      )}
+    >
+      <div className="mb-6 flex h-10 items-center justify-center xl:justify-start xl:px-3">
+        <span
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-foreground/[0.07] text-sm font-bold"
+          aria-hidden="true"
+        >
+          C
+        </span>
+        <span className="ml-2 hidden text-base font-semibold tracking-[-0.02em] xl:inline">
+          Ciclo
+        </span>
+      </div>
+
+      <nav aria-label="Navigazione principale" className="flex-1">
+        <ul className="space-y-1">
+          {NAV.map(({ to, icon: Icon, label }) => (
+            <li key={to}>
+              <NavLink
+                to={to}
+                end={to === '/'}
+                title={label}
+                className={({ isActive }) =>
+                  cn(
+                    'flex h-11 items-center rounded-full transition-colors',
+                    'justify-center xl:justify-start xl:px-3',
+                    isActive
+                      ? 'bg-foreground/[0.07] text-foreground'
+                      : 'text-muted-foreground hover:bg-foreground/[0.05] hover:text-foreground'
+                  )
+                }
+              >
+                <Icon size={19} aria-hidden="true" />
+                <span className="ml-3 hidden text-sm font-medium xl:inline">{label}</span>
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </aside>
+  );
+}
+
+/**
+ * Collapses the tab bar to icons only while the user scrolls down, and expands
+ * it again on any upward scroll. Phone only.
  */
 function useMinimizeOnScrollDown(): boolean {
   const [minimized, setMinimized] = useState(false);
@@ -34,59 +125,38 @@ function useMinimizeOnScrollDown(): boolean {
   return minimized;
 }
 
-export function Layout() {
+function BottomNav() {
   const minimized = useMinimizeOnScrollDown();
 
   return (
-    <div className="max-w-[560px] mx-auto min-h-screen flex flex-col relative pb-[calc(env(safe-area-inset-bottom,0px)+108px)]">
-      <main className="flex-1 px-4 pt-5 sm:px-6 sm:pt-8">
-        <Outlet />
-      </main>
-
-      {/* The tab bar floats above the content: glass belongs to navigation only. */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] pointer-events-none">
-        <nav
-          className="glass glass-group pointer-events-auto mx-auto max-w-[480px] rounded-xl"
-          aria-label="Navigazione principale"
-        >
-          <ul className="flex justify-around items-center px-2">
-            {NAV_ITEMS.map(({ to, icon, label }) => (
-              <NavItem key={to} to={to} icon={icon} label={label} minimized={minimized} />
-            ))}
-          </ul>
-        </nav>
-      </div>
-    </div>
-  );
-}
-
-interface NavItemProps {
-  to: string;
-  icon: typeof Calendar;
-  label: string;
-  minimized: boolean;
-}
-
-function NavItem({ to, icon: Icon, label, minimized }: NavItemProps) {
-  return (
-    <li>
-      <NavLink
-        to={to}
-        end={to === '/'}
-        className={({ isActive }) =>
-          [
-            // 44px minimum touch target, whatever the minimized state.
-            'glass-item flex flex-col items-center justify-center gap-1 rounded-xl',
-            'min-w-[56px] min-h-[44px] px-2 text-xs transition-all duration-200 motion-reduce:transition-none',
-            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
-            minimized ? 'py-2' : 'py-2.5',
-            isActive ? ' text-primary font-medium' : 'text-muted-foreground hover:text-foreground',
-          ].join(' ')
-        }
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-4 pb-[calc(env(safe-area-inset-bottom,0px)+12px)] md:hidden">
+      <nav
+        aria-label="Navigazione principale"
+        className="glass glass-group pointer-events-auto mx-auto max-w-[480px] rounded-full p-1"
       >
-        <Icon size={22} aria-hidden="true" />
-        <span className={minimized ? 'sr-only' : ''}>{label}</span>
-      </NavLink>
-    </li>
+        <ul className="flex items-center justify-around">
+          {NAV.map(({ to, icon: Icon, label }) => (
+            <li key={to} className="flex-1">
+              <NavLink
+                to={to}
+                end={to === '/'}
+                className={({ isActive }) =>
+                  cn(
+                    // 44px minimum touch target, whatever the minimized state.
+                    'glass-item flex min-h-[44px] flex-col items-center justify-center gap-0.5 rounded-full px-2 text-[11px]',
+                    'transition-all duration-200 motion-reduce:transition-none',
+                    minimized ? 'py-2' : 'py-1.5',
+                    isActive ? 'text-foreground' : 'text-muted-foreground'
+                  )
+                }
+              >
+                <Icon size={20} aria-hidden="true" />
+                <span className={minimized ? 'sr-only' : ''}>{label}</span>
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
   );
 }

@@ -122,94 +122,101 @@ export function HistoryScreen() {
         backLabel="Soldi"
       />
 
-      <ChartFrame
-        title="Entrate e spese per ciclo"
-        caption="Due barre affiancate per ogni ciclo."
-        summary={
-          lastCycle
-            ? `Nell'ultimo ciclo, ${lastCycle.label}, sono entrati ${euro(lastCycle.income)} e ne sono usciti ${euro(lastCycle.spent)}.`
-            : 'Nessun dato.'
-        }
-        table={{
-          columns: ['Ciclo', 'Entrate', 'Spese', 'Risparmio'],
-          rows: perCycle.map((row) => [
-            row.label,
-            euro(row.income),
-            euro(row.spent),
-            euro(row.saved),
-          ]),
-        }}
-      >
-        <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={perCycle} margin={{ top: 8, right: 4, bottom: 0, left: -12 }}>
-            <CartesianGrid stroke={CHART_GRID} vertical={false} />
-            <XAxis dataKey="label" tick={AXIS_STYLE} tickLine={false} axisLine={false} />
-            <YAxis
-              tick={AXIS_STYLE}
-              tickLine={false}
-              axisLine={false}
-              tickFormatter={euroTick}
-              width={64}
-            />
-            <Tooltip
-              cursor={{ fill: 'var(--surface-3)' }}
-              contentStyle={{
-                background: 'var(--surface)',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: 12,
-                color: 'var(--ink)',
-              }}
-              formatter={euroTick}
-            />
-            <Legend wrapperStyle={{ fontSize: 12, color: CHART_INK }} />
-            <Bar dataKey="income" name="Entrate" fill={categoricalColor(0)} radius={[4, 4, 0, 0]} />
-            <Bar dataKey="spent" name="Spese" fill={categoricalColor(1)} radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </ChartFrame>
+      <div className="grid gap-4 xl:grid-cols-2">
+        <ChartFrame
+          title="Entrate e spese per ciclo"
+          caption="Due barre affiancate per ogni ciclo."
+          summary={
+            lastCycle
+              ? `Nell'ultimo ciclo, ${lastCycle.label}, sono entrati ${euro(lastCycle.income)} e ne sono usciti ${euro(lastCycle.spent)}.`
+              : 'Nessun dato.'
+          }
+          table={{
+            columns: ['Ciclo', 'Entrate', 'Spese', 'Risparmio'],
+            rows: perCycle.map((row) => [
+              row.label,
+              euro(row.income),
+              euro(row.spent),
+              euro(row.saved),
+            ]),
+          }}
+        >
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={perCycle} margin={{ top: 8, right: 4, bottom: 0, left: -12 }}>
+              <CartesianGrid stroke={CHART_GRID} vertical={false} />
+              <XAxis dataKey="label" tick={AXIS_STYLE} tickLine={false} axisLine={false} />
+              <YAxis
+                tick={AXIS_STYLE}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={euroTick}
+                width={64}
+              />
+              <Tooltip
+                cursor={{ fill: 'var(--surface-3)' }}
+                contentStyle={{
+                  background: 'var(--surface)',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 12,
+                  color: 'var(--ink)',
+                }}
+                formatter={euroTick}
+              />
+              <Legend wrapperStyle={{ fontSize: 12, color: CHART_INK }} />
+              <Bar
+                dataKey="income"
+                name="Entrate"
+                fill={categoricalColor(0)}
+                radius={[4, 4, 0, 0]}
+              />
+              <Bar dataKey="spent" name="Spese" fill={categoricalColor(1)} radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartFrame>
 
-      <ChartFrame
-        title="Ripartizione media"
-        caption="Quanto è andato in media a ogni bucket, per ciclo."
-        summary={
-          averageSplit[0]
-            ? `Il bucket più servito è ${averageSplit[0].name}, con ${euro(averageSplit[0].value)} per ciclo.`
-            : 'Nessuna allocazione registrata.'
-        }
-        table={{
-          columns: ['Bucket', 'Media per ciclo'],
-          rows: averageSplit.map((row) => [row.name, euro(row.value)]),
-        }}
-      >
-        <ResponsiveContainer width="100%" height={240}>
-          <PieChart>
-            <Pie
-              data={averageSplit}
-              dataKey="value"
-              nameKey="name"
-              innerRadius={48}
-              outerRadius={80}
-              paddingAngle={2}
-              stroke="var(--surface)"
-              strokeWidth={2}
-            >
-              {averageSplit.map((row, index) => (
-                <Cell key={row.name} fill={categoricalColor(index)} />
-              ))}
-            </Pie>
-            <Tooltip
-              contentStyle={{
-                background: 'var(--surface)',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: 12,
-                color: 'var(--ink)',
-              }}
-              formatter={euroTick}
-            />
-            <Legend wrapperStyle={{ fontSize: 12, color: CHART_INK }} />
-          </PieChart>
-        </ResponsiveContainer>
-      </ChartFrame>
+        <ChartFrame
+          title="Ripartizione media"
+          caption="Quanto è andato in media a ogni bucket, per ciclo."
+          summary={
+            averageSplit[0]
+              ? `Il bucket più servito è ${averageSplit[0].name}, con ${euro(averageSplit[0].value)} per ciclo.`
+              : 'Nessuna allocazione registrata.'
+          }
+          table={{
+            columns: ['Bucket', 'Media per ciclo'],
+            rows: averageSplit.map((row) => [row.name, euro(row.value)]),
+          }}
+        >
+          <ResponsiveContainer width="100%" height={240}>
+            <PieChart>
+              <Pie
+                data={averageSplit}
+                dataKey="value"
+                nameKey="name"
+                innerRadius={48}
+                outerRadius={80}
+                paddingAngle={2}
+                stroke="var(--surface)"
+                strokeWidth={2}
+              >
+                {averageSplit.map((row, index) => (
+                  <Cell key={row.name} fill={categoricalColor(index)} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  background: 'var(--surface)',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: 12,
+                  color: 'var(--ink)',
+                }}
+                formatter={euroTick}
+              />
+              <Legend wrapperStyle={{ fontSize: 12, color: CHART_INK }} />
+            </PieChart>
+          </ResponsiveContainer>
+        </ChartFrame>
+      </div>
 
       <ChartFrame
         title="Risparmio cumulato"

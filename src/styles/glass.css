@@ -112,7 +112,9 @@
   box-shadow: none;
 }
 
-/* The active item is a frosted pill inside the already-blurred bar. */
+/* The active item is a frosted pill inside the already-blurred bar.
+   React Router marks the current link with aria-current, so no extra state. */
+.glass-group > .glass-item[aria-current='page'],
 .glass-group > .glass-item[data-active='true'] {
   background-color: rgba(153, 153, 153, 0.17);
   box-shadow: var(--glass-rim-ring-sm);

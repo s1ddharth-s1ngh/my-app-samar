@@ -34,7 +34,7 @@ export default function TodayScreen() {
       <CycleBanner />
 
       {totals.cycle && (
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
           <KpiCard
             label="Disponibile"
             value={<Money cents={totals.available} compact />}
@@ -68,7 +68,9 @@ export default function TodayScreen() {
         </div>
       )}
 
-      <QuickSpendForm />
+      <div className="grid gap-6 xl:grid-cols-2">
+        <QuickSpendForm />
+      </div>
     </div>
   );
 }

@@ -134,7 +134,7 @@ export function RecurringExpensesScreen() {
             Le uscite che tornano ogni mese, con il bucket da cui escono.
           </p>
         </div>
-        <Button onClick={openCreate} size="sm" className="hidden sm:inline-flex shrink-0">
+        <Button onClick={openCreate} size="sm" className="hidden md:inline-flex shrink-0">
           <Plus size={16} className="mr-2" aria-hidden="true" /> Nuova
         </Button>
       </header>
@@ -190,7 +190,7 @@ export function RecurringExpensesScreen() {
         </ul>
       )}
 
-      <div className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+108px)] right-4 sm:hidden">
+      <div className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+108px)] right-4 md:hidden">
         <Button
           onClick={openCreate}
           variant="primary"

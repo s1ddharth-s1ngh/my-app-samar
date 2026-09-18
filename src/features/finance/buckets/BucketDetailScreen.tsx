@@ -114,7 +114,7 @@ export function BucketDetailScreen() {
         backLabel="Soldi"
       />
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         <KpiCard label="Allocato" value={<Money cents={planned} compact />} />
         <KpiCard
           label="Speso"
