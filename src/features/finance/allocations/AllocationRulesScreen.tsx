@@ -42,7 +42,7 @@ export function AllocationRulesScreen() {
   let validationAlert: React.ReactNode;
   if (totalPercent > 100) {
     validationAlert = (
-      <div className="flex items-start gap-3 rounded-xl border border-destructive/20 bg-destructive/10 p-4 text-destructive">
+      <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
         <AlertCircle className="mt-0.5 shrink-0" size={20} />
         <p className="text-sm font-medium">
           La somma delle percentuali ({totalPercent}%) supera il 100%.
@@ -51,7 +51,7 @@ export function AllocationRulesScreen() {
     );
   } else if (!hasRemainder && totalPercent < 100) {
     validationAlert = (
-      <div className="flex items-start gap-3 rounded-xl border border-warning/20 bg-warning/10 p-4 text-warning">
+      <div className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-400/10 p-4 text-amber-300">
         <AlertCircle className="mt-0.5 shrink-0" size={20} />
         <p className="text-sm font-medium">
           Non hai un bucket per il "resto", e le percentuali non coprono il 100%. I fondi in eccesso
@@ -61,7 +61,7 @@ export function AllocationRulesScreen() {
     );
   } else {
     validationAlert = (
-      <div className="flex items-center gap-3 rounded-xl border border-success/20 bg-success/10 p-4 text-success">
+      <div className="flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-400/10 p-4 text-emerald-300">
         <CheckCircle2 className="shrink-0" size={20} />
         <p className="text-sm font-medium">
           Configurazione valida. I fondi fluiranno correttamente.
@@ -74,7 +74,7 @@ export function AllocationRulesScreen() {
     <div className="space-y-6">
       <div className="space-y-2">
         <h1 className="text-2xl font-bold">Regole di Allocazione</h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-white/45">
           Quando ricevi un'entrata (es. Stipendio), i soldi scendono a cascata nei bucket in base
           all'ordine e a queste regole.
         </p>
@@ -90,7 +90,7 @@ export function AllocationRulesScreen() {
           return (
             <Card key={bucket.id} className="p-4 flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="flex items-center gap-3 w-48 shrink-0">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-muted text-muted-foreground">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-white/[0.06] text-white/45">
                   {index + 1}
                 </div>
                 <div
@@ -161,17 +161,13 @@ export function AllocationRulesScreen() {
                     <Button onClick={() => handleSave(bucket.id)} className="flex-1">
                       Salva
                     </Button>
-                    <Button
-                      variant="secondary"
-                      onClick={() => setEditingId(null)}
-                      className="flex-1"
-                    >
+                    <Button variant="quiet" onClick={() => setEditingId(null)} className="flex-1">
                       Chiudi
                     </Button>
                   </div>
                 </div>
               ) : (
-                <div className="flex-1 flex justify-between items-center bg-popover p-3 rounded-xl">
+                <div className="flex-1 flex justify-between items-center bg-white/[0.04] p-3 rounded-xl">
                   <div className="text-sm font-medium">
                     {rule.type === 'fixed' &&
                       `Importo fisso: ${(rule.value / 100).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}`}
@@ -179,7 +175,7 @@ export function AllocationRulesScreen() {
                       `${rule.value}% del ${rule.base === 'gross' ? 'totale' : 'rimanente'}`}
                     {rule.type === 'remainder' && 'Tutto il resto'}
                   </div>
-                  <Button variant="secondary" size="sm" onClick={() => handleEdit(bucket)}>
+                  <Button variant="quiet" size="sm" onClick={() => handleEdit(bucket)}>
                     Modifica
                   </Button>
                 </div>

@@ -100,7 +100,7 @@ export function HistoryScreen() {
   if (perCycle.length === 0) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Storico" backTo="/soldi" backLabel="Soldi" />
+        <PageHeader title="Storico" breadcrumb={{ to: '/soldi', label: 'Soldi' }} />
         <EmptyState
           icon={LineChartIcon}
           title="Nessun ciclo da confrontare"
@@ -118,8 +118,7 @@ export function HistoryScreen() {
       <PageHeader
         title="Storico"
         subtitle={`${perCycle.length} ${perCycle.length === 1 ? 'ciclo' : 'cicli'}`}
-        backTo="/soldi"
-        backLabel="Soldi"
+        breadcrumb={{ to: '/soldi', label: 'Soldi' }}
       />
 
       <div className="grid gap-4 xl:grid-cols-2">

@@ -126,7 +126,7 @@ export function TaskEditorSheet({ task, onClose }: TaskEditorSheetProps) {
             <Button className="flex-1" onClick={() => void handleSave()}>
               Salva il task
             </Button>
-            <Button variant="secondary" onClick={onClose}>
+            <Button variant="quiet" onClick={onClose}>
               Annulla
             </Button>
           </div>

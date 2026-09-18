@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { Boxes, Receipt, ShoppingBag, Target } from 'lucide-react';
 import { useDataStore } from '@/stores/useDataStore';
-import { Card, EmptyState, KpiCard, Money, PageHeader } from '@/ui';
+import { Card, EmptyState, StatCard, Money, PageHeader } from '@/ui';
 import { parseCalendarDate } from '@/domain/cycles';
 
 const DAY_FORMAT = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'short' });
@@ -48,7 +48,7 @@ export function BucketDetailScreen() {
   if (!bucket) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Bucket" backTo="/soldi" backLabel="Soldi" />
+        <PageHeader title="Bucket" breadcrumb={{ to: '/soldi', label: 'Soldi' }} />
         <EmptyState
           icon={Boxes}
           title="Bucket non trovato"
@@ -110,39 +110,38 @@ export function BucketDetailScreen() {
       <PageHeader
         title={bucket.name}
         subtitle={activeCycle ? activeCycle.label : 'Nessun ciclo aperto'}
-        backTo="/soldi"
-        backLabel="Soldi"
+        breadcrumb={{ to: '/soldi', label: 'Soldi' }}
       />
 
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <KpiCard label="Allocato" value={<Money cents={planned} compact />} />
-        <KpiCard
+        <StatCard label="Allocato" value={<Money cents={planned} compact />} />
+        <StatCard
           label="Speso"
           value={<Money cents={spent} compact />}
           progress={planned > 0 ? spent / planned : undefined}
         />
-        <KpiCard
+        <StatCard
           label="Impegnato"
           value={<Money cents={committed} compact />}
-          tone={committed > 0 ? 'warning' : 'neutral'}
+          tone={committed > 0 ? 'warn' : 'neutral'}
           hint="Acquisti pianificati"
         />
-        <KpiCard
+        <StatCard
           label="Disponibile"
           value={<Money cents={available} compact />}
-          tone={available < 0 ? 'destructive' : 'success'}
+          tone={available < 0 ? 'bad' : 'good'}
         />
       </div>
 
       {bucket.targetAmount !== null && towardsTarget !== null && (
-        <Card padding="sm" className="space-y-2">
+        <Card className="space-y-2">
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/45">
               <Target size={18} aria-hidden="true" />
             </span>
             <div className="min-w-0 flex-1">
               <p className="kpi-label">Obiettivo</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-white/45">
                 <Money cents={towardsTarget} /> su <Money cents={bucket.targetAmount} />
               </p>
             </div>
@@ -150,9 +149,9 @@ export function BucketDetailScreen() {
               {Math.min(100, Math.round((towardsTarget / bucket.targetAmount) * 100))}%
             </span>
           </div>
-          <div className="h-1 rounded-full bg-muted overflow-hidden">
+          <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
             <div
-              className="h-full rounded-full bg-success"
+              className="h-full rounded-full bg-emerald-400"
               style={{
                 width: `${Math.min(100, (towardsTarget / bucket.targetAmount) * 100)}%`,
               }}
@@ -167,11 +166,11 @@ export function BucketDetailScreen() {
           <ul className="space-y-2">
             {plannedPurchases.map((item) => (
               <li key={item.id}>
-                <Card padding="sm" className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+                <Card className="flex items-center gap-3">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/45">
                     <ShoppingBag size={18} aria-hidden="true" />
                   </span>
-                  <span className="min-w-0 flex-1 font-medium text-foreground truncate">
+                  <span className="min-w-0 flex-1 font-medium text-white truncate">
                     {item.name}
                   </span>
                   <Money cents={item.estimatedCost} className="font-semibold shrink-0" />
@@ -194,10 +193,10 @@ export function BucketDetailScreen() {
           <ul className="space-y-2">
             {cycleTransactions.map((item) => (
               <li key={item.id}>
-                <Card padding="sm" className="flex items-center gap-3">
+                <Card className="flex items-center gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-foreground truncate">{item.description}</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="font-medium text-white truncate">{item.description}</p>
+                    <p className="text-sm text-white/45">
                       {DAY_FORMAT.format(parseCalendarDate(item.date))}
                     </p>
                   </div>
@@ -212,24 +211,24 @@ export function BucketDetailScreen() {
       {trend.length > 1 && (
         <section className="space-y-2">
           <h2 className="kpi-label">Ultimi {trend.length} cicli</h2>
-          <Card padding="sm">
+          <Card>
             <ul className="space-y-3">
               {trend.map((row) => (
                 <li key={row.cycle.id} className="space-y-1">
                   <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="truncate text-muted-foreground">{row.cycle.label}</span>
-                    <span className="shrink-0 tabular-nums text-muted-foreground">
+                    <span className="truncate text-white/45">{row.cycle.label}</span>
+                    <span className="shrink-0 tabular-nums text-white/45">
                       <Money cents={row.spent} compact /> / <Money cents={row.planned} compact />
                     </span>
                   </div>
                   <div className="flex gap-1 h-1.5">
                     <div
-                      className="rounded-full bg-primary/40"
+                      className="rounded-full bg-[#1E6FFF]/40"
                       style={{ width: `${(row.planned / maxTrend) * 100}%` }}
                       aria-hidden="true"
                     />
                     <div
-                      className="rounded-full bg-primary"
+                      className="rounded-full bg-[#1E6FFF]"
                       style={{ width: `${(row.spent / maxTrend) * 100}%` }}
                       aria-hidden="true"
                     />

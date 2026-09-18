@@ -80,7 +80,7 @@ export function QuickSpendForm() {
   };
 
   return (
-    <Card padding="sm" className="space-y-3">
+    <Card className="space-y-3">
       <h2 className="kpi-label">Spesa rapida</h2>
 
       <div className="flex gap-3">

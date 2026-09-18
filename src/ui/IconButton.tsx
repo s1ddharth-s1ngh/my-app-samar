@@ -1,53 +1,36 @@
 import { type ButtonHTMLAttributes, forwardRef } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/cn';
-import {
-  glassButtonClass,
-  glassPrimaryButtonClass,
-  glassRowActionClass,
-  glassRowDestructiveActionClass,
-} from '@/lib/glass';
+import { ICON_ACTION, ICON_ACTION_DANGER } from '@/lib/surfaces';
 
 export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: LucideIcon;
-  variant?: 'primary' | 'secondary' | 'ghost' | 'destructive';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'quiet' | 'danger' | 'solid';
+  /** `sm` is the 28px row action; `md` stands on its own at 32px. */
+  size?: 'sm' | 'md';
   /** Required: the button carries no visible text. */
   label: string;
 }
 
-const VARIANTS: Record<NonNullable<IconButtonProps['variant']>, string> = {
-  primary: glassPrimaryButtonClass,
-  secondary: glassButtonClass,
-  ghost: glassRowActionClass,
-  destructive: glassRowDestructiveActionClass,
-};
-
-/** Row actions are 32px; anything that stands alone keeps a 44px touch target. */
-const SIZES = {
-  sm: 'h-8 w-8',
-  md: 'h-9 w-9',
-  lg: 'h-11 w-11',
-} as const;
-
-const ICON_SIZES = { sm: 15, md: 17, lg: 20 } as const;
-
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ icon: Icon, variant = 'ghost', size = 'md', className, label, ...props }, ref) => (
+  ({ icon: Icon, variant = 'quiet', size = 'sm', className, label, ...props }, ref) => (
     <button
       ref={ref}
       aria-label={label}
       title={label}
       className={cn(
-        'inline-flex items-center justify-center rounded-full',
-        'disabled:opacity-40 disabled:pointer-events-none',
-        VARIANTS[variant],
-        SIZES[size],
+        variant === 'danger'
+          ? ICON_ACTION_DANGER
+          : variant === 'solid'
+            ? 'h-7 w-7 inline-flex items-center justify-center rounded-full bg-white/[0.06] text-white hover:bg-white/[0.12] transition-colors'
+            : ICON_ACTION,
+        size === 'md' ? 'h-8 w-8' : 'h-7 w-7',
+        'disabled:pointer-events-none disabled:opacity-40',
         className
       )}
       {...props}
     >
-      <Icon size={ICON_SIZES[size]} aria-hidden="true" />
+      <Icon className={size === 'md' ? 'h-4 w-4' : 'h-3.5 w-3.5'} aria-hidden="true" />
     </button>
   )
 );

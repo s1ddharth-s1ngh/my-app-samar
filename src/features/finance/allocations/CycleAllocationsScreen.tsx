@@ -8,7 +8,7 @@ import {
   Chip,
   EmptyState,
   IconButton,
-  KpiCard,
+  StatCard,
   Money,
   MoneyInput,
   PageHeader,
@@ -37,7 +37,7 @@ export function CycleAllocationsScreen() {
   if (!activeCycle) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Ripartizione" backTo="/soldi" backLabel="Soldi" />
+        <PageHeader title="Ripartizione" breadcrumb={{ to: '/soldi', label: 'Soldi' }} />
         <EmptyState
           icon={Layers}
           title="Nessun ciclo aperto"
@@ -96,25 +96,20 @@ export function CycleAllocationsScreen() {
       <PageHeader
         title="Ripartizione"
         subtitle={activeCycle.label}
-        backTo="/soldi"
-        backLabel="Soldi"
-        action={
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => void syncAllocations(activeCycle.id)}
-          >
+        breadcrumb={{ to: '/soldi', label: 'Soldi' }}
+        actions={
+          <Button size="sm" variant="quiet" onClick={() => void syncAllocations(activeCycle.id)}>
             <RefreshCw size={16} aria-hidden="true" /> Ricalcola
           </Button>
         }
       />
 
       <div className="grid grid-cols-2 gap-3">
-        <KpiCard label="Allocato" value={<Money cents={totalPlanned} compact />} tone="primary" />
-        <KpiCard
+        <StatCard label="Allocato" value={<Money cents={totalPlanned} compact />} tone="brand" />
+        <StatCard
           label="Bloccate"
           value={`${lockedCount} su ${rows.length}`}
-          tone={lockedCount > 0 ? 'warning' : 'neutral'}
+          tone={lockedCount > 0 ? 'warn' : 'neutral'}
           hint={lockedCount > 0 ? 'Il motore le lascia stare' : 'Tutte automatiche'}
         />
       </div>
@@ -131,7 +126,7 @@ export function CycleAllocationsScreen() {
             const available = allocation.plannedAmount - allocation.actualAmount;
             return (
               <li key={allocation.id}>
-                <Card padding="sm" className="space-y-2">
+                <Card className="space-y-2">
                   <div className="flex items-center gap-3">
                     <span
                       className="h-2.5 w-2.5 rounded-full shrink-0"
@@ -139,10 +134,10 @@ export function CycleAllocationsScreen() {
                       aria-hidden="true"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-foreground truncate">
+                      <p className="font-medium text-white truncate">
                         {bucket?.name ?? 'Bucket rimosso'}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-white/45">
                         Speso <Money cents={allocation.actualAmount} compact /> · resta{' '}
                         <Money cents={available} compact />
                       </p>
@@ -150,7 +145,7 @@ export function CycleAllocationsScreen() {
 
                     <div className="flex items-center gap-1 shrink-0">
                       {allocation.isLocked && (
-                        <Chip variant="warning">
+                        <Chip variant="warn">
                           <Lock size={10} aria-hidden="true" />
                           Bloccata
                         </Chip>
@@ -175,10 +170,10 @@ export function CycleAllocationsScreen() {
                   </div>
 
                   {allocation.plannedAmount > 0 && (
-                    <div className="h-1 rounded-full bg-muted overflow-hidden">
+                    <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
                       <div
                         className={`h-full rounded-full ${
-                          available < 0 ? 'bg-destructive' : 'bg-primary'
+                          available < 0 ? 'bg-red-500' : 'bg-[#1E6FFF]'
                         }`}
                         style={{
                           width: `${Math.min(100, (allocation.actualAmount / allocation.plannedAmount) * 100)}%`,
@@ -199,7 +194,7 @@ export function CycleAllocationsScreen() {
         title="Correggi l’allocazione"
       >
         <div className="space-y-4 py-2">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-white/45">
             Se cambi questo importo a mano, il motore smette di ricalcolarlo: resterà così anche
             quando registri nuove entrate. Potrai sbloccarlo quando vuoi.
           </p>
@@ -212,7 +207,7 @@ export function CycleAllocationsScreen() {
             <Button className="flex-1" onClick={() => void handleSaveOverride()}>
               Blocca a questo importo
             </Button>
-            <Button variant="secondary" onClick={() => setEditing(null)}>
+            <Button variant="quiet" onClick={() => setEditing(null)}>
               Annulla
             </Button>
           </div>

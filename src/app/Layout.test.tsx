@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Layout } from './Layout';
+import { setViewportMatches } from '@/test/setup';
 
 function renderLayout(path = '/') {
   return render(
@@ -10,58 +12,78 @@ function renderLayout(path = '/') {
         <Route path="/" element={<Layout />}>
           <Route index element={<p>Contenuto</p>} />
           <Route path="soldi" element={<p>Soldi</p>} />
+          <Route path="soldi/entrate" element={<p>Entrate</p>} />
         </Route>
       </Routes>
     </MemoryRouter>
   );
 }
 
-describe('Layout', () => {
-  it('ships both navigations so the breakpoint can choose, not a resize listener', () => {
+afterEach(() => setViewportMatches(false));
+
+describe('Layout — desktop shell', () => {
+  it('renders the header, the two navigation cards and the page', () => {
     renderLayout();
 
-    const navs = screen.getAllByRole('navigation', { name: 'Navigazione principale' });
-    expect(navs).toHaveLength(2);
+    expect(screen.getByRole('navigation', { name: 'Aree' })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Sezioni di Oggi' })).toBeInTheDocument();
+    expect(screen.getByText('Contenuto')).toBeInTheDocument();
   });
 
-  it('hides the rail below md and the tab bar from md up', () => {
+  it('shows the sections of the area the route belongs to', () => {
+    renderLayout('/soldi/entrate');
+
+    const sections = screen.getByRole('navigation', { name: 'Sezioni di Soldi' });
+    expect(sections).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Entrate' })).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('keeps the area home lit only on an exact match', () => {
+    renderLayout('/soldi/entrate');
+
+    expect(screen.getByRole('link', { name: 'Panoramica' })).not.toHaveAttribute('aria-current');
+  });
+
+  it('collapses to the icon rail without losing the navigation', async () => {
     const { container } = renderLayout();
 
-    const rail = container.querySelector('aside');
-    expect(rail?.className).toContain('hidden');
-    expect(rail?.className).toContain('md:flex');
+    await userEvent.click(screen.getByRole('button', { name: 'Comprimi la barra' }));
 
-    const bottomBar = container.querySelector('.fixed.inset-x-0.bottom-0');
-    expect(bottomBar?.className).toContain('md:hidden');
+    // Still both cards, just narrower.
+    expect(screen.getByRole('navigation', { name: 'Aree' })).toBeInTheDocument();
+    expect(container.querySelector('aside')?.className).toContain('w-16');
   });
 
-  it('reveals the rail labels only at the desktop breakpoint', () => {
-    const { container } = renderLayout();
-
-    const label = container.querySelector('aside nav span');
-    expect(label?.className).toContain('hidden');
-    expect(label?.className).toContain('xl:inline');
+  it('does not mount the phone shell', () => {
+    renderLayout();
+    expect(screen.queryByRole('button', { name: 'Tutte le sezioni' })).not.toBeInTheDocument();
   });
+});
 
-  it('widens the content column at each breakpoint', () => {
-    const { container } = renderLayout();
-
-    const column = container.querySelector('main > div');
-    expect(column?.className).toContain('max-w-[560px]');
-    expect(column?.className).toContain('md:max-w-[760px]');
-    expect(column?.className).toContain('xl:max-w-[1100px]');
-  });
-
-  it('marks the current route in both navigations', () => {
+describe('Layout — phone shell', () => {
+  it('renders the top bar, the bottom bar and the launcher', () => {
+    setViewportMatches(true);
     renderLayout('/soldi');
 
-    const current = screen.getAllByRole('link', { current: 'page' });
-    expect(current).toHaveLength(2);
-    expect(current[0]).toHaveTextContent('Soldi');
+    expect(screen.getByRole('navigation', { name: 'Navigazione' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tutte le sezioni' })).toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: 'Aree' })).not.toBeInTheDocument();
   });
 
-  it('renders the routed screen', () => {
-    renderLayout();
-    expect(screen.getByText('Contenuto')).toBeInTheDocument();
+  it('titles the top bar with the current section', () => {
+    setViewportMatches(true);
+    renderLayout('/soldi/entrate');
+
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Entrate');
+  });
+
+  it('opens the launcher with the areas and the secondary sections', async () => {
+    setViewportMatches(true);
+    renderLayout('/soldi');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Tutte le sezioni' }));
+
+    expect(screen.getByText('Aree')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Spese ricorrenti' })).toBeInTheDocument();
   });
 });

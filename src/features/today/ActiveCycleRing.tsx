@@ -39,11 +39,11 @@ export function ActiveCycleRing() {
   }
 
   return (
-    <Card className="flex flex-col items-center" padding="lg">
+    <Card className="flex flex-col items-center">
       <div className="text-center">
         <p className="kpi-label">Ciclo in corso</p>
-        <h2 className="mt-1 text-lg font-semibold text-foreground">{activeCycle.label}</h2>
-        <p className="text-sm text-muted-foreground tabular-nums">
+        <h2 className="mt-1 text-lg font-semibold text-white">{activeCycle.label}</h2>
+        <p className="text-sm text-white/45 tabular-nums">
           Giorno {daysPassed} di {daysTotal}
         </p>
       </div>
@@ -67,9 +67,9 @@ export function ActiveCycleRing() {
                   style={{ backgroundColor: bucket.color }}
                   aria-hidden="true"
                 />
-                <span className="truncate text-muted-foreground">{bucket.name}</span>
+                <span className="truncate text-white/45">{bucket.name}</span>
               </span>
-              <Money cents={bucket.amount} className="font-medium text-foreground" />
+              <Money cents={bucket.amount} className="font-medium text-white" />
             </li>
           ))}
         </ul>

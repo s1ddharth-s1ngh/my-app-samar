@@ -17,34 +17,34 @@ export function CycleForecast() {
   const projectedAvailable = totals.income - totals.spent;
 
   return (
-    <Card padding="sm" className="space-y-3">
+    <Card className="space-y-3">
       <div className="flex items-center gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/45">
           <TrendingUp size={18} aria-hidden="true" />
         </span>
         <div className="min-w-0">
           <h2 className="kpi-label">Previsione di fine ciclo</h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-white/45">
             <Money cents={pending} /> di entrate previste non sono ancora arrivate.
           </p>
         </div>
       </div>
 
       <dl className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl border border-border bg-popover p-3">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.04] p-3">
           <dt className="kpi-label">Confermato</dt>
           <dd className="kpi-number mt-1">
             <Money cents={confirmedAvailable} compact />
           </dd>
-          <p className="mt-1 text-sm text-muted-foreground">Solo entrate ricevute</p>
+          <p className="mt-1 text-sm text-white/45">Solo entrate ricevute</p>
         </div>
 
-        <div className="rounded-xl border border-dashed border-warning/50 bg-warning/5 p-3">
+        <div className="rounded-xl border border-dashed border-amber-500/50 bg-amber-400/5 p-3">
           <dt className="kpi-label">Se arriva tutto</dt>
-          <dd className="kpi-number mt-1 text-warning">
+          <dd className="kpi-number mt-1 text-amber-300">
             <Money cents={projectedAvailable} compact />
           </dd>
-          <p className="mt-1 text-sm text-muted-foreground">Incluse le previste</p>
+          <p className="mt-1 text-sm text-white/45">Incluse le previste</p>
         </div>
       </dl>
     </Card>

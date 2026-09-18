@@ -13,10 +13,10 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
     return (
       <div className={`flex items-start justify-between gap-4 py-2 ${className}`}>
         <div className="flex flex-col gap-0.5 min-w-0">
-          <label htmlFor={id} className="text-[15px] font-medium text-foreground cursor-pointer">
+          <label htmlFor={id} className="text-[13px] font-medium text-white cursor-pointer">
             {label}
           </label>
-          {description && <p className="text-sm text-muted-foreground">{description}</p>}
+          {description && <p className="text-[11px] text-white/35">{description}</p>}
         </div>
         <label
           htmlFor={id}
@@ -35,14 +35,14 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
           />
           <span
             className="
-              block w-11 h-6 rounded-full bg-muted border border-border
+              block h-5 w-9 rounded-full border border-white/[0.08] bg-white/[0.06]
               transition-colors duration-200 motion-reduce:transition-none
-              peer-checked:bg-primary peer-checked:border-primary
-              peer-focus-visible:ring-2 peer-focus-visible:ring-primary
+              peer-checked:border-[#1E6FFF] peer-checked:bg-[#1E6FFF]
+              peer-focus-visible:ring-2 peer-focus-visible:ring-[#1E6FFF]
               after:content-[''] after:absolute after:top-1 after:left-1
-              after:h-4 after:w-4 after:rounded-full after:bg-foreground
+              after:h-3 after:w-3 after:rounded-full after:bg-white
               after:transition-transform after:duration-200 motion-reduce:after:transition-none
-              peer-checked:after:translate-x-5 peer-checked:after:bg-white
+              peer-checked:after:translate-x-4
  "
           />
         </label>

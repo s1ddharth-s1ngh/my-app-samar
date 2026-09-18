@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Home, LayoutGrid, List, Settings, Star } from 'lucide-react';
+import { Home, Settings, Star } from 'lucide-react';
 import {
   Button,
   Card,
@@ -9,11 +9,11 @@ import {
   EmptyState,
   Field,
   IconButton,
-  KpiCard,
+  StatCard,
   Money,
   MoneyInput,
   PageHeader,
-  Segmented,
+  TabPills,
   Select,
   Sheet,
   Toggle,
@@ -59,41 +59,40 @@ export function DevUIScreen() {
       <Section title="Bottoni">
         <div className="flex flex-wrap items-center gap-3">
           <Button>Primario</Button>
-          <Button variant="secondary">Secondario</Button>
+          <Button variant="quiet">Secondario</Button>
           <Button variant="ghost">Ghost</Button>
-          <Button variant="destructive">Distruttivo</Button>
+          <Button variant="danger">Distruttivo</Button>
           <Button disabled>Disabilitato</Button>
           <IconButton icon={Star} label="Preferito" />
-          <IconButton icon={Star} label="Preferito" variant="secondary" />
-          <IconButton icon={Star} label="Elimina" variant="destructive" />
+          <IconButton icon={Star} label="Preferito" variant="quiet" />
+          <IconButton icon={Star} label="Elimina" variant="danger" />
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Button size="sm">Piccolo</Button>
           <Button size="md">Medio</Button>
-          <Button size="lg">Grande</Button>
+          <Button size="md">Grande</Button>
         </div>
       </Section>
 
       <Section title="Segmented">
-        <Segmented
+        <TabPills
           ariaLabel="Stato"
           value={segment}
           onChange={setSegment}
-          options={[
-            { value: 'all', label: 'Tutti' },
-            { value: 'active', label: 'Attivi' },
-            { value: 'inactive', label: 'Inattivi' },
+          items={[
+            { id: 'all', label: 'Tutti' },
+            { id: 'active', label: 'Attivi' },
+            { id: 'inactive', label: 'Inattivi' },
           ]}
           className="max-w-xs"
         />
-        <Segmented
+        <TabPills
           ariaLabel="Vista"
-          compact
           value={view}
           onChange={setView}
-          options={[
-            { value: 'list', label: <List size={15} aria-hidden="true" />, title: 'Lista' },
-            { value: 'grid', label: <LayoutGrid size={15} aria-hidden="true" />, title: 'Griglia' },
+          items={[
+            { id: 'list', label: 'Lista' },
+            { id: 'grid', label: 'Griglia' },
           ]}
           className="w-20"
         />
@@ -130,8 +129,8 @@ export function DevUIScreen() {
           <span className="status-chip status-error">Errore</span>
           <span className="status-chip status-current">Corrente</span>
           <span className="filter-chip">Filtro ereditato</span>
-          <Chip variant="success">Chip</Chip>
-          <Chip variant="error" onDelete={() => addToast('Rimosso.', 'info')}>
+          <Chip variant="good">Chip</Chip>
+          <Chip variant="bad" onDelete={() => addToast('Rimosso.', 'info')}>
             Rimovibile
           </Chip>
         </div>
@@ -139,25 +138,25 @@ export function DevUIScreen() {
 
       <Section title="Metriche">
         <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-          <KpiCard label="Neutro" value={<Money cents={123456} compact />} icon={Home} />
-          <KpiCard label="Corrente" value={<Money cents={98000} compact />} tone="primary" />
-          <KpiCard
+          <StatCard label="Neutro" value={<Money cents={123456} compact />} icon={Home} />
+          <StatCard label="Corrente" value={<Money cents={98000} compact />} tone="brand" />
+          <StatCard
             label="Con barra"
             value={<Money cents={45000} compact />}
             progress={0.62}
-            tone="success"
+            tone="good"
           />
-          <KpiCard
+          <StatCard
             label="Scoperto"
             value={<Money cents={-12000} compact />}
-            tone="destructive"
+            tone="bad"
             hint="Sei oltre il budget"
           />
         </div>
       </Section>
 
       <Section title="Anello del ciclo">
-        <Card className="flex justify-center" padding="lg">
+        <Card className="flex justify-center">
           <CycleRing
             daysTotal={30}
             daysPassed={12}
@@ -174,29 +173,28 @@ export function DevUIScreen() {
       <Section title="Contenitori">
         <div className="grid gap-3 md:grid-cols-2">
           <Card>Card standard</Card>
-          <Card interactive>Card cliccabile</Card>
+          <Card className="cursor-pointer transition-colors hover:bg-white/[0.03]">
+            Card cliccabile
+          </Card>
         </div>
         <Divider />
         <EmptyState
           icon={Settings}
           title="Nessun elemento trovato"
           description="Prova a modificare i filtri di ricerca."
-          action={<Button onClick={() => setIsSheetOpen(true)}>Apri lo sheet</Button>}
+          actions={<Button onClick={() => setIsSheetOpen(true)}>Apri lo sheet</Button>}
         />
       </Section>
 
       <Section title="Notifiche">
         <div className="flex flex-wrap gap-3">
-          <Button variant="secondary" onClick={() => addToast('Salvato.', 'success')}>
+          <Button variant="quiet" onClick={() => addToast('Salvato.', 'success')}>
             Successo
           </Button>
-          <Button variant="secondary" onClick={() => addToast('Informazione.', 'info')}>
+          <Button variant="quiet" onClick={() => addToast('Informazione.', 'info')}>
             Info
           </Button>
-          <Button
-            variant="secondary"
-            onClick={() => addToast('Qualcosa è andato storto.', 'error')}
-          >
+          <Button variant="quiet" onClick={() => addToast('Qualcosa è andato storto.', 'error')}>
             Errore
           </Button>
         </div>
@@ -204,7 +202,7 @@ export function DevUIScreen() {
 
       <Sheet isOpen={isSheetOpen} onClose={() => setIsSheetOpen(false)} title="Uno sheet">
         <div className="space-y-4 py-2">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-white/45">
             Sul telefono sale dal basso, da tablet in su è una modale centrata.
           </p>
           <Field label="Un campo" placeholder="Scrivi qui" />

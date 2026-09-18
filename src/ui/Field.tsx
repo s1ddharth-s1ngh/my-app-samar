@@ -1,4 +1,6 @@
 import { type InputHTMLAttributes, forwardRef, useId } from 'react';
+import { cn } from '@/lib/cn';
+import { MICRO_LABEL } from '@/lib/surfaces';
 import { inputClasses } from './inputStyles';
 
 export interface FieldProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -14,7 +16,7 @@ export const Field = forwardRef<HTMLInputElement, FieldProps>(
 
     return (
       <div className={`space-y-1.5 ${className}`}>
-        <label htmlFor={id} className="kpi-label block">
+        <label htmlFor={id} className={cn(MICRO_LABEL, 'block')}>
           {label}
         </label>
         <input
@@ -26,11 +28,11 @@ export const Field = forwardRef<HTMLInputElement, FieldProps>(
           {...props}
         />
         {error ? (
-          <p id={`${id}-error`} className="text-sm text-destructive">
+          <p id={`${id}-error`} className="text-[11px] text-red-300">
             {error}
           </p>
         ) : helpText ? (
-          <p id={`${id}-help`} className="text-sm text-muted-foreground">
+          <p id={`${id}-help`} className="text-[11px] text-white/35">
             {helpText}
           </p>
         ) : null}

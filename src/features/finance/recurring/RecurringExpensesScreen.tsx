@@ -129,8 +129,8 @@ export function RecurringExpensesScreen() {
     <div className="space-y-6">
       <header className="flex justify-between items-start gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Spese ricorrenti</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-2xl font-bold text-white">Spese ricorrenti</h1>
+          <p className="text-sm text-white/45">
             Le uscite che tornano ogni mese, con il bucket da cui escono.
           </p>
         </div>
@@ -140,7 +140,7 @@ export function RecurringExpensesScreen() {
       </header>
 
       {buckets.length === 0 && (
-        <Card className="text-sm text-muted-foreground">
+        <Card className="text-sm text-white/45">
           Prima crea almeno un bucket: una spesa ricorrente deve sapere da dove esce il soldo.
         </Card>
       )}
@@ -150,7 +150,7 @@ export function RecurringExpensesScreen() {
           icon={CalendarClock}
           title="Nessuna spesa ricorrente"
           description="Affitto, bollette, palestra: registra la prima e sapremo cosa aspettarci ogni ciclo."
-          action={
+          actions={
             <Button onClick={openCreate} disabled={buckets.length === 0}>
               Registra la prima
             </Button>
@@ -160,10 +160,10 @@ export function RecurringExpensesScreen() {
         <ul className="space-y-3">
           {expenses.map((expense) => (
             <li key={expense.id}>
-              <Card className="flex items-center justify-between gap-4" padding="sm">
+              <Card className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
-                  <h2 className="font-semibold text-foreground truncate">{expense.name}</h2>
-                  <p className="text-sm text-muted-foreground">
+                  <h2 className="font-semibold text-white truncate">{expense.name}</h2>
+                  <p className="text-sm text-white/45">
                     Il {expense.dayOfMonth} · {bucketName(expense.bucketId)}
                     {expense.createsTask ? ' · crea un task' : ''}
                   </p>
@@ -180,7 +180,7 @@ export function RecurringExpensesScreen() {
                     icon={Trash2}
                     label={'Elimina ' + expense.name}
                     size="sm"
-                    variant="destructive"
+                    variant="danger"
                     onClick={() => void handleRemove(expense.id, expense.name)}
                   />
                 </div>
@@ -193,7 +193,7 @@ export function RecurringExpensesScreen() {
       <div className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+108px)] right-4 md:hidden">
         <Button
           onClick={openCreate}
-          variant="primary"
+          variant="brand"
           className="h-14 w-14 rounded-full p-0"
           aria-label="Nuova spesa ricorrente"
         >
@@ -247,7 +247,7 @@ export function RecurringExpensesScreen() {
             <Button className="flex-1" onClick={() => void handleSave()}>
               Salva la spesa
             </Button>
-            <Button variant="secondary" onClick={() => setIsSheetOpen(false)}>
+            <Button variant="quiet" onClick={() => setIsSheetOpen(false)}>
               Annulla
             </Button>
           </div>

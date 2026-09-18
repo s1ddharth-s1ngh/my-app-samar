@@ -10,11 +10,11 @@ const DUE_FORMAT = new Intl.DateTimeFormat('it-IT', {
   minute: '2-digit',
 });
 
-const PRIORITY_VARIANT: Record<Task['priority'], 'neutral' | 'primary' | 'warning' | 'error'> = {
+const PRIORITY_VARIANT: Record<Task['priority'], 'neutral' | 'warn' | 'bad'> = {
   0: 'neutral',
   1: 'neutral',
-  2: 'warning',
-  3: 'error',
+  2: 'warn',
+  3: 'bad',
 };
 
 export interface TaskRowProps {
@@ -41,29 +41,29 @@ export function TaskRow({
   const isOverdue = task.dueAt !== null && !isDone && new Date(task.dueAt) < new Date();
 
   return (
-    <Card padding="sm" className={`flex items-center gap-3 ${isDone ? 'opacity-60' : ''}`}>
+    <Card className={`flex items-center gap-3 ${isDone ? 'opacity-60' : ''}`}>
       <button
         type="button"
         onClick={() => onToggle(task)}
         aria-pressed={isDone}
         aria-label={isDone ? `Riapri ${task.title}` : `Completa ${task.title}`}
         className={`h-6 w-6 shrink-0 rounded-full border-2 flex items-center justify-center transition-colors motion-reduce:transition-none ${
-          isDone ? 'bg-primary border-primary text-white' : 'border-border hover:border-primary'
+          isDone
+            ? 'bg-[#1E6FFF] border-[#1E6FFF] text-white'
+            : 'border-white/[0.06] hover:border-[#1E6FFF]'
         }`}
       >
         {isDone && <Check size={14} strokeWidth={3} aria-hidden="true" />}
       </button>
 
       <div className="min-w-0 flex-1">
-        <p
-          className={`truncate ${isDone ? 'line-through text-muted-foreground' : 'text-foreground'}`}
-        >
+        <p className={`truncate ${isDone ? 'line-through text-white/45' : 'text-white'}`}>
           {task.title}
         </p>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2 text-sm text-white/45">
           {contextLabel && <span className="truncate">{contextLabel}</span>}
           {task.dueAt && (
-            <span className={isOverdue ? 'text-destructive' : undefined}>
+            <span className={isOverdue ? 'text-red-300' : undefined}>
               {DUE_FORMAT.format(new Date(task.dueAt))}
             </span>
           )}
@@ -103,7 +103,7 @@ export function TaskRow({
             icon={Trash2}
             label={`Elimina ${task.title}`}
             size="sm"
-            variant="destructive"
+            variant="danger"
             onClick={() => onRemove(task)}
           />
         )}

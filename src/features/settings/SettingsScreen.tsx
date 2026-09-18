@@ -1,7 +1,7 @@
 import { useDataStore } from '@/stores/useDataStore';
 import { useThemeStore } from '@/stores/useThemeStore';
 import type { Theme } from '@/stores/useThemeStore';
-import { Button, Card, Select, Divider, Segmented } from '@/ui';
+import { Button, Card, Select, Divider, TabPills } from '@/ui';
 import { GLASS_TRANSPARENCY_PRESETS } from '@/lib/glass';
 import { FinancialSettingsSection } from './FinancialSettingsSection';
 
@@ -40,10 +40,10 @@ export function SettingsScreen() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-foreground">Impostazioni</h1>
+      <h1 className="text-2xl font-bold text-white">Impostazioni</h1>
 
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-foreground">Aspetto</h2>
+        <h2 className="text-lg font-semibold text-white">Aspetto</h2>
         <Select
           label="Tema dell'applicazione"
           value={theme}
@@ -55,16 +55,16 @@ export function SettingsScreen() {
 
         <div className="space-y-1.5">
           <p className="kpi-label">Trasparenza del vetro</p>
-          <Segmented
+          <TabPills
             ariaLabel="Trasparenza del vetro"
             value={String(glassTransparency)}
-            onChange={(value) => setGlassTransparency(Number(value))}
-            options={GLASS_TRANSPARENCY_PRESETS.map((preset) => ({
-              value: String(preset.value),
+            onChange={(value: string) => setGlassTransparency(Number(value))}
+            items={GLASS_TRANSPARENCY_PRESETS.map((preset) => ({
+              id: String(preset.value),
               label: preset.label,
             }))}
           />
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-white/45">
             Sfoca e opacizza insieme, come il cursore di iOS 27. Se hai chiesto meno trasparenza al
             sistema, il vetro resta opaco comunque.
           </p>
@@ -78,16 +78,16 @@ export function SettingsScreen() {
       <Divider />
 
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-foreground">Dati</h2>
-        <Card className="space-y-4" padding="sm">
-          <p className="text-sm text-muted-foreground">
+        <h2 className="text-lg font-semibold text-white">Dati</h2>
+        <Card className="space-y-4">
+          <p className="text-sm text-white/45">
             I dati di esempio sostituiscono tutto quello che hai adesso. Svuotare è irreversibile.
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
-            <Button variant="secondary" onClick={() => void handleLoadSeed()}>
+            <Button variant="quiet" onClick={() => void handleLoadSeed()}>
               Carica i dati di esempio
             </Button>
-            <Button variant="destructive" onClick={() => void handleReset()}>
+            <Button variant="danger" onClick={() => void handleReset()}>
               Svuota tutto
             </Button>
           </div>

@@ -1,5 +1,5 @@
 import { ArrowDownRight, Layers, PiggyBank, Wallet } from 'lucide-react';
-import { KpiCard, Money, PageHeader } from '@/ui';
+import { StatCard, Money, PageHeader } from '@/ui';
 import { CycleBanner } from '../cycles/CycleBanner';
 import { QuickSpendForm } from './QuickSpendForm';
 import { useCycleTotals } from '../finance/useCycleTotals';
@@ -35,14 +35,14 @@ export default function TodayScreen() {
 
       {totals.cycle && (
         <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-          <KpiCard
+          <StatCard
             label="Disponibile"
             value={<Money cents={totals.available} compact />}
             icon={Wallet}
-            tone={totals.available < 0 ? 'destructive' : 'primary'}
+            tone={totals.available < 0 ? 'bad' : 'brand'}
             hint={totals.available < 0 ? 'Sei oltre il budget' : 'Su tutti i bucket'}
           />
-          <KpiCard
+          <StatCard
             label="Entrate"
             value={<Money cents={totals.income} compact />}
             icon={PiggyBank}
@@ -52,17 +52,17 @@ export default function TodayScreen() {
                 : 'Incluse quelle previste'
             }
           />
-          <KpiCard
+          <StatCard
             label="Allocato"
             value={<Money cents={totals.allocated} compact />}
             icon={Layers}
           />
-          <KpiCard
+          <StatCard
             label="Speso"
             value={<Money cents={totals.spent} compact />}
             icon={ArrowDownRight}
             progress={totals.allocated > 0 ? totals.spent / totals.allocated : undefined}
-            tone={totals.spent > totals.allocated ? 'destructive' : 'neutral'}
+            tone={totals.spent > totals.allocated ? 'bad' : 'neutral'}
             hint={length > 0 ? `Giorno ${elapsed} di ${length}` : undefined}
           />
         </div>

@@ -27,18 +27,18 @@ export function ChartFrame({ title, summary, caption, table, children }: ChartFr
   const tableId = useId();
 
   return (
-    <Card padding="sm" className="space-y-3">
+    <Card className="space-y-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="kpi-label">{title}</h3>
-          {caption && <p className="mt-1 text-sm text-muted-foreground">{caption}</p>}
+          {caption && <p className="mt-1 text-sm text-white/45">{caption}</p>}
         </div>
         <button
           type="button"
           onClick={() => setShowTable((value) => !value)}
           aria-expanded={showTable}
           aria-controls={tableId}
-          className="inline-flex items-center gap-1.5 shrink-0 rounded-full border border-border px-2.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.04em] text-muted-foreground hover:text-foreground hover:border-border transition-colors"
+          className="inline-flex items-center gap-1.5 shrink-0 rounded-full border border-white/[0.06] px-2.5 py-1.5 text-[11px] font-medium uppercase tracking-[0.04em] text-white/45 hover:text-white hover:border-white/[0.06] transition-colors"
         >
           <Table2 size={12} aria-hidden="true" />
           {showTable ? 'Grafico' : 'Dati'}
@@ -49,7 +49,7 @@ export function ChartFrame({ title, summary, caption, table, children }: ChartFr
         <div id={tableId} className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border">
+              <tr className="border-b border-white/[0.06]">
                 {table.columns.map((column, index) => (
                   <th
                     key={column}
@@ -63,14 +63,12 @@ export function ChartFrame({ title, summary, caption, table, children }: ChartFr
             </thead>
             <tbody>
               {table.rows.map((row) => (
-                <tr key={String(row[0])} className="border-b border-border last:border-0">
+                <tr key={String(row[0])} className="border-b border-white/[0.06] last:border-0">
                   {row.map((cell, index) => (
                     <td
                       key={index}
                       className={`py-2 ${
-                        index === 0
-                          ? 'text-foreground'
-                          : 'text-right tabular-nums text-muted-foreground'
+                        index === 0 ? 'text-white' : 'text-right tabular-nums text-white/45'
                       }`}
                     >
                       {cell}

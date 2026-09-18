@@ -8,7 +8,7 @@ import {
   EmptyState,
   Field,
   IconButton,
-  KpiCard,
+  StatCard,
   Money,
   MoneyInput,
   PageHeader,
@@ -170,7 +170,7 @@ export function TransactionsScreen() {
   if (!activeCycle) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Movimenti" backTo="/soldi" backLabel="Soldi" />
+        <PageHeader title="Movimenti" breadcrumb={{ to: '/soldi', label: 'Soldi' }} />
         <EmptyState
           icon={Receipt}
           title="Nessun ciclo aperto"
@@ -185,16 +185,15 @@ export function TransactionsScreen() {
       <PageHeader
         title="Movimenti"
         subtitle={activeCycle.label}
-        backTo="/soldi"
-        backLabel="Soldi"
-        action={
+        breadcrumb={{ to: '/soldi', label: 'Soldi' }}
+        actions={
           <Button size="sm" onClick={openCreate}>
             <Plus size={16} aria-hidden="true" /> Aggiungi
           </Button>
         }
       />
 
-      <KpiCard
+      <StatCard
         label={bucketFilter === ALL ? 'Speso nel periodo' : `Speso su ${bucketName(bucketFilter)}`}
         value={<Money cents={total} />}
         hint={`${visible.length} ${visible.length === 1 ? 'movimento' : 'movimenti'}`}
@@ -223,7 +222,7 @@ export function TransactionsScreen() {
           icon={Receipt}
           title="Nessun movimento"
           description="Con questi filtri non c’è niente da mostrare. Registra la prima spesa."
-          action={<Button onClick={openCreate}>Registra una spesa</Button>}
+          actions={<Button onClick={openCreate}>Registra una spesa</Button>}
         />
       ) : (
         <div className="space-y-5">
@@ -233,10 +232,10 @@ export function TransactionsScreen() {
               <ul className="space-y-2">
                 {items.map((item) => (
                   <li key={item.id}>
-                    <Card padding="sm" className="flex items-center gap-3">
+                    <Card className="flex items-center gap-3">
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium text-foreground truncate">{item.description}</p>
-                        <p className="text-sm text-muted-foreground truncate">
+                        <p className="font-medium text-white truncate">{item.description}</p>
+                        <p className="text-sm text-white/45 truncate">
                           {bucketName(item.bucketId)}
                         </p>
                       </div>
@@ -245,7 +244,7 @@ export function TransactionsScreen() {
                         icon={Trash2}
                         label={`Elimina ${item.description}`}
                         size="sm"
-                        variant="destructive"
+                        variant="danger"
                         onClick={() => void handleRemove(item)}
                       />
                     </Card>
@@ -298,7 +297,7 @@ export function TransactionsScreen() {
               <Button className="flex-1" onClick={() => void handleSave()}>
                 Registra il movimento
               </Button>
-              <Button variant="secondary" onClick={() => setIsSheetOpen(false)}>
+              <Button variant="quiet" onClick={() => setIsSheetOpen(false)}>
                 Annulla
               </Button>
             </div>

@@ -40,7 +40,7 @@ export function ProjectDetailsScreen() {
   if (!isInbox && !project) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Progetto" backTo="/progetti" backLabel="Progetti" />
+        <PageHeader title="Progetto" breadcrumb={{ to: '/progetti', label: 'Progetti' }} />
         <EmptyState
           icon={Check}
           title="Progetto non trovato"
@@ -121,8 +121,7 @@ export function ProjectDetailsScreen() {
         subtitle={
           isInbox ? 'Task senza progetto' : (project?.description ?? `${open.length} da fare`)
         }
-        backTo="/progetti"
-        backLabel="Progetti"
+        breadcrumb={{ to: '/progetti', label: 'Progetti' }}
       />
 
       <form onSubmit={(event) => void handleQuickCreate(event)} className="flex gap-2 items-end">
@@ -138,7 +137,7 @@ export function ProjectDetailsScreen() {
         </Button>
         <Button
           type="button"
-          variant="secondary"
+          variant="quiet"
           onClick={() => setIsAdvancedOpen(true)}
           aria-label="Nuovo task a tempo"
         >
@@ -222,7 +221,7 @@ export function ProjectDetailsScreen() {
             >
               Crea il task
             </Button>
-            <Button variant="secondary" onClick={() => setIsAdvancedOpen(false)}>
+            <Button variant="quiet" onClick={() => setIsAdvancedOpen(false)}>
               Annulla
             </Button>
           </div>

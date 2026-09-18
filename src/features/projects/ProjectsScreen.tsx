@@ -163,7 +163,7 @@ export default function ProjectsScreen() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Progetti</h1>
-          <p className="text-sm text-muted-foreground">Gestisci i tuoi obiettivi e task</p>
+          <p className="text-sm text-white/45">Gestisci i tuoi obiettivi e task</p>
         </div>
         <Button onClick={handleOpenCreate} size="sm" className="hidden sm:inline-flex">
           <Plus size={16} className="mr-2" /> Nuovo
@@ -175,7 +175,7 @@ export default function ProjectsScreen() {
           icon={Folder}
           title="Nessun progetto"
           description="Crea il tuo primo progetto per iniziare a organizzare i task."
-          action={<Button onClick={handleOpenCreate}>Crea progetto</Button>}
+          actions={<Button onClick={handleOpenCreate}>Crea progetto</Button>}
         />
       ) : (
         <div className="space-y-3">
@@ -183,7 +183,7 @@ export default function ProjectsScreen() {
             <Card
               id={`proj-${proj.id}`}
               key={proj.id}
-              className="flex items-center p-3 gap-3 cursor-move hover:border-border transition-colors"
+              className="flex items-center p-3 gap-3 cursor-move hover:border-white/[0.06] transition-colors"
               draggable
               onDragStart={(e) => handleDragStart(e, proj.id)}
               onDragEnd={(e) => handleDragEnd(e, proj.id)}
@@ -192,7 +192,7 @@ export default function ProjectsScreen() {
               onClick={() => navigate(`/progetti/${proj.id}`)}
             >
               <div
-                className="text-muted-foreground cursor-grab active:cursor-grabbing shrink-0"
+                className="text-white/45 cursor-grab active:cursor-grabbing shrink-0"
                 onClick={(e) => e.stopPropagation()}
               >
                 <GripVertical size={20} />
@@ -212,9 +212,7 @@ export default function ProjectsScreen() {
                   )}
                 </div>
                 {proj.description && (
-                  <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">
-                    {proj.description}
-                  </p>
+                  <p className="text-xs text-white/45 line-clamp-1 mt-0.5">{proj.description}</p>
                 )}
               </div>
               <div className="flex gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
@@ -228,7 +226,7 @@ export default function ProjectsScreen() {
                   icon={Trash2}
                   label="Elimina"
                   size="sm"
-                  variant="destructive"
+                  variant="danger"
                   onClick={() => handleRemove(proj.id, proj.name)}
                 />
               </div>
@@ -300,7 +298,7 @@ export default function ProjectsScreen() {
             <Button className="flex-1" onClick={handleSave}>
               Salva
             </Button>
-            <Button variant="secondary" onClick={() => setIsSheetOpen(false)}>
+            <Button variant="quiet" onClick={() => setIsSheetOpen(false)}>
               Annulla
             </Button>
           </div>

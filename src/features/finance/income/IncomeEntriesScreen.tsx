@@ -9,7 +9,7 @@ import {
   EmptyState,
   Field,
   IconButton,
-  KpiCard,
+  StatCard,
   Money,
   MoneyInput,
   PageHeader,
@@ -172,7 +172,7 @@ export function IncomeEntriesScreen() {
   if (!activeCycle) {
     return (
       <div className="space-y-6">
-        <PageHeader title="Entrate" backTo="/soldi" backLabel="Soldi" />
+        <PageHeader title="Entrate" breadcrumb={{ to: '/soldi', label: 'Soldi' }} />
         <EmptyState
           icon={TrendingUp}
           title="Nessun ciclo aperto"
@@ -187,9 +187,8 @@ export function IncomeEntriesScreen() {
       <PageHeader
         title="Entrate"
         subtitle={activeCycle.label}
-        backTo="/soldi"
-        backLabel="Soldi"
-        action={
+        breadcrumb={{ to: '/soldi', label: 'Soldi' }}
+        actions={
           <Button size="sm" onClick={openCreate} disabled={activeSources.length === 0}>
             <Plus size={16} aria-hidden="true" /> Registra
           </Button>
@@ -197,12 +196,12 @@ export function IncomeEntriesScreen() {
       />
 
       <div className="grid grid-cols-2 gap-3">
-        <KpiCard label="Ricevute" value={<Money cents={received} compact />} tone="success" />
-        <KpiCard label="Previste" value={<Money cents={expected} compact />} tone="warning" />
+        <StatCard label="Ricevute" value={<Money cents={received} compact />} tone="good" />
+        <StatCard label="Previste" value={<Money cents={expected} compact />} tone="warn" />
       </div>
 
       {activeSources.length === 0 && (
-        <Card padding="sm" className="text-sm text-muted-foreground">
+        <Card className="text-sm text-white/45">
           Prima crea una fonte di entrata: un movimento in entrata deve sapere da dove arriva.
         </Card>
       )}
@@ -212,7 +211,7 @@ export function IncomeEntriesScreen() {
           icon={TrendingUp}
           title="Nessuna entrata in questo ciclo"
           description="Registra la prima: da lì il motore calcola le allocazioni dei bucket."
-          action={
+          actions={
             <Button onClick={openCreate} disabled={activeSources.length === 0}>
               Registra la prima
             </Button>
@@ -222,12 +221,10 @@ export function IncomeEntriesScreen() {
         <ul className="space-y-2">
           {cycleEntries.map((entry) => (
             <li key={entry.id}>
-              <Card padding="sm" className="flex items-center gap-3">
+              <Card className="flex items-center gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium text-foreground truncate">
-                    {sourceName(entry.sourceId)}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="font-medium text-white truncate">{sourceName(entry.sourceId)}</p>
+                  <p className="text-sm text-white/45">
                     {DATE_FORMAT.format(parseCalendarDate(entry.date))}
                     {entry.note ? ` · ${entry.note}` : ''}
                   </p>
@@ -237,7 +234,7 @@ export function IncomeEntriesScreen() {
                   <Money
                     cents={entry.amount}
                     className={`font-semibold ${
-                      entry.status === 'expected' ? 'text-muted-foreground' : 'text-foreground'
+                      entry.status === 'expected' ? 'text-white/45' : 'text-white'
                     }`}
                   />
                   <button
@@ -247,7 +244,7 @@ export function IncomeEntriesScreen() {
                       entry.status === 'received' ? 'Segna come prevista' : 'Segna come ricevuta'
                     }
                   >
-                    <Chip variant={entry.status === 'received' ? 'success' : 'warning'}>
+                    <Chip variant={entry.status === 'received' ? 'good' : 'warn'}>
                       {entry.status === 'received' ? (
                         <Check size={10} aria-hidden="true" />
                       ) : (
@@ -260,7 +257,7 @@ export function IncomeEntriesScreen() {
                     icon={Trash2}
                     label={`Elimina l’entrata da ${sourceName(entry.sourceId)}`}
                     size="sm"
-                    variant="destructive"
+                    variant="danger"
                     onClick={() => void handleRemove(entry)}
                   />
                 </div>
@@ -320,7 +317,7 @@ export function IncomeEntriesScreen() {
               <Button className="flex-1" onClick={() => void handleSave()}>
                 Registra l’entrata
               </Button>
-              <Button variant="secondary" onClick={() => setIsSheetOpen(false)}>
+              <Button variant="quiet" onClick={() => setIsSheetOpen(false)}>
                 Annulla
               </Button>
             </div>

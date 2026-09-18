@@ -5,16 +5,16 @@ import { cn } from '@/lib/cn';
 export interface ChipProps extends HTMLAttributes<HTMLSpanElement> {
   children: ReactNode;
   /** Status is soft, never a filled badge. Inactive is muted grey, not red. */
-  variant?: 'neutral' | 'primary' | 'success' | 'warning' | 'error';
+  variant?: 'neutral' | 'brand' | 'good' | 'warn' | 'bad';
   onDelete?: () => void;
 }
 
 const VARIANTS = {
   neutral: '',
-  primary: 'status-current',
-  success: 'status-active',
-  warning: 'status-warning',
-  error: 'status-error',
+  brand: 'status-brand',
+  good: 'status-good',
+  warn: 'status-warn',
+  bad: 'status-bad',
 } as const;
 
 export const Chip = forwardRef<HTMLSpanElement, ChipProps>(

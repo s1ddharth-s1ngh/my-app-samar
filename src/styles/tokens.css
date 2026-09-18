@@ -1,111 +1,59 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens — liquid glass, dark enterprise.
+ * Design tokens — transcribed from the NexSuite frontend.
  *
- * Rules this file encodes (see docs/DECISIONS.md):
- *  - only HSL tokens, never a hex or a raw Tailwind colour in a component;
- *  - colour is information: `success` for positive states, `primary` for real
- *    primary actions and "current", `destructive` for genuine errors. Nothing
- *    is coloured to look important;
- *  - depth comes from 1px low-opacity borders and the luminosity step between
- *    `--background` (page) and `--card` (panel), not from shadows;
- *  - two radius families only: `rounded-full` for everything interactive on the
- *    surface, `rounded-xl` for containers.
+ * The rules that system actually follows, in its own idiom:
+ *  - the canvas is pure black; every surface is a card floating on it, told
+ *    apart by a hairline `border-white/[0.06]`, not by a shadow;
+ *  - text is white at a fixed opacity ladder (85 / 70 / 55 / 45 / 40 / 35 / 30)
+ *    — that ladder IS the hierarchy, so there are no grey hexes;
+ *  - one brand blue, `#1E6FFF`, for the selected state and real primary
+ *    actions; `#67a8f3` for inline links. Green and red only for deltas;
+ *  - dense type: 9.5 / 10 / 10.5 / 11 / 12 / 13 / 14px, with 28px reserved for
+ *    the headline figure of a metric card;
+ *  - containers are `rounded-[20px]`, controls are `rounded-full`.
  */
 
 @theme {
-  /* Canonical names — the ones component recipes use. */
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--foreground));
-  --color-popover: hsl(var(--popover));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-border: hsl(var(--border));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-success: hsl(var(--success));
-  --color-warning: hsl(var(--warning));
-  --color-destructive: hsl(var(--destructive));
+  --color-canvas: #000000;
+  --color-card: #111111;
+  --color-card-raised: #121212;
+
+  --color-brand: #1e6fff;
+  --color-brand-soft: #67a8f3;
+
+  --color-good: #34d399;
+  --color-bad: #fca5a5;
+  --color-warn: #f59e0b;
 
   --font-sans: 'Urbanist Variable', 'Urbanist', system-ui, sans-serif;
-  --font-heading: 'Urbanist Variable', 'Urbanist', system-ui, sans-serif;
 
-  /* Two families, and only two. `rounded-xl` is the container radius; every
-     interactive surface element is `rounded-full`. */
   --radius-xl: 0.75rem;
-  --radius-lg: 0.625rem;
 }
 
-/* --- dark: the base theme --- */
 :root {
   color-scheme: dark;
-
-  --background: 220 7% 7%;
-  --card: 220 7% 11%;
-  --popover: 220 7% 9%;
-  --muted: 220 6% 16%;
-
-  --foreground: 0 0% 98%;
-  --muted-foreground: 220 6% 62%;
-  --faint-foreground: 220 6% 45%;
-
-  --border: 220 6% 18%;
-  --border-strong: 220 6% 26%;
-
-  --primary: 218 100% 60%;
-  --primary-strong: 218 100% 68%;
-  --primary-foreground: 0 0% 100%;
-
-  --success: 142 66% 48%;
-  --warning: 38 92% 55%;
-  --destructive: 0 80% 63%;
+  /* Kept for the iOS 27 material layer, which reads this attribute. */
 }
 
-/* --- light: same roles, daylight values --- */
-:root.light {
-  color-scheme: light;
-
-  --background: 220 14% 96%;
-  --card: 0 0% 100%;
-  --popover: 0 0% 100%;
-  --muted: 220 14% 93%;
-
-  --foreground: 220 20% 9%;
-  --muted-foreground: 220 9% 40%;
-  --faint-foreground: 220 9% 52%;
-
-  --border: 220 13% 88%;
-  --border-strong: 220 13% 78%;
-
-  --primary: 218 90% 50%;
-  --primary-strong: 218 90% 42%;
-  --primary-foreground: 0 0% 100%;
-
-  --success: 142 70% 33%;
-  --warning: 32 90% 40%;
-  --destructive: 0 72% 48%;
-}
-
-html {
-  background-color: hsl(var(--background));
+html,
+body {
+  background-color: #000000;
+  color: #ffffff;
 }
 
 body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
   font-family: var(--font-sans);
-  /* Dense but not cramped; inputs go back to 16px so iOS does not zoom. */
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.45;
   letter-spacing: -0.01em;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
 }
 
+/* iOS zooms any field under 16px on focus; only phones need the bump. */
 input,
 select,
 textarea {
@@ -116,119 +64,104 @@ textarea {
   input,
   select,
   textarea {
-    font-size: 14px;
+    font-size: 13px;
   }
 }
 
-/* --- system utilities (§1, §6, §8 of the style guide) --- */
-
-.page-title {
-  font-size: 1.375rem;
+/* Micro label above a figure, and a table column head. */
+.kpi-label,
+.micro-label {
+  font-size: 9.5px;
   font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  color: hsl(var(--foreground));
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.3);
 }
 
-/* Amounts and counters line up in columns. */
+.kpi-number {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Figures line up in columns wherever they are stacked. */
 .tabular,
 [data-numeric] {
   font-variant-numeric: tabular-nums;
 }
 
-/* The micro-label above a figure. */
-.kpi-label {
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: hsl(var(--faint-foreground));
-}
-
-.kpi-number {
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: hsl(var(--foreground));
-  font-variant-numeric: tabular-nums;
-}
-
-/* Status is soft, never a filled badge. Inactive is muted grey, not red. */
+/* --- status chips: soft, never a filled badge --- */
 .status-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  height: 18px;
+  padding: 0 0.5rem;
   border-radius: 9999px;
-  padding: 0.125rem 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 500;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   white-space: nowrap;
-  background-color: hsl(var(--muted));
-  color: hsl(var(--muted-foreground));
+  background-color: rgb(255 255 255 / 0.06);
+  color: rgb(255 255 255 / 0.5);
 }
 
-.status-active {
-  background-color: hsl(var(--success) / 0.12);
-  color: hsl(var(--success));
+.status-good {
+  background-color: rgb(16 185 129 / 0.12);
+  color: #6ee7b7;
 }
 
-.status-warning {
-  background-color: hsl(var(--warning) / 0.12);
-  color: hsl(var(--warning));
+.status-warn {
+  background-color: rgb(245 158 11 / 0.12);
+  color: #fcd34d;
 }
 
-.status-error {
-  background-color: hsl(var(--destructive) / 0.12);
-  color: hsl(var(--destructive));
+.status-bad {
+  background-color: rgb(239 68 68 / 0.12);
+  color: #fca5a5;
 }
 
-.status-current {
-  background-color: hsl(var(--primary) / 0.12);
-  color: hsl(var(--primary-strong));
+.status-brand {
+  background-color: rgb(30 111 255 / 0.15);
+  border: 1px solid rgb(30 111 255 / 0.3);
+  color: #67a8f3;
 }
 
-/* A filter whose value is not represented by a visible control. */
-.filter-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  border-radius: 9999px;
-  border: 1px solid hsl(var(--border));
-  background-color: hsl(var(--foreground) / 0.05);
-  padding: 0.25rem 0.625rem;
-  font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
-}
-
-/* --- scroll areas inside glass panels --- */
-.scrollbar-glass {
+/* --- scrollbars: thin, present, never loud --- */
+.scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: hsl(var(--foreground) / 0.15) transparent;
+  scrollbar-color: rgb(255 255 255 / 0.12) transparent;
 }
 
-.scrollbar-glass::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-.scrollbar-glass::-webkit-scrollbar-track {
+.scrollbar-thin::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.scrollbar-glass::-webkit-scrollbar-thumb {
-  background: hsl(var(--foreground) / 0.15);
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.12);
   border-radius: 9999px;
 }
 
-.scrollbar-glass:hover::-webkit-scrollbar-thumb {
-  background: hsl(var(--foreground) / 0.28);
+.scrollbar-thin:hover::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.22);
 }
 
-.scrollbar-glass::-webkit-scrollbar-thumb:active {
-  background: hsl(var(--foreground) / 0.4);
+.scrollbar-hide {
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 :focus-visible {
-  outline: 2px solid hsl(var(--primary));
+  outline: 2px solid #1e6fff;
   outline-offset: 2px;
 }

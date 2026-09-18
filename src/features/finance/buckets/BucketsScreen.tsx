@@ -170,7 +170,7 @@ export function BucketsScreen() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Bucket</h1>
-          <p className="text-sm text-muted-foreground">I tuoi contenitori di spesa e risparmio</p>
+          <p className="text-sm text-white/45">I tuoi contenitori di spesa e risparmio</p>
         </div>
         <Button onClick={handleOpenCreate} size="sm" className="hidden sm:inline-flex">
           <Plus size={16} className="mr-2" /> Nuovo
@@ -182,7 +182,7 @@ export function BucketsScreen() {
           icon={Inbox}
           title="Nessun bucket"
           description="Crea il tuo primo bucket (es. Affitto, Spesa, Risparmi)."
-          action={<Button onClick={handleOpenCreate}>Crea il primo</Button>}
+          actions={<Button onClick={handleOpenCreate}>Crea il primo</Button>}
         />
       ) : (
         <div className="space-y-3">
@@ -190,14 +190,14 @@ export function BucketsScreen() {
             <Card
               id={`bucket-${bucket.id}`}
               key={bucket.id}
-              className="flex items-center p-3 gap-3 cursor-move hover:border-border transition-colors"
+              className="flex items-center p-3 gap-3 cursor-move hover:border-white/[0.06] transition-colors"
               draggable
               onDragStart={(e) => handleDragStart(e, bucket.id)}
               onDragEnd={(e) => handleDragEnd(e, bucket.id)}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, bucket.id)}
             >
-              <div className="text-muted-foreground cursor-grab active:cursor-grabbing">
+              <div className="text-white/45 cursor-grab active:cursor-grabbing">
                 <GripVertical size={20} />
               </div>
               <div
@@ -208,7 +208,7 @@ export function BucketsScreen() {
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold">{bucket.name}</h3>
-                <p className="text-xs text-muted-foreground capitalize">{bucket.kind}</p>
+                <p className="text-xs text-white/45 capitalize">{bucket.kind}</p>
               </div>
               <div className="flex gap-1 shrink-0">
                 <IconButton
@@ -221,7 +221,7 @@ export function BucketsScreen() {
                   icon={Trash2}
                   label="Elimina"
                   size="sm"
-                  variant="destructive"
+                  variant="danger"
                   onClick={() => handleRemove(bucket.id, bucket.name)}
                 />
               </div>
@@ -288,7 +288,7 @@ export function BucketsScreen() {
             <Button className="flex-1" onClick={handleSave}>
               Salva
             </Button>
-            <Button variant="secondary" onClick={() => setIsSheetOpen(false)}>
+            <Button variant="quiet" onClick={() => setIsSheetOpen(false)}>
               Annulla
             </Button>
           </div>
