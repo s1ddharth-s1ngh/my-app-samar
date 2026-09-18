@@ -1,107 +1,119 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens — "dark enterprise", the visual language of NexSuite.
+ * Design tokens — liquid glass, dark enterprise.
  *
- * Near-black page, a small ladder of elevated surfaces, hairline borders at low
- * white alpha, one blue accent, and a single type family. Dark is the primary
- * theme; the light one mirrors the same roles for daylight use.
+ * Rules this file encodes (see docs/DECISIONS.md):
+ *  - only HSL tokens, never a hex or a raw Tailwind colour in a component;
+ *  - colour is information: `success` for positive states, `primary` for real
+ *    primary actions and "current", `destructive` for genuine errors. Nothing
+ *    is coloured to look important;
+ *  - depth comes from 1px low-opacity borders and the luminosity step between
+ *    `--background` (page) and `--card` (panel), not from shadows;
+ *  - two radius families only: `rounded-full` for everything interactive on the
+ *    surface, `rounded-xl` for containers.
  */
 
 @theme {
-  --color-bg: var(--bg);
-  --color-surface: var(--surface);
-  --color-surface-2: var(--surface-2);
-  --color-surface-3: var(--surface-3);
-  --color-ink: var(--ink);
-  --color-ink-muted: var(--ink-muted);
-  --color-ink-faint: var(--ink-faint);
-  --color-accent: var(--accent);
-  --color-accent-strong: var(--accent-strong);
-  --color-signal: var(--signal);
-  --color-alert: var(--alert);
-  --color-success: var(--success);
-  --color-line: var(--line);
-  --color-line-strong: var(--line-strong);
+  /* Canonical names — the ones component recipes use. */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--foreground));
+  --color-popover: hsl(var(--popover));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-success: hsl(var(--success));
+  --color-warning: hsl(var(--warning));
+  --color-destructive: hsl(var(--destructive));
+
+  /* Aliases kept so screens written before the refactor keep compiling.
+     New code uses the canonical names above. */
+  --color-bg: hsl(var(--background));
+  --color-surface: hsl(var(--card));
+  --color-surface-2: hsl(var(--popover));
+  --color-surface-3: hsl(var(--muted));
+  --color-ink: hsl(var(--foreground));
+  --color-ink-muted: hsl(var(--muted-foreground));
+  --color-ink-faint: hsl(var(--faint-foreground));
+  --color-accent: hsl(var(--primary));
+  --color-accent-strong: hsl(var(--primary-strong));
+  --color-signal: hsl(var(--warning));
+  --color-alert: hsl(var(--destructive));
+  --color-line: hsl(var(--border));
+  --color-line-strong: hsl(var(--border-strong));
 
   --font-sans: 'Urbanist Variable', 'Urbanist', system-ui, sans-serif;
   --font-heading: 'Urbanist Variable', 'Urbanist', system-ui, sans-serif;
 
-  --radius-panel: 24px;
-  --radius-card: 18px;
-  --radius-control: 12px;
-  --radius-chip: 10px;
+  /* Two families, and only two. `rounded-xl` is the container radius; every
+     interactive surface element is `rounded-full`. */
+  --radius-xl: 0.75rem;
+  --radius-lg: 0.625rem;
 }
 
-/* --- dark: the default --- */
+/* --- dark: the base theme --- */
 :root {
   color-scheme: dark;
 
-  --bg: #070707;
-  --surface: #101114;
-  --surface-2: #14161a;
-  --surface-3: #1d2128;
+  --background: 220 7% 7%;
+  --card: 220 7% 11%;
+  --popover: 220 7% 9%;
+  --muted: 220 6% 16%;
 
-  --ink: rgb(255 255 255 / 0.96);
-  --ink-muted: rgb(255 255 255 / 0.66);
-  --ink-faint: rgb(255 255 255 / 0.38);
+  --foreground: 0 0% 98%;
+  --muted-foreground: 220 6% 62%;
+  --faint-foreground: 220 6% 45%;
 
-  --accent: #2563eb;
-  --accent-strong: #3b82f6;
-  --accent-soft: rgb(37 99 235 / 0.14);
-  --accent-wash: rgb(37 99 235 / 0.08);
+  --border: 220 6% 18%;
+  --border-strong: 220 6% 26%;
 
-  --signal: #f59e0b;
-  --alert: #ef4444;
-  --success: #22c55e;
+  --primary: 218 100% 60%;
+  --primary-strong: 218 100% 68%;
+  --primary-foreground: 0 0% 100%;
 
-  --line: rgb(255 255 255 / 0.07);
-  --line-strong: rgb(255 255 255 / 0.14);
-
-  --shadow-panel: 0 18px 40px rgb(0 0 0 / 0.34);
-  --shadow-focus:
-    0 0 0 1px rgb(59 130 246 / 0.22),
-    0 0 0 4px rgb(59 130 246 / 0.08);
+  --success: 142 66% 48%;
+  --warning: 38 92% 55%;
+  --destructive: 0 80% 63%;
 }
 
 /* --- light: same roles, daylight values --- */
 :root.light {
   color-scheme: light;
 
-  --bg: #f4f5f7;
-  --surface: #ffffff;
-  --surface-2: #f8f9fb;
-  --surface-3: #eef0f4;
+  --background: 220 14% 96%;
+  --card: 0 0% 100%;
+  --popover: 0 0% 100%;
+  --muted: 220 14% 93%;
 
-  --ink: rgb(9 10 12 / 0.96);
-  --ink-muted: rgb(9 10 12 / 0.62);
-  --ink-faint: rgb(9 10 12 / 0.4);
+  --foreground: 220 20% 9%;
+  --muted-foreground: 220 9% 40%;
+  --faint-foreground: 220 9% 52%;
 
-  --accent: #2563eb;
-  --accent-strong: #1d4ed8;
-  --accent-soft: rgb(37 99 235 / 0.1);
-  --accent-wash: rgb(37 99 235 / 0.05);
+  --border: 220 13% 88%;
+  --border-strong: 220 13% 78%;
 
-  --signal: #b45309;
-  --alert: #dc2626;
-  --success: #15803d;
+  --primary: 218 90% 50%;
+  --primary-strong: 218 90% 42%;
+  --primary-foreground: 0 0% 100%;
 
-  --line: rgb(9 10 12 / 0.09);
-  --line-strong: rgb(9 10 12 / 0.16);
-
-  --shadow-panel: 0 18px 40px rgb(9 10 12 / 0.08);
+  --success: 142 70% 33%;
+  --warning: 32 90% 40%;
+  --destructive: 0 72% 48%;
 }
 
 html {
-  background-color: var(--bg);
+  background-color: hsl(var(--background));
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--ink);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
   font-family: var(--font-sans);
-  /* 14px keeps the dense enterprise feel; inputs go back up to 16px so iOS
-     does not zoom when a field takes focus. */
+  /* Dense but not cramped; inputs go back to 16px so iOS does not zoom. */
   font-size: 14px;
   line-height: 1.5;
   letter-spacing: -0.01em;
@@ -116,67 +128,123 @@ textarea {
   font-size: 16px;
 }
 
+@media (min-width: 768px) {
+  input,
+  select,
+  textarea {
+    font-size: 14px;
+  }
+}
+
+/* --- system utilities (§1, §6, §8 of the style guide) --- */
+
+.page-title {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: hsl(var(--foreground));
+}
+
 /* Amounts and counters line up in columns. */
 .tabular,
 [data-numeric] {
   font-variant-numeric: tabular-nums;
 }
 
-/* --- the KPI block: uppercase micro-label over a big number --- */
+/* The micro-label above a figure. */
 .kpi-label {
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--ink-faint);
+  color: hsl(var(--faint-foreground));
 }
 
 .kpi-number {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.2;
-  color: var(--ink);
+  color: hsl(var(--foreground));
   font-variant-numeric: tabular-nums;
 }
 
-/* 40px rounded tile that carries a section's icon. */
-.icon-tile {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-chip);
+/* Status is soft, never a filled badge. Inactive is muted grey, not red. */
+.status-chip {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  background: var(--accent-soft);
-  color: var(--accent-strong);
-  flex-shrink: 0;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  background-color: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
 }
 
-/* --- scrollbars: thin, present, never loud --- */
-* {
+.status-active {
+  background-color: hsl(var(--success) / 0.12);
+  color: hsl(var(--success));
+}
+
+.status-warning {
+  background-color: hsl(var(--warning) / 0.12);
+  color: hsl(var(--warning));
+}
+
+.status-error {
+  background-color: hsl(var(--destructive) / 0.12);
+  color: hsl(var(--destructive));
+}
+
+.status-current {
+  background-color: hsl(var(--primary) / 0.12);
+  color: hsl(var(--primary-strong));
+}
+
+/* A filter whose value is not represented by a visible control. */
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--foreground) / 0.05);
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}
+
+/* --- scroll areas inside glass panels --- */
+.scrollbar-glass {
   scrollbar-width: thin;
-  scrollbar-color: var(--line-strong) transparent;
+  scrollbar-color: hsl(var(--foreground) / 0.15) transparent;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+.scrollbar-glass::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
 }
 
-::-webkit-scrollbar-track {
+.scrollbar-glass::-webkit-scrollbar-track {
   background: transparent;
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--line-strong);
-  border-radius: 999px;
+.scrollbar-glass::-webkit-scrollbar-thumb {
+  background: hsl(var(--foreground) / 0.15);
+  border-radius: 9999px;
 }
 
-::-webkit-scrollbar-corner {
-  background: transparent;
+.scrollbar-glass:hover::-webkit-scrollbar-thumb {
+  background: hsl(var(--foreground) / 0.28);
+}
+
+.scrollbar-glass::-webkit-scrollbar-thumb:active {
+  background: hsl(var(--foreground) / 0.4);
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent-strong);
+  outline: 2px solid hsl(var(--primary));
   outline-offset: 2px;
 }

@@ -1,124 +1,91 @@
 /*
- * Liquid Glass — web translation of Apple's WWDC25 material, tuned for the
- * dark-enterprise base.
+ * What CSS must own for the glass system: the `.glass` surfaces used by the
+ * navigation layer, and the graceful degradation every veil needs.
  *
- * Rules of the material (same as the native one):
- *  - glass belongs to the navigation layer only: bars, sheets, toasts, controls.
- *    Never put it on content (lists, amounts, text blocks) — it hurts legibility.
+ * The class recipes themselves live in `src/lib/glass.ts` — components import
+ * them, they are not duplicated here.
+ *
+ * Rules of the material:
+ *  - glass belongs to the navigation layer: bars, sheets, popovers, controls.
+ *    Never on content (lists, amounts, text blocks) — it hurts legibility.
  *  - glass cannot sample glass: nest with `.glass-group` / `.glass-item`, which
  *    blurs once on the parent and lets children contribute tint and edges only.
- *  - every variant degrades to an opaque surface when the browser lacks
- *    backdrop-filter or the user asked for less transparency / more contrast.
  */
 
-:root {
-  --glass-blur: 22px;
-  --glass-saturate: 165%;
-  /* On near-black, the veil is a lifted surface rather than a white wash. */
-  --glass-bg: rgb(23 25 30 / 0.72);
-  --glass-bg-clear: rgb(23 25 30 / 0.4);
-  --glass-border: rgb(255 255 255 / 0.1);
-  /* Specular highlight along the top edge, the way light catches a lens. */
-  --glass-highlight: rgb(255 255 255 / 0.14);
-  --glass-lowlight: rgb(0 0 0 / 0.3);
-  --glass-shadow: 0 18px 40px rgb(0 0 0 / 0.45);
-  --glass-tint: transparent;
-}
-
-:root.light {
-  --glass-bg: rgb(255 255 255 / 0.68);
-  --glass-bg-clear: rgb(255 255 255 / 0.36);
-  --glass-border: rgb(255 255 255 / 0.7);
-  --glass-highlight: rgb(255 255 255 / 0.8);
-  --glass-lowlight: rgb(9 10 12 / 0.05);
-  --glass-shadow: 0 18px 40px rgb(9 10 12 / 0.12);
-}
-
-/* --- regular: the default, for bars and controls over mixed content --- */
 .glass {
   position: relative;
-  background-color: var(--glass-bg);
-  background-image: linear-gradient(to bottom, var(--glass-tint), var(--glass-tint));
-  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
-  border: 1px solid var(--glass-border);
+  background-color: hsl(var(--popover) / 0.6);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid hsl(var(--foreground) / 0.15);
   box-shadow:
-    inset 0 1px 0 0 var(--glass-highlight),
-    inset 0 -1px 0 0 var(--glass-lowlight),
-    var(--glass-shadow);
+    inset 1px 1px 0 0 hsl(var(--foreground) / 0.12),
+    0 24px 60px -20px rgb(0 0 0 / 0.55);
 }
 
-/* --- clear: for bold or media-rich backdrops, lets more through --- */
+/* Lets more of the page through, for bars sitting over dense content. */
 .glass-clear {
-  --glass-bg: var(--glass-bg-clear);
-  --glass-blur: 34px;
+  background-color: hsl(var(--popover) / 0.4);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
 }
 
-/* --- tints: only the accents from the design tokens --- */
-.glass-tint-accent {
-  --glass-tint: color-mix(in srgb, var(--accent) 26%, transparent);
-}
-.glass-tint-signal {
-  --glass-tint: color-mix(in srgb, var(--signal) 24%, transparent);
-}
-.glass-tint-alert {
-  --glass-tint: color-mix(in srgb, var(--alert) 24%, transparent);
-}
-
-/* --- interactive: responds to touch, never animates on its own --- */
+/* Responds to touch; never animates on its own. */
 .glass-interactive {
   transition:
     transform 150ms ease,
     background-color 150ms ease,
     border-color 150ms ease;
-  will-change: transform;
 }
+
 .glass-interactive:hover {
-  --glass-bg: rgb(29 33 40 / 0.82);
-  border-color: var(--line-strong);
+  background-color: hsl(var(--popover) / 0.75);
 }
-:root.light .glass-interactive:hover {
-  --glass-bg: rgb(255 255 255 / 0.84);
-}
+
 .glass-interactive:active {
   transform: scale(0.97);
 }
 
-/* --- containers: glass must not sample glass --- */
+/* Glass must not sample glass: the parent blurs, the children only tint. */
 .glass-group > .glass-item {
-  background-color: var(--glass-tint);
-  background-image: none;
+  background-color: transparent;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   border-color: transparent;
   box-shadow: none;
 }
 
+.glass-group > .glass-item[data-active='true'] {
+  background-color: hsl(var(--foreground) / 0.07);
+  border-color: hsl(var(--foreground) / 0.1);
+}
+
 /* --- graceful degradation --- */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .glass {
-    background-color: var(--surface-2);
-    border-color: var(--line);
+  .glass,
+  .glass-clear {
+    background-color: hsl(var(--popover));
+    border-color: hsl(var(--border));
   }
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .glass {
-    background-color: var(--surface-2);
-    background-image: none;
+  .glass,
+  .glass-clear {
+    background-color: hsl(var(--popover));
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    border-color: var(--line);
-    box-shadow: var(--glass-shadow);
+    border-color: hsl(var(--border));
   }
 }
 
 @media (prefers-contrast: more) {
-  .glass {
-    background-color: var(--surface);
+  .glass,
+  .glass-clear {
+    background-color: hsl(var(--card));
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    border-color: var(--ink-muted);
+    border-color: hsl(var(--muted-foreground));
   }
 }
 
