@@ -72,35 +72,36 @@ export function Sheet({ isOpen, onClose, title, children }: SheetProps) {
       ref={dialogRef}
       aria-label={title}
       className={`
-        backdrop:bg-ink/40 backdrop:backdrop-blur-sm
-        glass fixed m-0 w-full max-w-none p-0 text-foreground
+        /* A LIGHT scrim: a full one leaves the blur nothing to refract. */
+        backdrop:bg-black/25 backdrop:backdrop-blur-sm
+        glass fixed m-0 w-full max-w-none p-0 text-foreground scrollbar-glass
 
-        /* Mobile: bottom sheet */
-        inset-x-0 bottom-0 top-auto rounded-t-xl border-x-0 border-b-0
+        /* Phone: bottom sheet */
+        inset-x-0 bottom-0 top-auto rounded-t-xl
         animate-in slide-in-from-bottom-full motion-reduce:animate-none
 
-        /* Desktop: centered modal */
-        sm:bottom-auto sm:top-[10vh] sm:left-1/2 sm:-translate-x-1/2 sm:w-full sm:max-w-md
-        sm:rounded-xl sm:border
-        sm:animate-in sm:zoom-in-95 sm:slide-in-from-bottom-0 sm:fade-in
+        /* Tablet and desktop: centred modal */
+        md:bottom-auto md:top-[10vh] md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-lg
+        md:rounded-xl
+        md:animate-in md:zoom-in-95 md:slide-in-from-bottom-0 md:fade-in
       `}
     >
       {/* Mobile drag handle */}
       <button
         type="button"
-        className="w-full flex justify-center py-3 sm:hidden"
+        className="w-full flex justify-center py-3 md:hidden"
         onClick={onClose}
         aria-label="Chiudi"
       >
-        <span className="w-12 h-1.5 rounded-full bg-ink-muted/40" />
+        <span className="w-12 h-1.5 rounded-full bg-foreground/25" />
       </button>
 
-      <div className="px-4 pb-4 sm:p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-foreground">{title}</h2>
+      <div className="px-4 pb-4 md:p-6">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="page-title">{title}</h2>
           <IconButton icon={X} label="Chiudi" onClick={onClose} className="-mr-2" />
         </div>
-        <div className="overflow-y-auto overscroll-contain max-h-[80vh] sm:max-h-[70vh]">
+        <div className="overflow-y-auto overscroll-contain max-h-[70vh] md:max-h-[65vh]">
           {children}
         </div>
       </div>

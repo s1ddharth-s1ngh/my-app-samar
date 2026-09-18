@@ -1,265 +1,227 @@
 import { useState } from 'react';
+import { Home, LayoutGrid, List, Settings, Star } from 'lucide-react';
 import {
   Button,
-  IconButton,
-  Field,
-  Select,
-  Toggle,
-  Chip,
   Card,
+  Chip,
+  CycleRing,
   Divider,
   EmptyState,
-  Sheet,
+  Field,
+  IconButton,
+  KpiCard,
   Money,
   MoneyInput,
-  CycleRing,
+  PageHeader,
+  Segmented,
+  Select,
+  Sheet,
+  Toggle,
 } from '@/ui';
-import { Star, Home, Settings } from 'lucide-react';
 import { useToastStore } from '@/stores/toast';
 
+/**
+ * The design system on one page, in development only. Every state a component
+ * can be in should be visible here without having to reach it through the app.
+ */
 export function DevUIScreen() {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [toggleState, setToggleState] = useState(false);
-  const [moneyValue, setMoneyValue] = useState<number | null>(123456);
+  const [toggled, setToggled] = useState(false);
+  const [money, setMoney] = useState<number | null>(123456);
+  const [segment, setSegment] = useState('all');
+  const [view, setView] = useState('list');
   const addToast = useToastStore((state) => state.addToast);
 
   return (
-    <div className="p-4 sm:p-8 max-w-3xl mx-auto space-y-12 pb-32">
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold">Design System</h1>
-        <p className="text-muted-foreground">Preview di tutti i componenti UI (Responsive)</p>
-      </div>
+    <div className="mx-auto max-w-[1100px] space-y-10 px-4 py-8">
+      <PageHeader
+        title="Design system"
+        subtitle="Due famiglie di raggi: pillola per l'interattivo, rounded-xl per i contenitori."
+      />
 
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">Liquid Glass</h2>
-        <p className="text-sm text-muted-foreground">
-          Il vetro sta solo sul livello di navigazione: barre, sheet, toast, controlli. Mai sul
-          contenuto. Lo sfondo colorato qui sotto serve a far vedere cosa filtra.
-        </p>
-        <div className="rounded-xl p-6 bg-gradient-to-br from-primary via-warning to-destructive">
-          <div className="glass-group glass rounded-xl p-4 flex flex-wrap gap-3 justify-center">
-            <span className="glass-item rounded-xl px-4 py-2 text-sm">In un container</span>
-            <span className="glass-item  rounded-xl px-4 py-2 text-sm">Con tinta</span>
-          </div>
-          <div className="mt-4 flex flex-wrap gap-3 justify-center">
-            <span className="glass rounded-xl px-4 py-2 text-sm text-foreground">regular</span>
-            <span className="glass glass-clear rounded-xl px-4 py-2 text-sm text-foreground">
-              clear
+      <Section title="Vetro">
+        {/* A colourful ground so the material has something to refract. */}
+        <div className="rounded-xl bg-gradient-to-br from-primary via-warning to-destructive p-6">
+          <div className="glass glass-group mb-4 flex flex-wrap justify-center gap-2 rounded-full p-1">
+            <span className="glass-item rounded-full px-4 py-2 text-sm" aria-current="page">
+              In un container
             </span>
-            <span className="glass glass-interactive rounded-xl px-4 py-2 text-sm text-foreground">
-              interactive
-            </span>
+            <span className="glass-item rounded-full px-4 py-2 text-sm">Non attivo</span>
           </div>
-          <div className="mt-4 flex flex-wrap gap-3 justify-center">
-            <Button variant="secondary">Vetro</Button>
-            <Button variant="primary">Vetro in evidenza</Button>
-            <IconButton icon={Star} label="Preferito" variant="secondary" />
+          <div className="flex flex-wrap justify-center gap-3">
+            <span className="glass rounded-xl px-4 py-2 text-sm">pannello</span>
+            <span className="glass-control rounded-full px-4 py-2 text-sm">controllo</span>
+            <span className="glass-clear rounded-xl px-4 py-2 text-sm">clear</span>
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">Anello del Ciclo (CycleRing)</h2>
-        <div className="flex justify-center p-8 bg-card rounded-xl border border-border">
+      <Section title="Bottoni">
+        <div className="flex flex-wrap items-center gap-3">
+          <Button>Primario</Button>
+          <Button variant="secondary">Secondario</Button>
+          <Button variant="ghost">Ghost</Button>
+          <Button variant="destructive">Distruttivo</Button>
+          <Button disabled>Disabilitato</Button>
+          <IconButton icon={Star} label="Preferito" />
+          <IconButton icon={Star} label="Preferito" variant="secondary" />
+          <IconButton icon={Star} label="Elimina" variant="destructive" />
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button size="sm">Piccolo</Button>
+          <Button size="md">Medio</Button>
+          <Button size="lg">Grande</Button>
+        </div>
+      </Section>
+
+      <Section title="Segmented">
+        <Segmented
+          ariaLabel="Stato"
+          value={segment}
+          onChange={setSegment}
+          options={[
+            { value: 'all', label: 'Tutti' },
+            { value: 'active', label: 'Attivi' },
+            { value: 'inactive', label: 'Inattivi' },
+          ]}
+          className="max-w-xs"
+        />
+        <Segmented
+          ariaLabel="Vista"
+          compact
+          value={view}
+          onChange={setView}
+          options={[
+            { value: 'list', label: <List size={15} aria-hidden="true" />, title: 'Lista' },
+            { value: 'grid', label: <LayoutGrid size={15} aria-hidden="true" />, title: 'Griglia' },
+          ]}
+          className="w-20"
+        />
+      </Section>
+
+      <Section title="Campi">
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field label="Testo" placeholder="Scrivi qui" />
+          <Field label="Con errore" error="Questo campo è obbligatorio" />
+          <Field label="Con aiuto" helpText="Un suggerimento discreto" />
+          <Field label="Disabilitato" disabled value="Non modificabile" readOnly />
+          <Select
+            label="Select"
+            options={[
+              { value: 'a', label: 'Opzione A' },
+              { value: 'b', label: 'Opzione B' },
+            ]}
+          />
+          <MoneyInput label="Importo" value={money ?? 0} onChange={setMoney} />
+        </div>
+        <Toggle
+          label="Interruttore"
+          description="Con descrizione sotto"
+          checked={toggled}
+          onChange={(e) => setToggled(e.target.checked)}
+        />
+      </Section>
+
+      <Section title="Stati">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="status-chip">Inattivo</span>
+          <span className="status-chip status-active">Attivo</span>
+          <span className="status-chip status-warning">In attesa</span>
+          <span className="status-chip status-error">Errore</span>
+          <span className="status-chip status-current">Corrente</span>
+          <span className="filter-chip">Filtro ereditato</span>
+          <Chip variant="success">Chip</Chip>
+          <Chip variant="error" onDelete={() => addToast('Rimosso.', 'info')}>
+            Rimovibile
+          </Chip>
+        </div>
+      </Section>
+
+      <Section title="Metriche">
+        <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+          <KpiCard label="Neutro" value={<Money cents={123456} compact />} icon={Home} />
+          <KpiCard label="Corrente" value={<Money cents={98000} compact />} tone="primary" />
+          <KpiCard
+            label="Con barra"
+            value={<Money cents={45000} compact />}
+            progress={0.62}
+            tone="success"
+          />
+          <KpiCard
+            label="Scoperto"
+            value={<Money cents={-12000} compact />}
+            tone="destructive"
+            hint="Sei oltre il budget"
+          />
+        </div>
+      </Section>
+
+      <Section title="Anello del ciclo">
+        <Card className="flex justify-center" padding="lg">
           <CycleRing
             daysTotal={30}
             daysPassed={12}
             totalBudget={200000}
             buckets={[
-              { id: '1', amount: 80000, color: '#ef4444' }, // red
-              { id: '2', amount: 40000, color: '#eab308' }, // yellow
-              { id: '3', amount: 60000, color: '#22c55e' }, // green
+              { id: '1', amount: 90000, color: '#3b82f6' },
+              { id: '2', amount: 60000, color: '#d97706' },
+              { id: '3', amount: 50000, color: '#059669' },
             ]}
           />
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">Denaro (Money & MoneyInput)</h2>
-        <div className="flex flex-col gap-4 max-w-md">
-          <div className="flex gap-4 items-center p-4 bg-popover rounded-xl">
-            <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground">Base</span>
-              <Money cents={123456} className="text-lg font-medium" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground">Con Segno</span>
-              <Money cents={123456} showSign className="text-lg font-medium" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground">Semantico (+)</span>
-              <Money cents={123456} semanticColor showSign className="text-lg font-bold" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground">Semantico (-)</span>
-              <Money cents={-5000} semanticColor showSign className="text-lg font-bold" />
-            </div>
-          </div>
-
-          <MoneyInput
-            label="Inserisci importo"
-            value={moneyValue ?? 0}
-            onChange={setMoneyValue}
-            helpText={`Valore nello stato: ${moneyValue} centesimi`}
-          />
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">Buttons</h2>
-        <div className="flex flex-wrap gap-4 items-center">
-          <Button variant="primary">Primary</Button>
-          <Button variant="secondary">Secondary</Button>
-          <Button variant="ghost">Ghost</Button>
-          <Button variant="destructive">Destructive</Button>
-          <Button variant="primary" disabled>
-            Disabled
-          </Button>
-        </div>
-        <div className="flex flex-wrap gap-4 items-center">
-          <Button variant="primary" size="sm">
-            Small
-          </Button>
-          <Button variant="primary" size="md">
-            Medium
-          </Button>
-          <Button variant="primary" size="lg">
-            Large
-          </Button>
-        </div>
-        <div>
-          <Button variant="secondary" fullWidth>
-            Full Width Button
-          </Button>
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">Icon Buttons</h2>
-        <div className="flex gap-4 items-center">
-          <IconButton icon={Home} label="Home" variant="primary" />
-          <IconButton icon={Star} label="Star" variant="secondary" />
-          <IconButton icon={Settings} label="Settings" variant="ghost" />
-          <IconButton icon={Star} label="Destructive" variant="destructive" />
-          <IconButton icon={Home} label="Disabled" variant="primary" disabled />
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">Fields & Forms</h2>
-        <div className="max-w-md space-y-4">
-          <Field
-            label="Normal Input"
-            placeholder="Inserisci testo..."
-            helpText="Testo di aiuto sotto il campo"
-          />
-          <Field
-            label="Error Input"
-            defaultValue="Testo sbagliato"
-            error="Questo campo è obbligatorio"
-          />
-          <Field label="Disabled Input" disabled defaultValue="Non modificabile" />
-
-          <Select
-            label="Select Dropdown"
-            options={[
-              { value: '1', label: 'Opzione 1' },
-              { value: '2', label: 'Opzione 2' },
-            ]}
-          />
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">Toggles</h2>
-        <div className="max-w-md space-y-4">
-          <Toggle
-            label="Abilita notifiche"
-            description="Riceverai una notifica al giorno"
-            checked={toggleState}
-            onChange={(e) => setToggleState(e.target.checked)}
-          />
-          <Toggle label="Toggle disabilitato" disabled checked={true} readOnly />
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">Chips</h2>
-        <div className="flex flex-wrap gap-2">
-          <Chip variant="neutral">Neutral</Chip>
-          <Chip variant="primary">Primary</Chip>
-          <Chip variant="success">Success</Chip>
-          <Chip variant="warning">Warning</Chip>
-          <Chip variant="error">Error</Chip>
-          <Chip variant="neutral" onDelete={() => alert('deleted')}>
-            Con elimina
-          </Chip>
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">Card</h2>
-        <Card>
-          <h3 className="font-bold text-lg mb-2">Titolo Card</h3>
-          <p className="text-muted-foreground">
-            Contenuto interno della card. La card ha padding e shadow. È responsive.
-          </p>
         </Card>
-      </section>
+      </Section>
 
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">Divider</h2>
-        <p>Sopra</p>
+      <Section title="Contenitori">
+        <div className="grid gap-3 md:grid-cols-2">
+          <Card>Card standard</Card>
+          <Card interactive>Card cliccabile</Card>
+        </div>
         <Divider />
-        <p>Sotto</p>
-      </section>
+        <EmptyState
+          icon={Settings}
+          title="Nessun elemento trovato"
+          description="Prova a modificare i filtri di ricerca."
+          action={<Button onClick={() => setIsSheetOpen(true)}>Apri lo sheet</Button>}
+        />
+      </Section>
 
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">Empty State</h2>
-        <Card padding="none">
-          <EmptyState
-            icon={Star}
-            title="Nessun dato presente"
-            description="Non hai ancora inserito nessun elemento. Inizia creandone uno nuovo."
-            action={<Button>Crea nuovo</Button>}
-          />
-        </Card>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-bold border-b pb-2">Overlays (Toast & Sheet)</h2>
-        <div className="flex gap-4">
-          <Button onClick={() => addToast('Operazione completata con successo!', 'info')}>
-            Mostra Toast Info
+      <Section title="Notifiche">
+        <div className="flex flex-wrap gap-3">
+          <Button variant="secondary" onClick={() => addToast('Salvato.', 'success')}>
+            Successo
+          </Button>
+          <Button variant="secondary" onClick={() => addToast('Informazione.', 'info')}>
+            Info
           </Button>
           <Button
-            variant="destructive"
-            onClick={() => addToast('Si è verificato un errore critico.', 'error')}
+            variant="secondary"
+            onClick={() => addToast('Qualcosa è andato storto.', 'error')}
           >
-            Mostra Toast Error
-          </Button>
-          <Button variant="secondary" onClick={() => setIsSheetOpen(true)}>
-            Apri Sheet / Dialog
+            Errore
           </Button>
         </div>
-      </section>
+      </Section>
 
-      <Sheet isOpen={isSheetOpen} onClose={() => setIsSheetOpen(false)} title="Modifica Dati">
-        <div className="space-y-4 py-4">
-          <p className="text-muted-foreground">
-            Questo componente si comporta come una Bottom Sheet su mobile e come una Dialog modale
-            centrata su schermi desktop (sm:).
+      <Sheet isOpen={isSheetOpen} onClose={() => setIsSheetOpen(false)} title="Uno sheet">
+        <div className="space-y-4 py-2">
+          <p className="text-sm text-muted-foreground">
+            Sul telefono sale dal basso, da tablet in su è una modale centrata.
           </p>
-          <Field label="Nome" placeholder="Inserisci il tuo nome" />
-          <Field label="Cognome" placeholder="Inserisci il tuo cognome" />
-          <div className="flex gap-2 pt-4">
-            <Button className="flex-1">Salva</Button>
-            <Button variant="secondary" onClick={() => setIsSheetOpen(false)}>
-              Annulla
-            </Button>
-          </div>
+          <Field label="Un campo" placeholder="Scrivi qui" />
+          <Button fullWidth onClick={() => setIsSheetOpen(false)}>
+            Chiudi
+          </Button>
         </div>
       </Sheet>
     </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="space-y-3">
+      <h2 className="kpi-label">{title}</h2>
+      {children}
+    </section>
   );
 }
