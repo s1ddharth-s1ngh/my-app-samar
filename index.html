@@ -18,6 +18,7 @@
           stored === 'light' ||
           (stored === 'system' && window.matchMedia('(prefers-color-scheme: light)').matches);
         document.documentElement.classList.toggle('light', light);
+        document.documentElement.dataset.theme = light ? 'light' : 'dark';
       } catch (e) {}
     </script>
   </head>

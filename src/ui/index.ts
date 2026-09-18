@@ -5,6 +5,7 @@ export * from './inputStyles';
 export * from './Select';
 export * from './Toggle';
 export * from './Chip';
+export * from './Segmented';
 export * from './Card';
 export * from './KpiCard';
 export * from './PageHeader';

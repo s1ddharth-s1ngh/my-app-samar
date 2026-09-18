@@ -1,7 +1,8 @@
 import { useDataStore } from '@/stores/useDataStore';
 import { useThemeStore } from '@/stores/useThemeStore';
 import type { Theme } from '@/stores/useThemeStore';
-import { Button, Card, Select, Divider } from '@/ui';
+import { Button, Card, Select, Divider, Segmented } from '@/ui';
+import { GLASS_TRANSPARENCY_PRESETS } from '@/lib/glass';
 import { FinancialSettingsSection } from './FinancialSettingsSection';
 
 const THEME_OPTIONS = [
@@ -17,7 +18,7 @@ function isTheme(value: string): value is Theme {
 export function SettingsScreen() {
   const loadSeed = useDataStore((state) => state.loadSeed);
   const resetAll = useDataStore((state) => state.resetAll);
-  const { theme, setTheme } = useThemeStore();
+  const { theme, setTheme, glassTransparency, setGlassTransparency } = useThemeStore();
 
   const handleLoadSeed = async () => {
     if (
@@ -51,6 +52,23 @@ export function SettingsScreen() {
           }}
           options={THEME_OPTIONS}
         />
+
+        <div className="space-y-1.5">
+          <p className="kpi-label">Trasparenza del vetro</p>
+          <Segmented
+            ariaLabel="Trasparenza del vetro"
+            value={String(glassTransparency)}
+            onChange={(value) => setGlassTransparency(Number(value))}
+            options={GLASS_TRANSPARENCY_PRESETS.map((preset) => ({
+              value: String(preset.value),
+              label: preset.label,
+            }))}
+          />
+          <p className="text-sm text-muted-foreground">
+            Sfoca e opacizza insieme, come il cursore di iOS 27. Se hai chiesto meno trasparenza al
+            sistema, il vetro resta opaco comunque.
+          </p>
+        </div>
       </section>
 
       <Divider />

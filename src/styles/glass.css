@@ -1,9 +1,17 @@
 /*
- * What CSS must own for the glass system: the `.glass` surfaces used by the
- * navigation layer, and the graceful degradation every veil needs.
+ * Liquid Glass — the material.
  *
- * The class recipes themselves live in `src/lib/glass.ts` — components import
- * them, they are not duplicated here.
+ * The numbers come from `@ios27_design_system/tokens` (MIT), measured from
+ * Apple's official iOS 27 UI Kit: a blur + saturate backdrop, a 0.5px rim ring,
+ * and two opposed inset shadows that make the slab catch light at both edges.
+ * We consume its custom properties rather than its classes, for one reason:
+ * its classes hard-code Apple's radii (34px / 100px / 23px) and our geometry
+ * has only two families — `rounded-full` for anything interactive on the
+ * surface, `rounded-xl` for containers. Radius therefore stays a utility class
+ * and is never set here.
+ *
+ * The class recipes that combine these surfaces with colour and spacing live in
+ * `src/lib/glass.ts`; components import them from there.
  *
  * Rules of the material:
  *  - glass belongs to the navigation layer: bars, sheets, popovers, controls.
@@ -12,80 +20,142 @@
  *    blurs once on the parent and lets children contribute tint and edges only.
  */
 
-.glass {
-  position: relative;
-  background-color: hsl(var(--popover) / 0.6);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid hsl(var(--foreground) / 0.15);
-  box-shadow:
-    inset 1px 1px 0 0 hsl(var(--foreground) / 0.12),
-    0 24px 60px -20px rgb(0 0 0 / 0.55);
+:root {
+  /* iOS 27 replaced the binary Reduce Transparency toggle with a slider.
+     0 = fully tinted, 1 = ultra clear. Both derived scales come from the kit. */
+  --glass-blur-scale: calc(0.5 + 0.8 * var(--ios27-glass-transparency, 0.5));
+  --glass-alpha-scale: calc(1.6 - 1.1 * var(--ios27-glass-transparency, 0.5));
+
+  --glass-rim-ring: 0 0 0 var(--ios27-glass-rim-spread, 0.5px) var(--ios27-glass-rim);
+  --glass-rim-ring-sm: 0 0 0 var(--ios27-glass-rim-spread, 0.5px) var(--ios27-glass-rim-sm);
+  /* Opposed insets: light caught on the top edge, shade gathered at the bottom. */
+  --glass-inner-edges:
+    inset 0 40px 10px -40px var(--ios27-glass-inner),
+    inset 0 -40px 10px -40px var(--ios27-glass-inner);
 }
 
-/* Lets more of the page through, for bars sitting over dense content. */
+/* --- panel: sheets, bars, popovers --- */
+.glass {
+  position: relative;
+  backdrop-filter: blur(calc(6px * var(--glass-blur-scale))) saturate(1.8);
+  -webkit-backdrop-filter: blur(calc(6px * var(--glass-blur-scale))) saturate(1.8);
+  background-color: rgba(
+    var(--ios27-glass-me-rgb),
+    calc(var(--ios27-glass-me-alpha) * var(--glass-alpha-scale))
+  );
+  background-image: linear-gradient(var(--ios27-glass-me-overlay), var(--ios27-glass-me-overlay));
+  box-shadow:
+    var(--ios27-glass-me-shadow),
+    var(--glass-rim-ring),
+    var(--glass-inner-edges);
+}
+
+/* --- control: pills, buttons, segmented items --- */
+.glass-control {
+  position: relative;
+  backdrop-filter: blur(calc(3.6px * var(--glass-blur-scale))) saturate(1.8);
+  -webkit-backdrop-filter: blur(calc(3.6px * var(--glass-blur-scale))) saturate(1.8);
+  background-color: rgba(
+    var(--ios27-glass-sm-rgb),
+    calc(var(--ios27-glass-sm-alpha) * var(--glass-alpha-scale))
+  );
+  background-image: linear-gradient(var(--ios27-glass-sm-overlay), var(--ios27-glass-sm-overlay));
+  box-shadow:
+    var(--ios27-glass-sm-shadow),
+    var(--glass-rim-ring-sm),
+    var(--glass-inner-edges);
+}
+
+/* --- clear: lets the page through, for bars over dense content --- */
 .glass-clear {
-  background-color: hsl(var(--popover) / 0.4);
-  backdrop-filter: blur(32px) saturate(180%);
-  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  position: relative;
+  backdrop-filter: blur(calc(1.6px * var(--glass-blur-scale))) saturate(1.8);
+  -webkit-backdrop-filter: blur(calc(1.6px * var(--glass-blur-scale))) saturate(1.8);
+  background-color: var(--ios27-glass-clear-overlay);
+  box-shadow:
+    0 8px 15px rgb(0 0 0 / 0.02),
+    var(--glass-rim-ring-sm);
+}
+
+/* The prominent control: the kit backs it with a near-opaque plate so the
+   label reads at any transparency, then burns a tint into it. */
+.glass-prominent {
+  background-color: rgba(255, 255, 255, 0.16);
+  box-shadow:
+    var(--ios27-glass-sm-shadow),
+    var(--glass-rim-ring-sm),
+    inset 0 1px 0 0 rgb(255 255 255 / 0.18);
+}
+
+:root.light .glass-prominent {
+  background-color: rgba(0, 0, 0, 0.08);
 }
 
 /* Responds to touch; never animates on its own. */
 .glass-interactive {
   transition:
     transform 150ms ease,
-    background-color 150ms ease,
-    border-color 150ms ease;
+    background-color 150ms ease;
 }
 
 .glass-interactive:hover {
-  background-color: hsl(var(--popover) / 0.75);
+  background-color: rgba(
+    var(--ios27-glass-sm-rgb),
+    calc(var(--ios27-glass-sm-alpha) * var(--glass-alpha-scale) * 1.6)
+  );
 }
 
 .glass-interactive:active {
   transform: scale(0.97);
 }
 
-/* Glass must not sample glass: the parent blurs, the children only tint. */
+/* --- containers: glass must not sample glass --- */
 .glass-group > .glass-item {
   background-color: transparent;
+  background-image: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  border-color: transparent;
   box-shadow: none;
 }
 
+/* The active item is a frosted pill inside the already-blurred bar. */
 .glass-group > .glass-item[data-active='true'] {
-  background-color: hsl(var(--foreground) / 0.07);
-  border-color: hsl(var(--foreground) / 0.1);
+  background-color: rgba(153, 153, 153, 0.17);
+  box-shadow: var(--glass-rim-ring-sm);
 }
 
 /* --- graceful degradation --- */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass,
+  .glass-control,
   .glass-clear {
     background-color: hsl(var(--popover));
-    border-color: hsl(var(--border));
+    box-shadow: none;
+    border: 1px solid hsl(var(--border));
   }
 }
 
+/* The package already drives its transparency slider to 0 here; we drop the
+   translucency entirely so text never sits on a moving background. */
 @media (prefers-reduced-transparency: reduce) {
   .glass,
+  .glass-control,
   .glass-clear {
-    background-color: hsl(var(--popover));
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    border-color: hsl(var(--border));
+    background-color: hsl(var(--popover));
   }
 }
 
 @media (prefers-contrast: more) {
   .glass,
+  .glass-control,
   .glass-clear {
-    background-color: hsl(var(--card));
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    border-color: hsl(var(--muted-foreground));
+    background-color: hsl(var(--card));
+    box-shadow: none;
+    border: 1px solid hsl(var(--muted-foreground));
   }
 }
 
