@@ -1,5 +1,5 @@
 import type { CalendarDate, Clock, ScheduleBlock } from '@/data/types';
-import { formatCalendarDate, parseCalendarDate } from './cycles';
+import { formatCalendarDate, lastDayOfMonth, parseCalendarDate } from './cycles';
 
 /**
  * The day's shape, resolved from two kinds of row in the same collection.
@@ -152,5 +152,61 @@ export function dayWindow(blocks: ScheduleBlock[]): { fromHour: number; toHour: 
 export function shiftDate(date: CalendarDate, days: number): CalendarDate {
   const moved = parseCalendarDate(date);
   moved.setDate(moved.getDate() + days);
+  return formatCalendarDate(moved);
+}
+
+export type CalendarView = 'giorno' | 'settimana' | 'mese' | 'anno';
+
+/** Monday of the week `date` falls in — the week starts on Monday here. */
+export function startOfWeek(date: CalendarDate): CalendarDate {
+  return shiftDate(date, -(isoWeekday(date) - 1));
+}
+
+/** The seven dates of that week, Monday first. */
+export function weekDates(date: CalendarDate): CalendarDate[] {
+  const monday = startOfWeek(date);
+  return Array.from({ length: 7 }, (_, index) => shiftDate(monday, index));
+}
+
+export function startOfMonth(date: CalendarDate): CalendarDate {
+  return `${date.slice(0, 7)}-01`;
+}
+
+export function sameMonth(a: CalendarDate, b: CalendarDate): boolean {
+  return a.slice(0, 7) === b.slice(0, 7);
+}
+
+/**
+ * The 6x7 cells a month calendar draws: the leading days of the previous month
+ * and the trailing days of the next one included, so the grid never changes
+ * height from one month to the next.
+ */
+export function monthGridDates(date: CalendarDate): CalendarDate[] {
+  const start = startOfWeek(startOfMonth(date));
+  return Array.from({ length: 42 }, (_, index) => shiftDate(start, index));
+}
+
+/** The first day of each month of that year. */
+export function monthsOfYear(date: CalendarDate): CalendarDate[] {
+  const year = date.slice(0, 4);
+  return Array.from(
+    { length: 12 },
+    (_, index) => `${year}-${String(index + 1).padStart(2, '0')}-01`
+  );
+}
+
+/** One step forward or back in whatever range the current view shows. */
+export function shiftRange(date: CalendarDate, view: CalendarView, step: number): CalendarDate {
+  if (view === 'giorno') return shiftDate(date, step);
+  if (view === 'settimana') return shiftDate(date, step * 7);
+
+  const moved = parseCalendarDate(date);
+  const dayOfMonth = moved.getDate();
+
+  // Move on the 1st, then clamp: the 31st must not spill into the next month.
+  moved.setDate(1);
+  moved.setMonth(moved.getMonth() + (view === 'mese' ? step : step * 12));
+  moved.setDate(Math.min(dayOfMonth, lastDayOfMonth(moved.getFullYear(), moved.getMonth())));
+
   return formatCalendarDate(moved);
 }

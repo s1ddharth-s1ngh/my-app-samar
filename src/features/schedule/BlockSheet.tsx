@@ -17,6 +17,7 @@ export interface BlockSheetProps {
   date: CalendarDate;
   /** The weekly editor has no single day: only the weekly scope exists there. */
   weekOnly?: boolean;
+  initialDraft?: BlockDraft;
 }
 
 const EMPTY: BlockDraft = { title: '', kind: 'custom', start: '09:00', end: '10:00' };
@@ -29,12 +30,20 @@ const EMPTY: BlockDraft = { title: '', kind: 'custom', start: '09:00', end: '10:
  * Mounted only while open, so the draft starts from the block it was opened on
  * and needs no effect to keep the two in step.
  */
-export function BlockSheet({ onClose, block, date, weekOnly = false }: BlockSheetProps) {
+export function BlockSheet({
+  onClose,
+  block,
+  date,
+  weekOnly = false,
+  initialDraft,
+}: BlockSheetProps) {
   const { save, remove } = useSchedule();
   const addToast = useToastStore((state) => state.addToast);
 
   const [draft, setDraft] = useState<BlockDraft>(() =>
-    block ? { title: block.title, kind: block.kind, start: block.start, end: block.end } : EMPTY
+    block
+      ? { title: block.title, kind: block.kind, start: block.start, end: block.end }
+      : { ...EMPTY, ...initialDraft }
   );
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);

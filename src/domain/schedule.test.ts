@@ -1,6 +1,17 @@
 import { describe, it, expect } from 'vitest';
 import type { ScheduleBlock } from '@/data/types';
-import { blocksForDate, dayWindow, isoWeekday, layoutDay, minutesOfDay } from './schedule';
+import {
+  blocksForDate,
+  dayWindow,
+  isoWeekday,
+  layoutDay,
+  minutesOfDay,
+  monthGridDates,
+  monthsOfYear,
+  shiftRange,
+  startOfWeek,
+  weekDates,
+} from './schedule';
 
 let counter = 0;
 
@@ -155,5 +166,52 @@ describe('minutesOfDay', () => {
   it('reads a clock as minutes since midnight', () => {
     expect(minutesOfDay('08:30')).toBe(510);
     expect(minutesOfDay('00:00')).toBe(0);
+  });
+});
+
+describe('ranges', () => {
+  it('starts the week on Monday', () => {
+    expect(startOfWeek('2026-10-09')).toBe('2026-10-05');
+    expect(startOfWeek('2026-10-05')).toBe('2026-10-05');
+    expect(startOfWeek('2026-10-11')).toBe('2026-10-05');
+  });
+
+  it('lays the week out Monday to Sunday', () => {
+    expect(weekDates('2026-10-09')).toEqual([
+      '2026-10-05',
+      '2026-10-06',
+      '2026-10-07',
+      '2026-10-08',
+      '2026-10-09',
+      '2026-10-10',
+      '2026-10-11',
+    ]);
+  });
+
+  it('draws a month as 42 cells starting on a Monday', () => {
+    const grid = monthGridDates('2026-10-09');
+    expect(grid).toHaveLength(42);
+    expect(grid[0]).toBe('2026-09-28');
+    expect(isoWeekday(grid[0]!)).toBe(1);
+    expect(grid).toContain('2026-10-01');
+    expect(grid).toContain('2026-10-31');
+  });
+
+  it('lists the twelve first-of-month dates of the year', () => {
+    const months = monthsOfYear('2026-07-14');
+    expect(months).toHaveLength(12);
+    expect(months[0]).toBe('2026-01-01');
+    expect(months[11]).toBe('2026-12-01');
+  });
+
+  it('moves one range at a time per view', () => {
+    expect(shiftRange('2026-10-09', 'giorno', 1)).toBe('2026-10-10');
+    expect(shiftRange('2026-10-09', 'settimana', -1)).toBe('2026-10-02');
+    expect(shiftRange('2026-10-09', 'mese', 1)).toBe('2026-11-09');
+    expect(shiftRange('2026-10-09', 'anno', -1)).toBe('2025-10-09');
+  });
+
+  it('clamps the day when the next month is shorter', () => {
+    expect(shiftRange('2026-01-31', 'mese', 1)).toBe('2026-02-28');
   });
 });

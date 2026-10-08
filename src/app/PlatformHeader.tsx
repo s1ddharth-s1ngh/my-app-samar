@@ -39,7 +39,7 @@ export function PlatformHeader() {
   return (
     <header className="z-50 flex h-14 w-full shrink-0 items-center gap-5 border-b border-white/[0.06] bg-black px-5">
       <Link to="/" className="flex shrink-0 items-center gap-2">
-        <img src="/logo.png" alt="" className="h-8 w-8 rounded-lg object-cover" />
+        <img src="/logo-transparent.png" alt="" className="h-8 w-8 rounded-lg object-cover" />
         <span className="hidden text-[15px] font-semibold tracking-[-0.02em] sm:inline">Samar</span>
       </Link>
 

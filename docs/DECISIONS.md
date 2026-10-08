@@ -48,3 +48,12 @@
 - **Corsie calcolate, non blocchi annidati**: `layoutDay` assegna colonne affiancate ai blocchi che si sovrappongono (la pausa pranzo sta dentro il blocco lavoro) con un greedy su `laneEnds`. Alternativa scartata: disegnare il blocco interno sopra quello esterno, che rende incliccabile quello sotto.
 - **Font Inter al posto di Urbanist**: richiesta esplicita. Il resto della scala tipografica non cambia.
 - **`docs/DESIGN.md` come manuale operativo**: `DECISIONS.md` spiega *perché*; mancava il *come*, cioè la pagina che si legge prima di costruire una schermata. Un file solo, non cinque: uno letto vale più di cinque ignorati.
+
+## Viste del calendario (2026-10-09)
+
+- **Quattro viste su una sola rotta**: giorno, settimana, mese, anno vivono su `/` e si scambiano con `TabPills`; la data selezionata è unica, la vista decide soltanto quanto se ne disegna. Passando da mese a giorno resti sul giorno che stavi guardando. Alternativa scartata: quattro rotte e quattro voci nella sidebar, che avrebbero riempito la bottom bar del telefono e perso la data nel passaggio.
+- **Una griglia oraria sola per giorno e settimana**: `Timeline` prende `dates: CalendarDate[]` — una data disegna il giorno, sette la settimana. Stesso posizionamento, stesse corsie, stessa linea dell'ora. Alternativa scartata: `DayTimeline` + `WeekTimeline`, due componenti che si sarebbero disallineati al primo ritocco.
+- **Il mese sono 42 celle fisse**: `monthGridDates` include la coda del mese prima e la testa del successivo, così la griglia non cambia altezza passando da febbraio a marzo. Ogni cella mostra al massimo tre blocchi e poi "+N altri": l'ora appartiene alla vista giorno.
+- **L'anno è densità, non contenuto**: 12 mini-mesi dove ogni giorno è un quadratino tinto su quattro livelli in base a quanti blocchi contiene. A quella scala nessun testo è leggibile, quindi non se ne mette. Alternativa scartata: una lista di eventi per mese, illeggibile e lunga una pagina per ogni mese.
+- **Click sul vuoto = nuovo blocco a quell'ora**: nella timeline il click su spazio libero apre il foglio già impostato sulla mezz'ora più vicina. È il gesto che ci si aspetta da un calendario. La via accessibile da tastiera resta il bottone "+ Blocco" nell'header della card.
+- **La parte soldi resta solo nella vista giorno**: ciclo, KPI e spesa rapida parlano di oggi; sotto una griglia mensile sarebbero rumore.

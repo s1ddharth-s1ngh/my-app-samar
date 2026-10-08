@@ -30,7 +30,7 @@ export function MobileShell({ area, children }: { area: AreaKey; children: React
     <>
       <div className="fixed inset-0 flex flex-col overflow-hidden bg-black">
         <header className="flex h-12 shrink-0 items-center gap-3 border-b border-white/[0.06] bg-black px-4">
-          <img src="/logo.png" alt="" className="h-7 w-7 rounded-lg object-cover" />
+          <img src="/logo-transparent.png" alt="" className="h-7 w-7 rounded-lg object-cover" />
           <h1 className="min-w-0 flex-1 truncate text-[14px] font-semibold tracking-[-0.02em]">
             {title}
           </h1>
