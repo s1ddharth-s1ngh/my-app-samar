@@ -217,3 +217,23 @@ export const settingsSchema = baseSchema.extend({
   notificationsEnabled: z.boolean(),
   quietHours: z.object({ from: clockSchema, to: clockSchema }).nullable(),
 }) satisfies z.ZodType<T.Settings>;
+
+export const scheduleBlockSchema = baseSchema
+  .extend({
+    title: z.string().min(1, 'Il titolo è obbligatorio'),
+    kind: z.enum(['work', 'break', 'gym', 'custom']),
+    start: clockSchema,
+    end: clockSchema,
+    byWeekday: z.array(z.number().int().min(1).max(7)),
+    date: calendarDateSchema.nullable(),
+    templateId: idSchema.nullable(),
+    skipped: z.boolean(),
+  })
+  .refine((data) => data.end > data.start, {
+    message: "La fine deve venire dopo l'inizio",
+    path: ['end'],
+  })
+  .refine((data) => data.date !== null || data.byWeekday.length > 0, {
+    message: 'Scegli almeno un giorno della settimana',
+    path: ['byWeekday'],
+  }) satisfies z.ZodType<T.ScheduleBlock>;

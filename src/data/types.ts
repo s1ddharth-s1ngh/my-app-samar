@@ -195,3 +195,25 @@ export interface OutboxEntry {
   createdAt: Instant;
   syncedAt: Instant | null;
 }
+
+export type ScheduleKind = 'work' | 'break' | 'gym' | 'custom';
+
+/**
+ * One block of the day, in the only collection the agenda has.
+ *
+ * A row is either the weekly template (`date: null`, repeating on the weekdays
+ * in `byWeekday`) or a single-day exception (`date` set): `templateId` names
+ * the template it replaces, `skipped` removes that template for the day, and
+ * both null means a block that belongs to that date alone.
+ */
+export interface ScheduleBlock extends Base {
+  title: string;
+  kind: ScheduleKind;
+  start: Clock;
+  end: Clock;
+  /** ISO weekdays, 1 = Monday to 7 = Sunday. Empty on an exception. */
+  byWeekday: number[];
+  date: CalendarDate | null;
+  templateId: ID | null;
+  skipped: boolean;
+}
