@@ -13,7 +13,7 @@
  * "Altro" rather than inventing a hue.
  */
 export const CHART_CATEGORICAL = [
-  '#3b82f6', // blue
+  '#9db560', // olive
   '#d97706', // amber
   '#059669', // emerald
   '#ec4899', // pink

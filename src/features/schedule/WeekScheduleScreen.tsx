@@ -92,7 +92,7 @@ export function WeekScheduleScreen() {
                           className={cn(
                             'h-7 w-8 rounded-full text-[10px] font-semibold transition-colors',
                             isOn
-                              ? 'bg-[#1E6FFF] text-white'
+                              ? 'bg-[#1F523A] text-white'
                               : 'bg-white/[0.04] text-white/35 hover:bg-white/[0.08] hover:text-white/70'
                           )}
                         >

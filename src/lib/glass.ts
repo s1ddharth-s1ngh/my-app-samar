@@ -17,7 +17,7 @@
 /** Buttons and actions: the small iOS 27 glass, as a pill. */
 export const glassButtonClass = 'glass-control glass-interactive rounded-full text-foreground';
 
-/** The primary action: the same pill, denser frost. Never a solid blue block. */
+/** The primary action: the same pill, denser frost. Never a solid color block. */
 export const glassPrimaryButtonClass =
   'glass-control glass-interactive glass-prominent rounded-full text-foreground font-semibold';
 

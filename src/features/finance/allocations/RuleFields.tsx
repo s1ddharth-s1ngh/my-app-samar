@@ -89,5 +89,3 @@ export function RuleFields({
     </>
   );
 }
-
-export { ruleOfType };

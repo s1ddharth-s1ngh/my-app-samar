@@ -37,8 +37,8 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
             className="
               block h-5 w-9 rounded-full border border-white/[0.08] bg-white/[0.06]
               transition-colors duration-200 motion-reduce:transition-none
-              peer-checked:border-[#1E6FFF] peer-checked:bg-[#1E6FFF]
-              peer-focus-visible:ring-2 peer-focus-visible:ring-[#1E6FFF]
+              peer-checked:border-[#1F523A] peer-checked:bg-[#1F523A]
+              peer-focus-visible:ring-2 peer-focus-visible:ring-[#9DB560]
               after:content-[''] after:absolute after:top-1 after:left-1
               after:h-3 after:w-3 after:rounded-full after:bg-white
               after:transition-transform after:duration-200 motion-reduce:after:transition-none

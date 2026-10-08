@@ -8,8 +8,8 @@
  *    apart by a hairline `border-white/[0.06]`, not by a shadow;
  *  - text is white at a fixed opacity ladder (85 / 70 / 55 / 45 / 40 / 35 / 30)
  *    — that ladder IS the hierarchy, so there are no grey hexes;
- *  - one brand blue, `#1E6FFF`, for the selected state and real primary
- *    actions; `#67a8f3` for inline links. Green and red only for deltas;
+ *  - one deep green, `#1F523A`, for selected states and primary actions;
+ *    `#D1D9B0` for inline links. Green and red only for deltas;
  *  - dense type: 9.5 / 10 / 10.5 / 11 / 12 / 13 / 14px, with 28px reserved for
  *    the headline figure of a metric card;
  *  - containers are `rounded-[20px]`, controls are `rounded-full`.
@@ -20,8 +20,8 @@
   --color-card: #111111;
   --color-card-raised: #121212;
 
-  --color-brand: #1e6fff;
-  --color-brand-soft: #67a8f3;
+  --color-brand: #1f523a;
+  --color-brand-soft: #d1d9b0;
 
   --color-good: #34d399;
   --color-bad: #fca5a5;
@@ -124,9 +124,9 @@ textarea {
 }
 
 .status-brand {
-  background-color: rgb(30 111 255 / 0.15);
-  border: 1px solid rgb(30 111 255 / 0.3);
-  color: #67a8f3;
+  background-color: rgb(31 82 58 / 0.25);
+  border: 1px solid rgb(31 82 58 / 0.5);
+  color: #d1d9b0;
 }
 
 /* --- scrollbars: thin, present, never loud --- */
@@ -162,6 +162,6 @@ textarea {
 }
 
 :focus-visible {
-  outline: 2px solid #1e6fff;
+  outline: 2px solid #9db560;
   outline-offset: 2px;
 }

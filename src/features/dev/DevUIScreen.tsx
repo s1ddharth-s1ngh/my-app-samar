@@ -162,7 +162,7 @@ export function DevUIScreen() {
             daysPassed={12}
             totalBudget={200000}
             buckets={[
-              { id: '1', amount: 90000, color: '#3b82f6' },
+              { id: '1', amount: 90000, color: '#9db560' },
               { id: '2', amount: 60000, color: '#d97706' },
               { id: '3', amount: 50000, color: '#059669' },
             ]}

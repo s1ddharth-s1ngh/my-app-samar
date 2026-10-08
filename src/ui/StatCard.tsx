@@ -17,7 +17,7 @@ export interface StatCardProps {
 
 const TONE_TEXT = {
   neutral: 'text-white',
-  brand: 'text-[#67a8f3]',
+  brand: 'text-[#D1D9B0]',
   good: 'text-emerald-300',
   warn: 'text-amber-300',
   bad: 'text-red-300',
@@ -25,7 +25,7 @@ const TONE_TEXT = {
 
 const TONE_FILL = {
   neutral: 'bg-white/30',
-  brand: 'bg-[#1E6FFF]',
+  brand: 'bg-[#9DB560]',
   good: 'bg-emerald-400',
   warn: 'bg-amber-400',
   bad: 'bg-red-400',

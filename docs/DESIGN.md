@@ -83,14 +83,14 @@ incapsulato in `CARD` / `CARD_METRIC`. Non scriverlo a mano altrove.
 ## 5. Colore = informazione, mai decorazione
 
 ```
-#1E6FFF   brand. Stato selezionato e UNA azione primaria per pagina.
-#67a8f3   link inline e valori "brand" dentro una card.
+#1F523A   brand. Stato selezionato e UNA azione primaria per pagina.
+#D1D9B0   link inline e valori "brand" dentro una card.
 emerald   solo un delta positivo o uno stato realmente buono.
 amber     solo un avviso reale.
 red       solo un errore o un superamento reale.
 ```
 
-Un bottone pieno blu esiste (`PILL_BRAND`) ed è l'unico bottone pieno del
+Un bottone pieno brand esiste (`PILL_BRAND`) ed è l'unico bottone pieno del
 sistema. Se in una schermata ce ne sono due, una delle due azioni non è primaria.
 
 Per i grafici si usa **solo** `src/ui/chartPalette.ts`: sei tinte categoriche
@@ -189,7 +189,7 @@ encoding secondario.
 - Comporre da `surfaces.ts` — non inventare un fondo nuovo in una pagina
 - Sette opacità — non `text-gray-400`
 - Due raggi — non `rounded-lg` su un contenitore
-- Un bottone pieno per pagina — non blu su ogni CTA
+- Un bottone pieno per pagina — non il colore brand su ogni CTA
 - Vetro sulla navigazione — non su una card di contenuto
 - `tabular-nums` sulle cifre — non colonne che ballano
 - `Money` per gli importi — non formattazione a mano

@@ -3,7 +3,7 @@ import { cn } from '@/lib/cn';
 
 /**
  * THE row of buttons under a page title. A dark segmented control: pill
- * container with a hairline, the selected item in brand blue.
+ * container with a hairline, the selected item in brand green.
  *
  * There is no alternative: every top-level row of choices — page tabs, view
  * switches, dashboard sections — uses this. Change the look here and it changes
@@ -13,7 +13,7 @@ export const TAB_PILLS_CONTAINER =
   'flex items-center gap-0.5 p-0.5 rounded-full bg-white/[0.04] border border-white/[0.08]';
 export const TAB_PILL_ITEM =
   'shrink-0 h-7 px-3 rounded-full inline-flex items-center gap-1.5 text-xs font-medium transition-colors whitespace-nowrap';
-export const TAB_PILL_ACTIVE = 'bg-[#1E6FFF] text-white';
+export const TAB_PILL_ACTIVE = 'bg-[#1F523A] text-white';
 export const TAB_PILL_INACTIVE = 'text-white/45 hover:text-white/80';
 
 export interface TabPillItem<T extends string = string> {

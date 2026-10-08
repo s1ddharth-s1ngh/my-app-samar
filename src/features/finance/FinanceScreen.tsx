@@ -76,7 +76,7 @@ export default function FinanceScreen() {
           id: allocation.id,
           bucketId: allocation.bucketId,
           name: bucket?.name ?? 'Bucket rimosso',
-          color: bucket?.color ?? '#3b8bff',
+          color: bucket?.color ?? '#9DB560',
           priority: bucket?.priority ?? 99,
           planned: allocation.plannedAmount,
           spent: allocation.actualAmount,
@@ -262,7 +262,7 @@ export default function FinanceScreen() {
                       formatter={euro}
                     />
                     <Legend wrapperStyle={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }} />
-                    <Bar dataKey="income" name="Entrate" fill="#1E6FFF" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="income" name="Entrate" fill="#9DB560" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="spent" name="Spese" fill="#d97706" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -414,7 +414,7 @@ function BucketTable({ rows, committed }: { rows: BucketRow[]; committed: number
                   <td className="px-2 py-2">
                     <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
                       <div
-                        className={`h-full rounded-full ${row.available < 0 ? 'bg-red-400' : 'bg-[#1E6FFF]'}`}
+                        className={`h-full rounded-full ${row.available < 0 ? 'bg-red-400' : 'bg-[#9DB560]'}`}
                         style={{ width: `${ratio * 100}%` }}
                       />
                     </div>

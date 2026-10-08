@@ -130,8 +130,8 @@ export function DayTimeline({ date, blocks, onSelect }: DayTimelineProps) {
             style={{ top: offset(nowMinutes) }}
             aria-label={`Ora: ${clockFromMinutes(nowMinutes)}`}
           >
-            <span className="h-1.5 w-1.5 -ml-0.5 rounded-full bg-[#1E6FFF]" />
-            <span className="h-px flex-1 bg-[#1E6FFF]/60" />
+            <span className="h-1.5 w-1.5 -ml-0.5 rounded-full bg-[#9DB560]" />
+            <span className="h-px flex-1 bg-[#9DB560]/60" />
           </div>
         )}
       </div>

@@ -22,9 +22,9 @@ export const PILL_QUIET =
   'px-3 h-7 rounded-full bg-white/[0.04] border border-white/[0.08] text-white/55 ' +
   'hover:text-white hover:bg-white/[0.08] transition-colors text-[11px] font-medium';
 
-/** The primary action. The only filled blue button in the system. */
+/** The primary action. The only filled brand button in the system. */
 export const PILL_BRAND =
-  'px-3 h-7 rounded-full bg-[#1E6FFF] text-white hover:bg-[#3b8bff] transition-colors ' +
+  'px-3 h-7 rounded-full bg-[#1F523A] text-white hover:bg-[#35643F] transition-colors ' +
   'text-[11px] font-semibold';
 
 /** A destructive action: soft red, never a filled red block. */
@@ -34,7 +34,7 @@ export const PILL_DANGER =
 
 /** Inline link inside a card header or a list. */
 export const LINK_SOFT =
-  'text-[11px] text-[#67a8f3] hover:text-white transition-colors font-medium';
+  'text-[11px] text-[#D1D9B0] hover:text-white transition-colors font-medium';
 
 /** Micro label above a value, or a table column head. */
 export const MICRO_LABEL = 'text-[9.5px] uppercase tracking-[0.07em] text-white/30 font-semibold';
@@ -63,7 +63,7 @@ export const ICON_ACTION_DANGER =
 export const FIELD =
   'h-9 w-full rounded-full bg-white/[0.04] border border-white/[0.08] px-3.5 text-[12px] ' +
   'text-white placeholder:text-white/30 transition-colors ' +
-  'hover:bg-white/[0.06] focus:outline-none focus:border-[#1E6FFF]/60 ' +
+  'hover:bg-white/[0.06] focus:outline-none focus:border-[#9DB560]/60 ' +
   'disabled:opacity-40 disabled:cursor-not-allowed';
 
 /** Table head cell. */

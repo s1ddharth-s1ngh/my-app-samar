@@ -26,7 +26,7 @@ const STATUS_LABELS: Record<Project['status'], string | null> = {
 const EMPTY_FORM = {
   name: '',
   description: '',
-  color: '#3b82f6',
+  color: '#9db560',
   icon: '📁',
   status: 'active',
 };

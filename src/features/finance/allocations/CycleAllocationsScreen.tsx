@@ -173,7 +173,7 @@ export function CycleAllocationsScreen() {
                     <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
                       <div
                         className={`h-full rounded-full ${
-                          available < 0 ? 'bg-red-500' : 'bg-[#1E6FFF]'
+                          available < 0 ? 'bg-red-500' : 'bg-[#9DB560]'
                         }`}
                         style={{
                           width: `${Math.min(100, (allocation.actualAmount / allocation.plannedAmount) * 100)}%`,

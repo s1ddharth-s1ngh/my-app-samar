@@ -49,8 +49,8 @@ export function TaskRow({
         aria-label={isDone ? `Riapri ${task.title}` : `Completa ${task.title}`}
         className={`h-6 w-6 shrink-0 rounded-full border-2 flex items-center justify-center transition-colors motion-reduce:transition-none ${
           isDone
-            ? 'bg-[#1E6FFF] border-[#1E6FFF] text-white'
-            : 'border-white/[0.06] hover:border-[#1E6FFF]'
+            ? 'bg-[#1F523A] border-[#1F523A] text-white'
+            : 'border-white/[0.06] hover:border-[#9DB560]'
         }`}
       >
         {isDone && <Check size={14} strokeWidth={3} aria-hidden="true" />}

@@ -3,7 +3,7 @@ import { cn } from '@/lib/cn';
 import { PILL_BRAND, PILL_DANGER, PILL_QUIET } from '@/lib/surfaces';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  /** `brand` is the one filled blue button on a page; everything else is quiet. */
+  /** `brand` is the one filled brand button on a page; everything else is quiet. */
   variant?: 'brand' | 'quiet' | 'ghost' | 'danger';
   size?: 'sm' | 'md';
   fullWidth?: boolean;

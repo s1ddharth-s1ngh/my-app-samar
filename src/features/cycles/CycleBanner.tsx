@@ -32,7 +32,7 @@ export function CycleBanner() {
   };
 
   return (
-    <div className="rounded-xl border border-[#1E6FFF]/25 bg-[#1E6FFF]/10 p-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+    <div className="rounded-xl border border-[#9DB560]/40 bg-[#1F523A]/30 p-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
       <div className="flex gap-3">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/45">
           <CalendarClock size={18} aria-hidden="true" />

@@ -30,9 +30,7 @@ export function MobileShell({ area, children }: { area: AreaKey; children: React
     <>
       <div className="fixed inset-0 flex flex-col overflow-hidden bg-black">
         <header className="flex h-12 shrink-0 items-center gap-3 border-b border-white/[0.06] bg-black px-4">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1E6FFF] text-[11px] font-bold">
-            C
-          </span>
+          <img src="/logo.png" alt="" className="h-7 w-7 rounded-lg object-cover" />
           <h1 className="min-w-0 flex-1 truncate text-[14px] font-semibold tracking-[-0.02em]">
             {title}
           </h1>
@@ -99,7 +97,7 @@ function BottomNav({
               'relative flex h-12 w-12 items-center justify-center rounded-[18px] text-white transition-transform active:scale-95',
               launcherOpen
                 ? 'bg-white/[0.12]'
-                : 'bg-[#1E6FFF] shadow-[0_8px_24px_rgba(30,111,255,0.45)]'
+                : 'bg-[#1F523A] shadow-[0_8px_24px_rgba(31,82,58,0.45)]'
             )}
           >
             {launcherOpen ? (

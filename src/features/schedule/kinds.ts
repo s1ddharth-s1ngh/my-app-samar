@@ -11,9 +11,9 @@ export const SCHEDULE_KINDS: Record<
 > = {
   work: {
     label: 'Lavoro',
-    rail: 'bg-[#1E6FFF]',
-    fill: 'bg-[#1E6FFF]/[0.12]',
-    text: 'text-[#9cc4ff]',
+    rail: 'bg-[#1F523A]',
+    fill: 'bg-[#1F523A]/[0.25]',
+    text: 'text-[#D1D9B0]',
   },
   break: {
     label: 'Pausa',

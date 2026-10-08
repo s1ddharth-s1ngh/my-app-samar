@@ -67,7 +67,7 @@ export function generateSeedData(): any {
       rule: { type: 'fixed', value: 20000 },
       priority: 2,
       targetAmount: null,
-      color: '#2196f3',
+      color: '#9db560',
       icon: 'zap',
       isActive: true,
     },

@@ -223,12 +223,12 @@ export function BucketDetailScreen() {
                   </div>
                   <div className="flex gap-1 h-1.5">
                     <div
-                      className="rounded-full bg-[#1E6FFF]/40"
+                      className="rounded-full bg-[#9DB560]/50"
                       style={{ width: `${(row.planned / maxTrend) * 100}%` }}
                       aria-hidden="true"
                     />
                     <div
-                      className="rounded-full bg-[#1E6FFF]"
+                      className="rounded-full bg-[#9DB560]"
                       style={{ width: `${(row.spent / maxTrend) * 100}%` }}
                       aria-hidden="true"
                     />

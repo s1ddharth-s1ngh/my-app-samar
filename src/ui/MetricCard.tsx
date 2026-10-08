@@ -3,7 +3,7 @@ import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import { cn } from '@/lib/cn';
 import { CARD_METRIC } from '@/lib/surfaces';
 
-const BRAND = '#1E6FFF';
+const BRAND = '#9DB560';
 
 export interface MetricSub {
   label: string;
