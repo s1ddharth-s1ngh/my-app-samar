@@ -42,7 +42,7 @@ export function PlatformHeader() {
         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#1E6FFF] text-[13px] font-bold text-white">
           C
         </span>
-        <span className="hidden text-[15px] font-semibold tracking-[-0.02em] sm:inline">Ciclo</span>
+        <span className="hidden text-[15px] font-semibold tracking-[-0.02em] sm:inline">Samar</span>
       </Link>
 
       {/* The centre carries the one figure worth seeing from every page. */}

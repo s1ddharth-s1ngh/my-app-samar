@@ -1,6 +1,6 @@
-# Ciclo
+# Samar
 
-Ciclo is a personal web application for managing finances, projects, tasks, daily habits, and planned purchases.
+Samar is a personal web application for managing finances, projects, tasks, daily habits, and planned purchases.
 
 ## Setup & Running
 

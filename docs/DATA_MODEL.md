@@ -1,4 +1,4 @@
-# Modello Dati - Ciclo
+# Modello Dati - Samar
 
 ## Relazioni Principali
 

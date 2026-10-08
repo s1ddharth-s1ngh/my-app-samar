@@ -9,7 +9,7 @@ import { createClient } from '@supabase/supabase-js';
  * `.from()` inside a screen is the shortcut that makes the data layer
  * unswappable later.
  *
- * Ciclo shares a Postgres instance with another app and lives in its own
+ * Samar shares a Postgres instance with another app and lives in its own
  * schema, so every request has to be pointed at that schema — otherwise
  * PostgREST answers on `public`, which belongs to the other app.
  */
@@ -17,7 +17,7 @@ import { createClient } from '@supabase/supabase-js';
 const url = import.meta.env.VITE_SUPABASE_URL;
 const publishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-/** The Postgres schema that holds Ciclo's tables. */
+/** The Postgres schema that holds Samar's tables. */
 export const SUPABASE_SCHEMA = import.meta.env.VITE_SUPABASE_SCHEMA ?? 'samar';
 
 /**
@@ -45,15 +45,15 @@ function create() {
   });
 }
 
-export type CicloSupabaseClient = ReturnType<typeof create>;
+export type SamarSupabaseClient = ReturnType<typeof create>;
 
-let cached: CicloSupabaseClient | null = null;
+let cached: SamarSupabaseClient | null = null;
 
 /**
  * Created on first use rather than at module load, so importing anything from
  * `src/data/` does not fail in a test or a build where the env is absent.
  */
-export function getSupabaseClient(): CicloSupabaseClient {
+export function getSupabaseClient(): SamarSupabaseClient {
   if (!isSupabaseConfigured()) {
     throw new Error(
       'Supabase non è configurato: mancano VITE_SUPABASE_URL o VITE_SUPABASE_PUBLISHABLE_KEY. ' +
