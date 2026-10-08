@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import FinanceScreen from './FinanceScreen';
 import { useDataStore } from '@/stores/useDataStore';
 import { dbAdapter } from '@/stores/db';
+import { defaultSettings } from '@/data/defaults';
 
 /** The screen the whole money area hangs off: it must survive a real dataset. */
 describe('FinanceScreen', () => {
