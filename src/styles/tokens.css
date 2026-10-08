@@ -27,7 +27,7 @@
   --color-bad: #fca5a5;
   --color-warn: #f59e0b;
 
-  --font-sans: 'Urbanist Variable', 'Urbanist', system-ui, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, sans-serif;
 
   --radius-xl: 0.75rem;
 }
