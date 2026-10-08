@@ -14,6 +14,7 @@ import type {
   TimerSession,
   ShoppingItem,
   ScheduledNotification,
+  ScheduleBlock,
   Settings,
 } from './types';
 
@@ -92,6 +93,7 @@ export interface ExportData {
     timerSessions: TimerSession[];
     shoppingItems: ShoppingItem[];
     scheduledNotifications: ScheduledNotification[];
+    scheduleBlocks: ScheduleBlock[];
     settings: Settings[];
   };
 }
@@ -113,6 +115,7 @@ export interface DataAdapter {
   timerSessions: Repository<TimerSession>;
   shoppingItems: Repository<ShoppingItem>;
   scheduledNotifications: Repository<ScheduledNotification>;
+  scheduleBlocks: Repository<ScheduleBlock>;
   settings: Repository<Settings>;
 
   /**

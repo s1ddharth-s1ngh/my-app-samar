@@ -174,7 +174,7 @@ export function TransactionsScreen() {
         <EmptyState
           icon={Receipt}
           title="Nessun ciclo aperto"
-          description="Apri un ciclo dalla schermata Oggi per registrarci i movimenti."
+          description="Apri un ciclo dalla schermata Agenda per registrarci i movimenti."
         />
       </div>
     );

@@ -92,10 +92,10 @@ export function ProjectDetailsScreen() {
   };
 
   const handleToggle = async (task: Task) => {
-    const done = task.status !== 'done';
+    const isDone = task.status !== 'done';
     await updateItem('tasks', task.id, {
-      status: done ? 'done' : 'todo',
-      completedAt: done ? nowInstant() : null,
+      status: isDone ? 'done' : 'todo',
+      completedAt: isDone ? nowInstant() : null,
       updatedAt: nowInstant(),
     });
   };

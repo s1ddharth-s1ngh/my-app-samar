@@ -24,6 +24,7 @@ import { useDataStore } from '@/stores/useDataStore';
 import { useCycleTotals } from './useCycleTotals';
 import { deltaPct, useCycleSeries } from './useCycleSeries';
 import { CycleForecast } from './CycleForecast';
+import { CycleBanner } from '../cycles/CycleBanner';
 
 const QUICK_LINKS: [string, string][] = [
   ['Entrate', '/soldi/entrate'],
@@ -101,15 +102,18 @@ export default function FinanceScreen() {
       .reduce((acc, item) => acc + item.estimatedCost, 0);
   }, [shoppingItems, cycleId]);
 
+  // The banner carries the only button that opens a cycle, so it belongs here
+  // too: being told to go to another screen is not an answer.
   if (!totals.cycle) {
     return (
       <div className="space-y-3">
         <PageHeader title="Soldi" subtitle="Nessun ciclo aperto" />
+        <CycleBanner />
         <Card>
           <EmptyState
             icon={Wallet}
             title="Nessun ciclo aperto"
-            description="Apri il primo ciclo dalla schermata Oggi: entrate, bucket e movimenti nascono da lì."
+            description="Apri un ciclo qui sopra: entrate, bucket e movimenti nascono da lì."
           />
         </Card>
       </div>
@@ -129,6 +133,9 @@ export default function FinanceScreen() {
 
   return (
     <div className="space-y-3">
+      {/* Only shows itself when the cycle no longer covers today. */}
+      <CycleBanner />
+
       {/* ── Header + quick access ── */}
       <div className="mb-1 flex flex-wrap items-end justify-between gap-4">
         <PageHeader

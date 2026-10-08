@@ -176,7 +176,7 @@ export function IncomeEntriesScreen() {
         <EmptyState
           icon={TrendingUp}
           title="Nessun ciclo aperto"
-          description="Apri un ciclo dalla schermata Oggi per registrarci le entrate."
+          description="Apri un ciclo dalla schermata Agenda per registrarci le entrate."
         />
       </div>
     );

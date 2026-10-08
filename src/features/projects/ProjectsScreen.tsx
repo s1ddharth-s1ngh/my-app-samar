@@ -1,22 +1,39 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ChevronDown, ChevronUp, Edit2, Folder, Plus, Trash2 } from 'lucide-react';
 import { useDataStore } from '@/stores/useDataStore';
 import { useToastStore } from '@/stores/toast';
-import { Button, IconButton, Card, Sheet, Field, Select, EmptyState } from '@/ui';
-import { Plus, Edit2, Trash2, Folder, GripVertical } from 'lucide-react';
+import { Button, Card, EmptyState, Field, IconButton, PageHeader, Select, Sheet } from '@/ui';
 import type { Project } from '@/data/types';
 import { projectSchema } from '@/data/schemas';
-import { useNavigate } from 'react-router-dom';
+import { newBase, nowInstant } from '@/lib/record';
+import { ordered, reorder } from './projectModel';
 
-type FormState = {
-  name: string;
-  description: string;
-  color: string;
-  icon: string;
-  status: string;
+const STATUS_OPTIONS = [
+  { value: 'active', label: 'Attivo' },
+  { value: 'paused', label: 'In pausa' },
+  { value: 'done', label: 'Completato' },
+  { value: 'archived', label: 'Archiviato' },
+];
+
+const STATUS_LABELS: Record<Project['status'], string | null> = {
+  active: null,
+  paused: 'In pausa',
+  done: 'Fatto',
+  archived: 'Archiviato',
+};
+
+const EMPTY_FORM = {
+  name: '',
+  description: '',
+  color: '#3b82f6',
+  icon: '📁',
+  status: 'active',
 };
 
 export default function ProjectsScreen() {
-  const projects = useDataStore((state) => state.projects).sort((a, b) => a.order - b.order);
+  const projects = useDataStore((state) => state.projects);
+  const tasks = useDataStore((state) => state.tasks);
   const createItem = useDataStore((state) => state.createItem);
   const updateItem = useDataStore((state) => state.updateItem);
   const removeItem = useDataStore((state) => state.removeItem);
@@ -25,152 +42,108 @@ export default function ProjectsScreen() {
 
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState<FormState>({
-    name: '',
-    description: '',
-    color: '#3b82f6',
-    icon: '📁',
-    status: 'active',
-  });
+  const [form, setForm] = useState(EMPTY_FORM);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const [draggedId, setDraggedId] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const list = ordered(projects);
 
   const handleOpenCreate = () => {
-    setForm({ name: '', description: '', color: '#3b82f6', icon: '📁', status: 'active' });
+    setForm(EMPTY_FORM);
     setErrors({});
     setEditingId(null);
     setIsSheetOpen(true);
   };
 
-  const handleOpenEdit = (proj: Project) => {
+  const handleOpenEdit = (project: Project) => {
     setForm({
-      name: proj.name,
-      description: proj.description || '',
-      color: proj.color,
-      icon: proj.icon,
-      status: proj.status,
+      name: project.name,
+      description: project.description ?? '',
+      color: project.color,
+      icon: project.icon,
+      status: project.status,
     });
     setErrors({});
-    setEditingId(proj.id);
+    setEditingId(project.id);
     setIsSheetOpen(true);
   };
 
-  const handleRemove = async (id: string, name: string) => {
-    try {
-      await removeItem('projects', id);
-      const onUndo = async () => {
-        try {
-          await restoreItem('projects', id);
-          addToast(`"${name}" ripristinato.`, 'success');
-        } catch {
-          addToast(`Errore nel ripristino.`, 'error');
-        }
-      };
-      addToast(`Hai eliminato "${name}".`, 'info', { label: 'Annulla', onClick: onUndo });
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   const handleSave = async () => {
-    try {
-      const payload = {
-        name: form.name,
-        description: form.description || null,
+    const parsed = projectSchema
+      .omit({ id: true, createdAt: true, updatedAt: true, deletedAt: true })
+      .safeParse({
+        name: form.name.trim(),
+        description: form.description.trim() === '' ? null : form.description.trim(),
         color: form.color,
         icon: form.icon,
-        status: form.status as any,
-        order: editingId ? (projects.find((p) => p.id === editingId)?.order ?? 0) : projects.length,
-      };
+        status: form.status,
+        order: editingId ? (projects.find((p) => p.id === editingId)?.order ?? 0) : list.length,
+      });
 
-      const parsed = projectSchema
-        .omit({ id: true, createdAt: true, updatedAt: true, deletedAt: true })
-        .safeParse(payload);
-      if (!parsed.success) {
-        const newErrors: Record<string, string> = {};
-        parsed.error.issues.forEach((i) => {
-          if (i.path[0]) newErrors[i.path[0].toString()] = i.message;
-        });
-        setErrors(newErrors);
-        return;
-      }
+    if (!parsed.success) {
+      setErrors(
+        Object.fromEntries(
+          parsed.error.issues.map((issue) => [String(issue.path[0] ?? ''), issue.message])
+        )
+      );
+      return;
+    }
 
+    try {
       if (editingId) {
-        await updateItem('projects', editingId, parsed.data);
+        await updateItem('projects', editingId, { ...parsed.data, updatedAt: nowInstant() });
       } else {
-        await createItem('projects', {
-          id: crypto.randomUUID(),
-          ...parsed.data,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          deletedAt: null,
-        });
+        await createItem('projects', { ...newBase(), ...parsed.data });
       }
       setIsSheetOpen(false);
       addToast('Salvato con successo.', 'success');
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // The store already reported the failure.
     }
   };
 
-  const handleDragStart = (e: React.DragEvent, id: string) => {
-    setDraggedId(id);
-    e.dataTransfer.effectAllowed = 'move';
-    setTimeout(() => {
-      const el = document.getElementById(`proj-${id}`);
-      if (el) el.classList.add('opacity-50');
-    }, 0);
+  const handleMove = async (id: string, delta: number) => {
+    await Promise.all(
+      reorder(projects, id, delta).map((row) =>
+        updateItem('projects', row.id, { order: row.order, updatedAt: nowInstant() })
+      )
+    );
   };
 
-  const handleDragEnd = (_e: React.DragEvent, id: string) => {
-    setDraggedId(null);
-    const el = document.getElementById(`proj-${id}`);
-    if (el) el.classList.remove('opacity-50');
-  };
+  /** A project owns its tasks: deleting one hides both, and undo brings both back. */
+  const handleRemove = async (project: Project) => {
+    const taskIds = tasks.filter((task) => task.projectId === project.id).map((task) => task.id);
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  };
-
-  const handleDrop = async (e: React.DragEvent, dropId: string) => {
-    e.preventDefault();
-    if (!draggedId || draggedId === dropId) return;
-
-    const dragIndex = projects.findIndex((p) => p.id === draggedId);
-    const dropIndex = projects.findIndex((p) => p.id === dropId);
-
-    if (dragIndex === -1 || dropIndex === -1) return;
-
-    const newProjects = [...projects];
-    const [removed] = newProjects.splice(dragIndex, 1);
-    if (!removed) return;
-
-    newProjects.splice(dropIndex, 0, removed);
-
-    for (let i = 0; i < newProjects.length; i++) {
-      const proj = newProjects[i];
-      if (proj && proj.order !== i) {
-        await updateItem('projects', proj.id, { order: i });
-      }
+    try {
+      await removeItem('projects', project.id);
+      await Promise.all(taskIds.map((id) => removeItem('tasks', id)));
+    } catch {
+      return; // The store already reported the failure.
     }
+
+    addToast(`Hai eliminato "${project.name}".`, 'info', {
+      label: 'Annulla',
+      onClick: () => {
+        void (async () => {
+          await restoreItem('projects', project.id);
+          await Promise.all(taskIds.map((id) => restoreItem('tasks', id)));
+        })();
+      },
+    });
   };
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold">Progetti</h1>
-          <p className="text-sm text-white/45">Gestisci i tuoi obiettivi e task</p>
-        </div>
-        <Button onClick={handleOpenCreate} size="sm" className="hidden sm:inline-flex">
-          <Plus size={16} className="mr-2" /> Nuovo
-        </Button>
-      </div>
+      <PageHeader
+        title="Progetti"
+        subtitle="Gestisci i tuoi obiettivi e task"
+        actions={
+          <Button onClick={handleOpenCreate} size="sm" className="hidden sm:inline-flex">
+            <Plus size={16} className="mr-2" /> Nuovo
+          </Button>
+        }
+      />
 
-      {projects.length === 0 ? (
+      {list.length === 0 ? (
         <EmptyState
           icon={Folder}
           title="Nessun progetto"
@@ -178,74 +151,88 @@ export default function ProjectsScreen() {
           actions={<Button onClick={handleOpenCreate}>Crea progetto</Button>}
         />
       ) : (
-        <div className="space-y-3">
-          {projects.map((proj) => (
-            <Card
-              id={`proj-${proj.id}`}
-              key={proj.id}
-              className="flex items-center p-3 gap-3 cursor-move hover:border-white/[0.06] transition-colors"
-              draggable
-              onDragStart={(e) => handleDragStart(e, proj.id)}
-              onDragEnd={(e) => handleDragEnd(e, proj.id)}
-              onDragOver={handleDragOver}
-              onDrop={(e) => handleDrop(e, proj.id)}
-              onClick={() => navigate(`/progetti/${proj.id}`)}
-            >
-              <div
-                className="text-white/45 cursor-grab active:cursor-grabbing shrink-0"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <GripVertical size={20} />
-              </div>
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl shrink-0 shadow-sm"
-                style={{ backgroundColor: `${proj.color}20`, color: proj.color }}
-              >
-                {proj.icon}
-              </div>
-              <div className="flex-1 cursor-pointer">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-semibold">{proj.name}</h3>
-                  {proj.status === 'paused' && <span className="status-chip">In pausa</span>}
-                  {proj.status === 'done' && (
-                    <span className="status-chip status-active">Fatto</span>
-                  )}
-                </div>
-                {proj.description && (
-                  <p className="text-xs text-white/45 line-clamp-1 mt-0.5">{proj.description}</p>
-                )}
-              </div>
-              <div className="flex gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
-                <IconButton
-                  icon={Edit2}
-                  label="Modifica"
-                  size="sm"
-                  onClick={() => handleOpenEdit(proj)}
-                />
-                <IconButton
-                  icon={Trash2}
-                  label="Elimina"
-                  size="sm"
-                  variant="danger"
-                  onClick={() => handleRemove(proj.id, proj.name)}
-                />
-              </div>
-            </Card>
-          ))}
-        </div>
+        <ul className="space-y-3">
+          {list.map((project, index) => {
+            const open = tasks.filter(
+              (task) => task.projectId === project.id && task.status !== 'done'
+            ).length;
+            const badge = STATUS_LABELS[project.status];
+
+            return (
+              <li key={project.id}>
+                <Card className="flex items-center gap-3 p-3">
+                  <div className="flex flex-col">
+                    <IconButton
+                      icon={ChevronUp}
+                      label={`Sposta ${project.name} in su`}
+                      disabled={index === 0}
+                      onClick={() => void handleMove(project.id, -1)}
+                    />
+                    <IconButton
+                      icon={ChevronDown}
+                      label={`Sposta ${project.name} in giù`}
+                      disabled={index === list.length - 1}
+                      onClick={() => void handleMove(project.id, 1)}
+                    />
+                  </div>
+
+                  <Link
+                    to={`/progetti/${project.id}`}
+                    className="flex min-w-0 flex-1 items-center gap-3"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl"
+                      style={{ backgroundColor: `${project.color}20`, color: project.color }}
+                    >
+                      {project.icon}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="flex items-center gap-2">
+                        <span className="truncate font-semibold text-white">{project.name}</span>
+                        {badge && <span className="status-chip">{badge}</span>}
+                      </span>
+                      <span className="mt-0.5 block truncate text-xs text-white/45">
+                        {project.description ?? `${open} da fare`}
+                      </span>
+                    </span>
+                  </Link>
+
+                  <div className="flex shrink-0 gap-1">
+                    <IconButton
+                      icon={Edit2}
+                      label={`Modifica ${project.name}`}
+                      onClick={() => handleOpenEdit(project)}
+                    />
+                    <IconButton
+                      icon={Trash2}
+                      label={`Elimina ${project.name}`}
+                      variant="danger"
+                      onClick={() => void handleRemove(project)}
+                    />
+                  </div>
+                </Card>
+              </li>
+            );
+          })}
+        </ul>
       )}
 
       {/* Mobile FAB */}
-      <div className="fixed bottom-20 right-4 md:hidden">
-        <Button onClick={handleOpenCreate} className="h-14 w-14 rounded-full shadow-lg p-0">
-          <Plus size={24} />
+      <div className="fixed right-4 bottom-20 md:hidden">
+        <Button
+          onClick={handleOpenCreate}
+          aria-label="Nuovo progetto"
+          className="h-14 w-14 rounded-full p-0 shadow-lg"
+        >
+          <Plus size={24} aria-hidden="true" />
         </Button>
       </div>
 
       <Sheet
         isOpen={isSheetOpen}
         onClose={() => setIsSheetOpen(false)}
-        title={editingId ? 'Modifica Progetto' : 'Nuovo Progetto'}
+        title={editingId ? 'Modifica progetto' : 'Nuovo progetto'}
       >
         <div className="space-y-4 py-4">
           <div className="flex gap-4">
@@ -278,24 +265,19 @@ export default function ProjectsScreen() {
             label="Stato"
             value={form.status}
             onChange={(e) => setForm({ ...form, status: e.target.value })}
-            options={[
-              { value: 'active', label: 'Attivo' },
-              { value: 'paused', label: 'In pausa' },
-              { value: 'done', label: 'Completato' },
-              { value: 'archived', label: 'Archiviato' },
-            ]}
+            options={STATUS_OPTIONS}
           />
 
           <Field
-            label="Colore (Hex)"
+            label="Colore"
             type="color"
             value={form.color}
             onChange={(e) => setForm({ ...form, color: e.target.value })}
             className="h-16"
           />
 
-          <div className="pt-4 flex gap-3">
-            <Button className="flex-1" onClick={handleSave}>
+          <div className="flex gap-3 pt-4">
+            <Button className="flex-1" onClick={() => void handleSave()}>
               Salva
             </Button>
             <Button variant="quiet" onClick={() => setIsSheetOpen(false)}>

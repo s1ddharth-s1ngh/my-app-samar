@@ -32,7 +32,7 @@ export function CycleCloseScreen() {
         <EmptyState
           icon={CalendarCheck}
           title="Nessun ciclo aperto"
-          description="Apri un ciclo dalla schermata Oggi per poterlo poi chiudere."
+          description="Apri un ciclo dalla schermata Agenda per poterlo poi chiudere."
         />
       </div>
     );

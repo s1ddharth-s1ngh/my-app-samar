@@ -11,13 +11,13 @@ Come si costruisce una schermata. Il **perché** delle scelte sta in
 
 ## 1. Fondamenta
 
-| Ruolo              | Valore                         | Dove          |
-| ------------------ | ------------------------------ | ------------- |
-| Canvas             | `#000000`                      | `body`        |
-| Card contenuto     | `#111111`                      | `CARD`        |
-| Card navigazione   | `#121212` + ombra lunga        | `CARD_NAV`    |
-| Card metrica       | gradiente `#161616 → #101010`  | `CARD_METRIC` |
-| Bordo              | `border-white/[0.06]`          | ovunque       |
+| Ruolo            | Valore                        | Dove          |
+| ---------------- | ----------------------------- | ------------- |
+| Canvas           | `#000000`                     | `body`        |
+| Card contenuto   | `#111111`                     | `CARD`        |
+| Card navigazione | `#121212` + ombra lunga       | `CARD_NAV`    |
+| Card metrica     | gradiente `#161616 → #101010` | `CARD_METRIC` |
+| Bordo            | `border-white/[0.06]`         | ovunque       |
 
 Le superfici si distinguono con un **bordo a capello**, mai con un'ombra.
 L'unica ombra del sistema è quella delle card di navigazione, e serve a farle
@@ -131,21 +131,21 @@ Il materiale sta in `src/styles/glass.css`, le ricette in `src/lib/glass.ts`.
 
 **Componenti** (`src/ui/`, tutti riesportati da `@/ui`):
 
-| Componente                      | Quando                                                     |
-| ------------------------------- | ---------------------------------------------------------- |
-| `Button`                        | `variant: brand / quiet / ghost / danger`, `size: sm / md`  |
-| `IconButton`                    | azione di riga o di barra, solo icona + `label`             |
-| `Card` / `CardHeader`           | la superficie di default                                    |
-| `StatCard`                      | una cifra sola, con `progress` e `tone` opzionali           |
-| `MetricCard`                    | cifra di testa + delta + sparkline + sotto-metriche         |
-| `Field` `MoneyInput` `Select` `Toggle` | i form                                               |
-| `Chip`                          | `neutral / brand / good / warn / bad`                       |
-| `TabPills`                      | l'unica fila di tab di alto livello                         |
-| `PageHeader`                    | ogni pagina si apre così                                    |
-| `Divider` `EmptyState` `Sheet` `Toast` | il resto                                             |
-| `Money`                         | ogni importo, sempre — mai `toFixed` a mano                 |
-| `ChartFrame`                    | ogni grafico: titolo, sintesi, didascalia, tabella dati     |
-| `CycleRing`                     | l'anello del ciclo                                          |
+| Componente                             | Quando                                                     |
+| -------------------------------------- | ---------------------------------------------------------- |
+| `Button`                               | `variant: brand / quiet / ghost / danger`, `size: sm / md` |
+| `IconButton`                           | azione di riga o di barra, solo icona + `label`            |
+| `Card` / `CardHeader`                  | la superficie di default                                   |
+| `StatCard`                             | una cifra sola, con `progress` e `tone` opzionali          |
+| `MetricCard`                           | cifra di testa + delta + sparkline + sotto-metriche        |
+| `Field` `MoneyInput` `Select` `Toggle` | i form                                                     |
+| `Chip`                                 | `neutral / brand / good / warn / bad`                      |
+| `TabPills`                             | l'unica fila di tab di alto livello                        |
+| `PageHeader`                           | ogni pagina si apre così                                   |
+| `Divider` `EmptyState` `Sheet` `Toast` | il resto                                                   |
+| `Money`                                | ogni importo, sempre — mai `toFixed` a mano                |
+| `ChartFrame`                           | ogni grafico: titolo, sintesi, didascalia, tabella dati    |
+| `CycleRing`                            | l'anello del ciclo                                         |
 
 Se stai per scrivere la sesta variante di un bottone: non farlo.
 

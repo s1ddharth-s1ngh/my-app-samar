@@ -110,6 +110,18 @@ export async function syncAllocations(cycleId: ID): Promise<void> {
   }
 }
 
+/**
+ * Recomputes the open cycle, if there is one. Buckets and their rules decide
+ * the split, so every write to them has to end here — otherwise the numbers on
+ * screen keep describing the rules as they were.
+ */
+export async function syncActiveCycle(): Promise<void> {
+  const active = useDataStore
+    .getState()
+    .cycles.find((cycle) => cycle.status === 'active' && !cycle.deletedAt);
+  if (active) await syncAllocations(active.id);
+}
+
 export async function openCycle(params: {
   bounds: CycleBounds;
   label: string;

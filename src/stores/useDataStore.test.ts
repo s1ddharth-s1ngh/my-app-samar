@@ -54,8 +54,14 @@ describe('useDataStore', () => {
     expect(state.tasks.length).toBe(10);
     expect(state.shoppingItems.length).toBe(4);
     expect(state.cycles.length).toBe(1);
-    expect(state.transactions.length).toBe(2);
+    expect(state.transactions.length).toBe(1);
     expect(state.settings?.currency).toBe('EUR');
+
+    // The sample cycle must be the one containing today, already split.
+    const today = new Date().toISOString().slice(0, 10);
+    expect(state.cycles[0]!.startDate <= today).toBe(true);
+    expect(state.cycles[0]!.endDate >= today).toBe(true);
+    expect(state.allocations.length).toBe(state.buckets.length);
 
     const toasts = useToastStore.getState().toasts;
     expect(toasts.some((t) => t.message.includes('Dati di esempio'))).toBe(true);
@@ -69,6 +75,9 @@ describe('useDataStore', () => {
     const state = useDataStore.getState();
     expect(state.projects.length).toBe(0);
     expect(state.tasks.length).toBe(0);
-    expect(state.settings).toBeNull();
+    // Emptying the data must not leave the app without settings: without them
+    // the cycle banner hides, and nothing can be opened again.
+    expect(state.settings).not.toBeNull();
+    expect(state.settings?.cycleMode).toBe('calendarMonth');
   });
 });

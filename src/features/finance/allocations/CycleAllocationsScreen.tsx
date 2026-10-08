@@ -41,7 +41,7 @@ export function CycleAllocationsScreen() {
         <EmptyState
           icon={Layers}
           title="Nessun ciclo aperto"
-          description="Apri un ciclo dalla schermata Oggi per vederne la ripartizione."
+          description="Apri un ciclo dalla schermata Agenda per vederne la ripartizione."
         />
       </div>
     );

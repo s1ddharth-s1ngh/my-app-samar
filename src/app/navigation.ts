@@ -1,6 +1,7 @@
 import {
   CalendarDays,
   CalendarClock,
+  CalendarRange,
   Boxes,
   Inbox,
   Layers,
@@ -24,7 +25,7 @@ import type { LucideIcon } from 'lucide-react';
  * where you are is always answered by two visible rows rather than by a URL.
  */
 
-export type AreaKey = 'oggi' | 'soldi' | 'lavoro' | 'impostazioni';
+export type AreaKey = 'agenda' | 'soldi' | 'lavoro' | 'impostazioni';
 
 export interface Area {
   key: AreaKey;
@@ -46,14 +47,17 @@ export interface NavSection {
 }
 
 export const AREAS: Area[] = [
-  { key: 'oggi', label: 'Oggi', home: '/', icon: CalendarDays },
+  { key: 'agenda', label: 'Agenda', home: '/', icon: CalendarDays },
   { key: 'soldi', label: 'Soldi', home: '/soldi', icon: Wallet },
   { key: 'lavoro', label: 'Lavoro', home: '/progetti', icon: ListTodo },
   { key: 'impostazioni', label: 'Impostazioni', home: '/impostazioni', icon: Settings },
 ];
 
 const SECTIONS: Record<AreaKey, NavSection[]> = {
-  oggi: [{ id: 'oggi', label: 'La giornata', href: '/', icon: CalendarDays, isHome: true }],
+  agenda: [
+    { id: 'giornata', label: 'La giornata', href: '/', icon: CalendarDays, isHome: true },
+    { id: 'schema', label: 'Schema settimanale', href: '/agenda/schema', icon: CalendarRange },
+  ],
 
   soldi: [
     { id: 'panoramica', label: 'Panoramica', href: '/soldi', icon: Wallet, isHome: true },
@@ -108,11 +112,11 @@ export function getSecondarySections(area: AreaKey): NavSection[] {
 
 /** Longest prefix wins, so `/soldi/entrate` resolves before `/soldi`. */
 export function resolveArea(pathname: string): AreaKey {
-  if (pathname === '/' || pathname.startsWith('/oggi')) return 'oggi';
+  if (pathname === '/' || pathname.startsWith('/agenda')) return 'agenda';
   if (pathname.startsWith('/soldi')) return 'soldi';
   if (pathname.startsWith('/progetti')) return 'lavoro';
   if (pathname.startsWith('/impostazioni')) return 'impostazioni';
-  return 'oggi';
+  return 'agenda';
 }
 
 /** The area's home stays lit only on an exact match; the rest match by prefix. */

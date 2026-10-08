@@ -1,4 +1,7 @@
 import type * as T from './types';
+import { defaultScheduleBlocks } from './defaults';
+import { computeAllocations } from '@/domain/allocation';
+import { computeCycleBounds, describeCycle, todayCalendarDate } from '@/domain/cycles';
 
 function createBase(): T.Base {
   return {
@@ -394,47 +397,6 @@ export function generateSeedData(): any {
     },
   ];
 
-  const cycleId = crypto.randomUUID();
-  const cycles: T.Cycle[] = [
-    {
-      ...createBase(),
-      id: cycleId,
-      label: 'Settembre 2026',
-      startDate: '2026-09-01',
-      endDate: '2026-09-30',
-      status: 'active',
-      openingBalance: 500000,
-      closedAt: null,
-    },
-  ];
-
-  const transactions: T.Transaction[] = [
-    {
-      ...createBase(),
-      cycleId,
-      bucketId: null,
-      type: 'income',
-      amount: 250000,
-      date: '2026-09-27',
-      description: 'Stipendio',
-      category: 'Lavoro',
-      shoppingItemId: null,
-      taskId: null,
-    },
-    {
-      ...createBase(),
-      cycleId,
-      bucketId: bucketSpeseId,
-      type: 'expense',
-      amount: 5000,
-      date: '2026-09-05',
-      description: 'Spesa',
-      category: 'Alimentari',
-      shoppingItemId: null,
-      taskId: null,
-    },
-  ];
-
   const settings: T.Settings = {
     ...createBase(),
     currency: 'EUR',
@@ -442,17 +404,75 @@ export function generateSeedData(): any {
     weekStartsOn: 1,
     cycleMode: 'calendarMonth',
     paydayAnchor: 27,
-    theme: 'system',
+    theme: 'dark',
     notificationsEnabled: false,
     quietHours: null,
   };
 
+  // The sample cycle is the one that contains today: a hardcoded date would
+  // hand the user a cycle that expired before they ever opened the app.
+  const bounds = computeCycleBounds(todayCalendarDate(), settings.cycleMode, settings.paydayAnchor);
+  const cycleId = crypto.randomUUID();
+  const cycles: T.Cycle[] = [
+    {
+      ...createBase(),
+      id: cycleId,
+      label: describeCycle(bounds, settings.cycleMode),
+      ...bounds,
+      status: 'active',
+      openingBalance: 500000,
+      closedAt: null,
+    },
+  ];
+
+  const incomeEntries: T.IncomeEntry[] = [
+    {
+      ...createBase(),
+      sourceId: stipendioId,
+      cycleId,
+      amount: 250000,
+      date: bounds.startDate,
+      note: null,
+      status: 'received',
+    },
+  ];
+
+  // Run the real engine, so the sample data shows the split the rules produce
+  // rather than an empty one the user would have to trigger by hand.
+  const totalIncome =
+    cycles[0]!.openingBalance + incomeEntries.reduce((acc, entry) => acc + entry.amount, 0);
+
+  const spesa: T.Transaction = {
+    ...createBase(),
+    cycleId,
+    bucketId: bucketSpeseId,
+    type: 'expense',
+    amount: 5000,
+    date: bounds.startDate,
+    description: 'Spesa al mercato',
+    category: 'Alimentari',
+    shoppingItemId: null,
+    taskId: null,
+  };
+  const transactions: T.Transaction[] = [spesa];
+
+  const allocations: T.Allocation[] = computeAllocations({ totalIncome, buckets }).lines.map(
+    (line) => ({
+      ...createBase(),
+      cycleId,
+      bucketId: line.bucketId,
+      plannedAmount: line.plannedAmount,
+      actualAmount: line.bucketId === spesa.bucketId ? spesa.amount : 0,
+      isLocked: false,
+    })
+  );
+
   return {
     incomeSources,
-    incomeEntries: [],
+    incomeEntries,
     buckets,
     cycles,
-    allocations: [],
+    allocations,
     transactions,
     recurringExpenses: [],
     projects,
@@ -461,6 +481,7 @@ export function generateSeedData(): any {
     timerSessions: [],
     shoppingItems,
     scheduledNotifications: [],
+    scheduleBlocks: defaultScheduleBlocks(),
     settings: [settings],
   };
 }

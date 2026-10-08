@@ -72,6 +72,11 @@ export interface Schema extends DBSchema {
     value: T.Settings;
     indexes: { deletedAt: string };
   };
+  scheduleBlocks: {
+    key: string;
+    value: T.ScheduleBlock;
+    indexes: { deletedAt: string; date: string };
+  };
   outbox: {
     key: string;
     value: T.OutboxEntry;

@@ -1,7 +1,50 @@
 import { create } from 'zustand';
 import { dbAdapter } from './db';
 import { useToastStore } from './toast';
+import { defaultSettings } from '../data/defaults';
 import type * as T from '../data/types';
+
+/** Soft-deleted rows stay in IndexedDB but must never reach a screen. */
+function live<R extends { deletedAt: T.Instant | null }>(rows: R[] | undefined): R[] {
+  return (rows ?? []).filter((row) => !row.deletedAt);
+}
+
+/** Set by `hydrate`, so concurrent calls queue instead of racing. */
+let hydration: Promise<void> | null = null;
+
+async function runHydrate(): Promise<void> {
+  if (!(dbAdapter as any).db) {
+    await dbAdapter.init();
+  }
+  const c = (await dbAdapter.exportAll()).collections;
+
+  // Without settings the app is unusable: the cycle banner hides itself when
+  // they are missing, and that banner is the only way to open a first cycle.
+  let settings = c.settings?.[0] ?? null;
+  if (!settings) {
+    settings = defaultSettings();
+    await dbAdapter.settings.create(settings);
+  }
+
+  useDataStore.setState({
+    isHydrated: true,
+    incomeSources: live(c.incomeSources),
+    incomeEntries: live(c.incomeEntries),
+    buckets: live(c.buckets),
+    cycles: live(c.cycles),
+    allocations: live(c.allocations),
+    transactions: live(c.transactions),
+    recurringExpenses: live(c.recurringExpenses),
+    projects: live(c.projects),
+    tasks: live(c.tasks),
+    taskOccurrences: live(c.taskOccurrences),
+    timerSessions: live(c.timerSessions),
+    shoppingItems: live(c.shoppingItems),
+    scheduledNotifications: live(c.scheduledNotifications),
+    scheduleBlocks: live(c.scheduleBlocks),
+    settings,
+  });
+}
 
 interface State {
   isHydrated: boolean;
@@ -18,6 +61,7 @@ interface State {
   timerSessions: T.TimerSession[];
   shoppingItems: T.ShoppingItem[];
   scheduledNotifications: T.ScheduledNotification[];
+  scheduleBlocks: T.ScheduleBlock[];
   settings: T.Settings | null;
 }
 
@@ -53,36 +97,16 @@ const initialState: State = {
   timerSessions: [],
   shoppingItems: [],
   scheduledNotifications: [],
+  scheduleBlocks: [],
   settings: null,
 };
 
 export const useDataStore = create<State & Actions>((set, get) => ({
   ...initialState,
 
-  hydrate: async () => {
-    if (!(dbAdapter as any).db) {
-      await dbAdapter.init();
-    }
-    const data = await dbAdapter.exportAll();
-
-    set({
-      isHydrated: true,
-      incomeSources: data.collections.incomeSources || [],
-      incomeEntries: data.collections.incomeEntries || [],
-      buckets: data.collections.buckets || [],
-      cycles: data.collections.cycles || [],
-      allocations: data.collections.allocations || [],
-      transactions: data.collections.transactions || [],
-      recurringExpenses: data.collections.recurringExpenses || [],
-      projects: data.collections.projects || [],
-      tasks: data.collections.tasks || [],
-      taskOccurrences: data.collections.taskOccurrences || [],
-      timerSessions: data.collections.timerSessions || [],
-      shoppingItems: data.collections.shoppingItems || [],
-      scheduledNotifications: data.collections.scheduledNotifications || [],
-      settings: (data.collections.settings?.[0] as T.Settings) || null,
-    });
-  },
+  // Serialized: StrictMode mounts twice, and two concurrent runs would each see
+  // no settings row and each create one.
+  hydrate: () => (hydration = (hydration ?? Promise.resolve()).then(runHydrate)),
 
   createItem: async (collection, item) => {
     const prev = get()[collection];
@@ -194,6 +218,7 @@ export const useDataStore = create<State & Actions>((set, get) => ({
       timerSessions: [],
       shoppingItems: [],
       scheduledNotifications: [],
+      scheduleBlocks: [],
       settings: [],
       outbox: [],
     };

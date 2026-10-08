@@ -3,18 +3,32 @@ import { useDataStore } from '@/stores/useDataStore';
 import { useToastStore } from '@/stores/toast';
 import { Button, IconButton, Card, Sheet, Field, Select, EmptyState } from '@/ui';
 import { Plus, Edit2, Trash2, GripVertical, Inbox } from 'lucide-react';
-import type { Bucket } from '@/data/types';
+import type { AllocationRule, Bucket } from '@/data/types';
 import { bucketSchema } from '@/data/schemas';
+import { syncActiveCycle } from '@/stores/cycleOperations';
+import { RuleFields, describeRule } from '../allocations/RuleFields';
 
 type FormState = {
   name: string;
   icon: string;
   kind: string;
   color: string;
+  rule: AllocationRule;
+};
+
+const EMPTY_FORM: FormState = {
+  name: '',
+  icon: '🏠',
+  kind: 'custom',
+  color: '#10b981',
+  rule: { type: 'percent', value: 10, base: 'afterFixed' },
 };
 
 export function BucketsScreen() {
-  const buckets = useDataStore((state) => state.buckets).sort((a, b) => a.priority - b.priority);
+  // `.sort` mutates, and the array it is given is the store's own.
+  const buckets = [...useDataStore((state) => state.buckets)]
+    .filter((bucket) => !bucket.deletedAt)
+    .sort((a, b) => a.priority - b.priority);
   const createItem = useDataStore((state) => state.createItem);
   const updateItem = useDataStore((state) => state.updateItem);
   const removeItem = useDataStore((state) => state.removeItem);
@@ -23,19 +37,14 @@ export function BucketsScreen() {
 
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState<FormState>({
-    name: '',
-    icon: '🏠',
-    kind: 'custom',
-    color: '#10b981',
-  });
+  const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Drag and drop state
   const [draggedId, setDraggedId] = useState<string | null>(null);
 
   const handleOpenCreate = () => {
-    setForm({ name: '', icon: '🏠', kind: 'custom', color: '#10b981' });
+    setForm(EMPTY_FORM);
     setErrors({});
     setEditingId(null);
     setIsSheetOpen(true);
@@ -47,6 +56,7 @@ export function BucketsScreen() {
       icon: bucket.icon,
       kind: bucket.kind,
       color: bucket.color,
+      rule: bucket.rule,
     });
     setErrors({});
     setEditingId(bucket.id);
@@ -56,9 +66,11 @@ export function BucketsScreen() {
   const handleRemove = async (id: string, name: string) => {
     try {
       await removeItem('buckets', id);
+      await syncActiveCycle();
       const onUndo = async () => {
         try {
           await restoreItem('buckets', id);
+          await syncActiveCycle();
           addToast(`"${name}" ripristinato.`, 'success');
         } catch {
           addToast(`Errore nel ripristino.`, 'error');
@@ -77,7 +89,7 @@ export function BucketsScreen() {
         icon: form.icon,
         kind: form.kind as any,
         color: form.color,
-        rule: { type: 'remainder' } as const, // Basic default
+        rule: form.rule,
         priority: editingId
           ? (buckets.find((b) => b.id === editingId)?.priority ?? 0)
           : buckets.length,
@@ -103,6 +115,8 @@ export function BucketsScreen() {
           icon: parsed.data.icon,
           kind: parsed.data.kind,
           color: parsed.data.color,
+          rule: parsed.data.rule,
+          updatedAt: new Date().toISOString(),
         });
       } else {
         await createItem('buckets', {
@@ -113,6 +127,8 @@ export function BucketsScreen() {
           deletedAt: null,
         });
       }
+      // A new bucket, or a changed rule, changes the split of the open cycle.
+      await syncActiveCycle();
       setIsSheetOpen(false);
       addToast('Salvato con successo.', 'success');
     } catch (e) {
@@ -163,6 +179,8 @@ export function BucketsScreen() {
         await updateItem('buckets', bucket.id, { priority: i });
       }
     }
+    // Priority is the order of service, so reordering re-splits the cycle.
+    await syncActiveCycle();
   };
 
   return (
@@ -208,7 +226,7 @@ export function BucketsScreen() {
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold">{bucket.name}</h3>
-                <p className="text-xs text-white/45 capitalize">{bucket.kind}</p>
+                <p className="text-xs text-white/45">{describeRule(bucket.rule)}</p>
               </div>
               <div className="flex gap-1 shrink-0">
                 <IconButton
@@ -283,6 +301,8 @@ export function BucketsScreen() {
             onChange={(e) => setForm({ ...form, color: e.target.value })}
             className="h-16"
           />
+
+          <RuleFields rule={form.rule} onChange={(rule) => setForm({ ...form, rule })} />
 
           <div className="pt-4 flex gap-3">
             <Button className="flex-1" onClick={handleSave}>

@@ -72,8 +72,8 @@ export function PlatformHeader() {
 
         <Link
           to="/"
-          title="Oggi"
-          aria-label="Oggi"
+          title="Agenda"
+          aria-label="Agenda"
           className="flex h-8 w-8 items-center justify-center rounded-full bg-white/[0.06] transition-colors hover:bg-white/[0.1]"
         >
           <CalendarDays className="h-4 w-4 text-white/60" />

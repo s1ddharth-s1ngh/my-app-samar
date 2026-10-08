@@ -2,6 +2,7 @@ import { openDB, type IDBPDatabase } from 'idb';
 import type { DataAdapter, ExportData } from '../adapter';
 import type { Schema } from './schema';
 import { runMigrationV1 } from './migrations/v1';
+import { runMigrationV2 } from './migrations/v2';
 import { IndexedDBRepository } from './repository';
 
 export class IndexedDBAdapter implements DataAdapter {
@@ -20,13 +21,17 @@ export class IndexedDBAdapter implements DataAdapter {
   public timerSessions!: IndexedDBRepository<any>;
   public shoppingItems!: IndexedDBRepository<any>;
   public scheduledNotifications!: IndexedDBRepository<any>;
+  public scheduleBlocks!: IndexedDBRepository<any>;
   public settings!: IndexedDBRepository<any>;
 
   async init(dbName = 'ciclo_db') {
-    this.db = await openDB<Schema>(dbName, 1, {
+    this.db = await openDB<Schema>(dbName, 2, {
       upgrade(db, oldVersion, _newVersion, _transaction) {
         if (oldVersion < 1) {
           runMigrationV1(db);
+        }
+        if (oldVersion < 2) {
+          runMigrationV2(db);
         }
       },
     });
@@ -44,6 +49,7 @@ export class IndexedDBAdapter implements DataAdapter {
     this.timerSessions = new IndexedDBRepository(this.db, 'timerSessions');
     this.shoppingItems = new IndexedDBRepository(this.db, 'shoppingItems');
     this.scheduledNotifications = new IndexedDBRepository(this.db, 'scheduledNotifications');
+    this.scheduleBlocks = new IndexedDBRepository(this.db, 'scheduleBlocks');
     this.settings = new IndexedDBRepository(this.db, 'settings');
   }
 

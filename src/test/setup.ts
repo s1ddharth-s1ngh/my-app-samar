@@ -1,4 +1,6 @@
 import '@testing-library/jest-dom/vitest';
+// jsdom ships no IndexedDB, and the store hydrates from it on boot.
+import 'fake-indexeddb/auto';
 import { vi } from 'vitest';
 
 /**

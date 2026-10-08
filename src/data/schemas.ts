@@ -157,10 +157,8 @@ export const taskSchema = baseSchema
     reminders: z.array(reminderSchema),
     completedAt: instantSchema.nullable(),
   })
-  .refine((data) => !(data.kind !== 'simple' && !data.recurrence), {
-    message: 'La ricorrenza è obbligatoria per le abitudini e i task con timer',
-    path: ['recurrence'],
-  })
+  // A timed task is a one-off pomodoro far more often than a repeating one, so
+  // the recurrence stays optional: FASE 7 is what will materialise occurrences.
   .refine((data) => !(data.kind === 'timed' && !data.timer), {
     message: "Il timer è obbligatorio per i task di tipo 'timed'",
     path: ['timer'],

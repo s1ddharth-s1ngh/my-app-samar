@@ -1,5 +1,5 @@
 import type { CalendarDate, Clock, ScheduleBlock } from '@/data/types';
-import { parseCalendarDate } from './cycles';
+import { formatCalendarDate, parseCalendarDate } from './cycles';
 
 /**
  * The day's shape, resolved from two kinds of row in the same collection.
@@ -146,4 +146,11 @@ export function dayWindow(blocks: ScheduleBlock[]): { fromHour: number; toHour: 
     fromHour: Math.max(0, Math.floor(earliest / 60) - 1),
     toHour: Math.min(24, Math.ceil(latest / 60) + 1),
   };
+}
+
+/** The same date, `days` later — negative goes back. Local midnight, never UTC. */
+export function shiftDate(date: CalendarDate, days: number): CalendarDate {
+  const moved = parseCalendarDate(date);
+  moved.setDate(moved.getDate() + days);
+  return formatCalendarDate(moved);
 }

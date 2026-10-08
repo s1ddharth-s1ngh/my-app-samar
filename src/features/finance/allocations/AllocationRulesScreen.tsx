@@ -1,12 +1,17 @@
 import { useState } from 'react';
 import { useDataStore } from '@/stores/useDataStore';
 import { useToastStore } from '@/stores/toast';
-import { Button, Card, Select, MoneyInput, Field } from '@/ui';
+import { Button, Card } from '@/ui';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import type { Bucket, AllocationRule } from '@/data/types';
+import { syncActiveCycle } from '@/stores/cycleOperations';
+import { RuleFields, describeRule } from './RuleFields';
 
 export function AllocationRulesScreen() {
-  const buckets = useDataStore((state) => state.buckets).sort((a, b) => a.priority - b.priority);
+  // `.sort` mutates, and the array it is given is the store's own.
+  const buckets = [...useDataStore((state) => state.buckets)]
+    .filter((bucket) => !bucket.deletedAt)
+    .sort((a, b) => a.priority - b.priority);
   const updateItem = useDataStore((state) => state.updateItem);
   const addToast = useToastStore((state) => state.addToast);
 
@@ -21,9 +26,11 @@ export function AllocationRulesScreen() {
   const handleSave = async (id: string) => {
     if (!draftRule) return;
     try {
-      await updateItem('buckets', id, { rule: draftRule });
+      await updateItem('buckets', id, { rule: draftRule, updatedAt: new Date().toISOString() });
+      // The split on screen describes the old rule until this runs.
+      await syncActiveCycle();
       setEditingId(null);
-      addToast('Regola aggiornata.', 'success');
+      addToast('Regola aggiornata. Ripartizione ricalcolata.', 'success');
     } catch {
       // toast handled
     }
@@ -31,16 +38,29 @@ export function AllocationRulesScreen() {
 
   // Validation logic
   let totalPercent = 0;
-  let hasRemainder = false;
+  let remainderCount = 0;
 
   buckets.forEach((b) => {
     const rule = editingId === b.id && draftRule ? draftRule : b.rule;
     if (rule.type === 'percent') totalPercent += rule.value;
-    if (rule.type === 'remainder') hasRemainder = true;
+    if (rule.type === 'remainder') remainderCount += 1;
   });
 
+  const hasRemainder = remainderCount > 0;
+
   let validationAlert: React.ReactNode;
-  if (totalPercent > 100) {
+  // The engine serves one remainder bucket; the others silently stay at zero.
+  if (remainderCount > 1) {
+    validationAlert = (
+      <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
+        <AlertCircle className="mt-0.5 shrink-0" size={20} />
+        <p className="text-sm font-medium">
+          Hai {remainderCount} bucket su "tutto il resto". Solo il primo per priorità riceve
+          qualcosa: gli altri restano a zero. Dai una regola diversa a tutti tranne uno.
+        </p>
+      </div>
+    );
+  } else if (totalPercent > 100) {
     validationAlert = (
       <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
         <AlertCircle className="mt-0.5 shrink-0" size={20} />
@@ -106,56 +126,7 @@ export function AllocationRulesScreen() {
 
               {isEditing ? (
                 <div className="flex-1 flex flex-col sm:flex-row gap-3 items-end">
-                  <Select
-                    label="Regola"
-                    value={draftRule?.type || 'remainder'}
-                    onChange={(e) => {
-                      const type = e.target.value as any;
-                      if (type === 'fixed') setDraftRule({ type: 'fixed', value: 0 });
-                      else if (type === 'percent')
-                        setDraftRule({ type: 'percent', value: 10, base: 'afterFixed' });
-                      else setDraftRule({ type: 'remainder' });
-                    }}
-                    options={[
-                      { value: 'fixed', label: 'Importo Fisso' },
-                      { value: 'percent', label: 'Percentuale' },
-                      { value: 'remainder', label: 'Tutto il resto' },
-                    ]}
-                  />
-
-                  {draftRule?.type === 'fixed' && (
-                    <MoneyInput
-                      label="Importo"
-                      value={draftRule.value}
-                      onChange={(v) => setDraftRule({ type: 'fixed', value: v || 0 })}
-                    />
-                  )}
-
-                  {draftRule?.type === 'percent' && (
-                    <>
-                      <Field
-                        label="% (0-100)"
-                        type="number"
-                        min={0}
-                        max={100}
-                        value={draftRule.value}
-                        onChange={(e) =>
-                          setDraftRule({ ...draftRule, value: parseInt(e.target.value) || 0 })
-                        }
-                      />
-                      <Select
-                        label="Su quale base"
-                        value={draftRule.base}
-                        onChange={(e) =>
-                          setDraftRule({ ...draftRule, base: e.target.value as any })
-                        }
-                        options={[
-                          { value: 'afterFixed', label: 'Rimasto' },
-                          { value: 'gross', label: 'Totale Iniziale' },
-                        ]}
-                      />
-                    </>
-                  )}
+                  <RuleFields rule={rule} onChange={setDraftRule} />
 
                   <div className="flex gap-2 w-full sm:w-auto">
                     <Button onClick={() => handleSave(bucket.id)} className="flex-1">
@@ -168,13 +139,7 @@ export function AllocationRulesScreen() {
                 </div>
               ) : (
                 <div className="flex-1 flex justify-between items-center bg-white/[0.04] p-3 rounded-xl">
-                  <div className="text-sm font-medium">
-                    {rule.type === 'fixed' &&
-                      `Importo fisso: ${(rule.value / 100).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}`}
-                    {rule.type === 'percent' &&
-                      `${rule.value}% del ${rule.base === 'gross' ? 'totale' : 'rimanente'}`}
-                    {rule.type === 'remainder' && 'Tutto il resto'}
-                  </div>
+                  <div className="text-sm font-medium">{describeRule(rule)}</div>
                   <Button variant="quiet" size="sm" onClick={() => handleEdit(bucket)}>
                     Modifica
                   </Button>

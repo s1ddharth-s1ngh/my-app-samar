@@ -1,8 +1,10 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useDataStore } from './stores/useDataStore';
 import { GlobalErrorBoundary } from './app/ErrorBoundary';
 import { Layout } from './app/Layout';
-import TodayScreen from './features/today/TodayScreen';
+import ScheduleScreen from './features/schedule/ScheduleScreen';
+import { WeekScheduleScreen } from './features/schedule/WeekScheduleScreen';
 import FinanceScreen from './features/finance/FinanceScreen';
 import ProjectsScreen from './features/projects/ProjectsScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
@@ -28,12 +30,42 @@ const HistoryScreen = lazy(() =>
 import { ProjectDetailsScreen } from './features/projects/ProjectDetailsScreen';
 
 export default function App() {
+  const hydrate = useDataStore((state) => state.hydrate);
+  const isHydrated = useDataStore((state) => state.isHydrated);
+  const [failed, setFailed] = useState(false);
+
+  // Everything on screen reads the store, and the store starts empty: nothing
+  // renders truthfully until IndexedDB has been read once.
+  useEffect(() => {
+    hydrate().catch(() => setFailed(true));
+  }, [hydrate]);
+
+  // Private windows and blocked site data leave us with no database at all.
+  // Saying so beats a spinner that never stops.
+  if (failed) {
+    return (
+      <div className="flex h-screen items-center justify-center p-6 text-center text-[13px] text-white/60">
+        Non riesco ad aprire l’archivio locale. Controlla che il browser permetta i dati dei siti,
+        poi ricarica la pagina.
+      </div>
+    );
+  }
+
+  if (!isHydrated) {
+    return (
+      <div className="flex h-screen items-center justify-center text-[12px] text-white/35">
+        Carico i tuoi dati…
+      </div>
+    );
+  }
+
   return (
     <Router>
       <GlobalErrorBoundary>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route index element={<TodayScreen />} />
+            <Route index element={<ScheduleScreen />} />
+            <Route path="agenda/schema" element={<WeekScheduleScreen />} />
             <Route path="soldi">
               <Route index element={<FinanceScreen />} />
               <Route path="fonti" element={<IncomeSourcesScreen />} />

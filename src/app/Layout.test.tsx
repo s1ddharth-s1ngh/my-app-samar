@@ -26,7 +26,7 @@ describe('Layout — desktop shell', () => {
     renderLayout();
 
     expect(screen.getByRole('navigation', { name: 'Aree' })).toBeInTheDocument();
-    expect(screen.getByRole('navigation', { name: 'Sezioni di Oggi' })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Sezioni di Agenda' })).toBeInTheDocument();
     expect(screen.getByText('Contenuto')).toBeInTheDocument();
   });
 
