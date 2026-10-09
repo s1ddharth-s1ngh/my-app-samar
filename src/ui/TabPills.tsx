@@ -106,7 +106,7 @@ export function TabPills<T extends string = string>({
                   transition={
                     reduceMotion
                       ? { duration: 0 }
-                      : { type: 'spring', stiffness: 480, damping: 25, mass: 0.8 }
+                      : { type: 'spring', stiffness: 480, damping: 28, mass: 0.8 }
                   }
                 />
               )}

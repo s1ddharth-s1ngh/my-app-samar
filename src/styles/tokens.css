@@ -86,6 +86,8 @@ body {
   overscroll-behavior-y: none;
 }
 #root { min-height: 100dvh; isolation: isolate; }
+/* A shorter tab must not shift the controls when its scrollbar disappears. */
+main { scrollbar-gutter: stable; }
 button, a, input, select, textarea { touch-action: manipulation; }
 button:not(:disabled), [role='button']:not([aria-disabled='true']) { cursor: pointer; }
 input, select, textarea { max-width: 100%; accent-color: var(--theme-brand); }

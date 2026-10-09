@@ -1,12 +1,17 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { MotionConfig } from 'framer-motion';
 import '@fontsource-variable/urbanist';
 import './index.css';
+import './styles/motion.css';
+import './styles/mobile.css';
 import './stores/useThemeStore';
 import App from './App.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <MotionConfig reducedMotion="user">
+      <App />
+    </MotionConfig>
   </StrictMode>
 );

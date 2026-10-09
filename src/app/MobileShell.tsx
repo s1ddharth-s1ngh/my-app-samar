@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutGrid, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
@@ -18,17 +18,36 @@ import {
  */
 export function MobileShell({ area, children }: { area: AreaKey; children: ReactNode }) {
   const location = useLocation();
-  const [launcherOpen, setLauncherOpen] = useState(false);
+  const [launcher, setLauncher] = useState({ pathname: location.pathname, open: false });
+  if (launcher.pathname !== location.pathname) {
+    setLauncher({ pathname: location.pathname, open: false });
+  }
+  const launcherOpen = launcher.pathname === location.pathname && launcher.open;
+  const setLauncherOpen = (open: boolean) => setLauncher({ pathname: location.pathname, open });
+  const mainRef = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    mainRef.current?.scrollTo?.({ top: 0, left: 0, behavior: 'instant' });
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!launcherOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setLauncher({ pathname: location.pathname, open: false });
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [launcherOpen, location.pathname]);
 
   const primary = getPrimarySections(area);
   const secondary = getSecondarySections(area);
 
   return (
     <>
-      <div className="fixed inset-0 flex flex-col overflow-hidden bg-black">
+      <div className="mobile-shell fixed inset-0 flex flex-col overflow-hidden bg-canvas">
         <main
+          ref={mainRef}
           className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain"
-          style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
         >
           {children}
         </main>
@@ -37,7 +56,7 @@ export function MobileShell({ area, children }: { area: AreaKey; children: React
           sections={primary}
           pathname={location.pathname}
           launcherOpen={launcherOpen}
-          onLauncher={() => setLauncherOpen((open) => !open)}
+          onLauncher={() => setLauncherOpen(!launcherOpen)}
         />
       </div>
 
@@ -69,7 +88,7 @@ function BottomNav({
   return (
     <nav
       aria-label="Navigazione"
-      className="sticky bottom-0 z-40 shrink-0 border-t border-white/[0.07] bg-[#0b0b0d]/90 shadow-[0_-8px_28px_rgba(0,0,0,0.55)] backdrop-blur-xl"
+      className="sticky bottom-0 z-40 shrink-0 border-t border-border bg-card/95 backdrop-blur-xl"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
       <div className="grid h-16 grid-cols-5">
@@ -84,19 +103,21 @@ function BottomNav({
             aria-expanded={launcherOpen}
             aria-label="Tutte le sezioni"
             className={cn(
-              'relative flex h-12 w-12 items-center justify-center rounded-[18px] text-white transition-transform active:scale-95',
-              launcherOpen
-                ? 'bg-white/[0.12]'
-                : 'bg-[#1F523A] shadow-[0_8px_24px_rgba(31,82,58,0.45)]'
+              'mobile-launcher-button relative flex h-12 w-12 items-center justify-center rounded-[18px] text-foreground',
+              launcherOpen ? 'bg-foreground/[0.12]' : 'bg-brand text-on-brand shadow-card'
             )}
           >
-            {launcherOpen ? (
-              <X className="h-[21px] w-[21px]" />
-            ) : (
-              <LayoutGrid className="h-[21px] w-[21px]" />
-            )}
+            <LayoutGrid
+              className={cn('mobile-launcher-icon h-[21px] w-[21px]', launcherOpen && 'is-hidden')}
+            />
+            <X
+              className={cn(
+                'mobile-launcher-icon absolute h-[21px] w-[21px]',
+                !launcherOpen && 'is-hidden'
+              )}
+            />
           </button>
-          <span className="mt-1 text-[10px] leading-none font-semibold tracking-tight text-white/80">
+          <span className="mt-1 text-[10px] leading-none font-semibold tracking-tight text-secondary">
             Menu
           </span>
         </div>
@@ -118,21 +139,22 @@ function NavSlot({ section, pathname }: { section?: NavSection; pathname: string
   return (
     <Link
       to={section.href}
+      viewTransition
       aria-current={active ? 'page' : undefined}
-      className="relative flex h-16 flex-col items-center justify-center gap-1 transition-transform active:scale-95"
+      className="mobile-nav-slot relative flex h-16 flex-col items-center justify-center gap-1"
     >
       <span
         className={cn(
-          'flex h-7 w-7 items-center justify-center rounded-full transition-colors',
-          active ? 'bg-white/[0.12] text-white' : 'text-white/45'
+          'mobile-nav-icon flex h-7 w-7 items-center justify-center rounded-full',
+          active ? 'bg-foreground/[0.12] text-foreground' : 'text-muted-foreground'
         )}
       >
         <Icon className="h-[18px] w-[18px]" />
       </span>
       <span
         className={cn(
-          'text-[10px] leading-none tracking-tight',
-          active ? 'font-semibold text-white' : 'text-white/45'
+          'mobile-nav-label text-[10px] leading-none tracking-tight',
+          active ? 'font-semibold text-foreground' : 'text-muted-foreground'
         )}
       >
         {section.label}
@@ -153,10 +175,12 @@ function Launcher({
   area: AreaKey;
   secondary: NavSection[];
 }) {
-  if (!open) return null;
-
   return (
-    <div className="fixed inset-0 z-50">
+    <div
+      className={cn('mobile-launcher fixed inset-0 z-50', open && 'is-open')}
+      aria-hidden={!open}
+      inert={!open}
+    >
       <button
         type="button"
         aria-label="Chiudi il menu"
@@ -164,8 +188,8 @@ function Launcher({
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
       />
 
-      <div className="absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom,0px)+84px)] rounded-[20px] border border-white/[0.08] bg-[#121212] p-3 shadow-[0_24px_60px_-20px_rgba(0,0,0,0.8)]">
-        <p className="px-1 pb-2 text-[9.5px] font-semibold tracking-[0.07em] text-white/30 uppercase">
+      <div className="absolute inset-x-3 bottom-[calc(env(safe-area-inset-bottom,0px)+84px)] max-h-[calc(100dvh-110px)] overflow-y-auto rounded-[20px] border border-border bg-card p-3 shadow-card">
+        <p className="px-1 pb-2 text-[9.5px] font-semibold tracking-[0.07em] text-muted-foreground uppercase">
           Aree
         </p>
         <div className="grid grid-cols-4 gap-2">
@@ -176,10 +200,13 @@ function Launcher({
               <Link
                 key={entry.key}
                 to={entry.home}
+                viewTransition
                 onClick={onClose}
                 className={cn(
                   'flex flex-col items-center gap-1.5 rounded-xl px-1 py-3 transition-colors',
-                  active ? 'bg-neutral-200 text-neutral-900' : 'bg-white/[0.04] text-white/70'
+                  active
+                    ? 'bg-selected text-selected-foreground'
+                    : 'bg-foreground/[0.04] text-secondary'
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -191,7 +218,7 @@ function Launcher({
 
         {secondary.length > 0 && (
           <>
-            <p className="px-1 pt-4 pb-2 text-[9.5px] font-semibold tracking-[0.07em] text-white/30 uppercase">
+            <p className="px-1 pt-4 pb-2 text-[9.5px] font-semibold tracking-[0.07em] text-muted-foreground uppercase">
               Altre sezioni
             </p>
             <div className="space-y-1">
@@ -201,10 +228,11 @@ function Launcher({
                   <Link
                     key={section.id}
                     to={section.href}
+                    viewTransition
                     onClick={onClose}
-                    className="flex h-10 items-center gap-2.5 rounded-full pr-3 pl-1.5 text-white/70 transition-colors hover:bg-white/[0.05] hover:text-white"
+                    className="flex h-10 items-center gap-2.5 rounded-full pr-3 pl-1.5 text-secondary transition-colors hover:bg-foreground/[0.05] hover:text-foreground"
                   >
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.07]">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-foreground/[0.07]">
                       <Icon className="h-3.5 w-3.5" />
                     </span>
                     <span className="text-[13px] tracking-[-0.2px]">{section.label}</span>

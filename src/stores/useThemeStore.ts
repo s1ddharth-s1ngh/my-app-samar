@@ -27,7 +27,7 @@ export function applyTheme(preference: ThemePreference): void {
   document.documentElement.style.colorScheme = theme;
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', dark ? '#000000' : '#f5f5f5');
+    ?.setAttribute('content', dark ? '#0b100d' : '#f3f6f0');
 }
 
 export function applyGlassTransparency(value: number): void {

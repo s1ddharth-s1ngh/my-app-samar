@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { useMediaQuery } from '@/lib/useIsMobile';
 import { CARD_NAV } from '@/lib/surfaces';
 import { AREAS, areaByKey, getSections, isSectionActive, type AreaKey } from './navigation';
 
@@ -16,7 +17,7 @@ const COLLAPSED_KEY = 'ciclo-sidebar-collapsed';
 export function AppSidebar({ area }: { area: AreaKey }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(() => {
+  const [storedCollapsed, setCollapsed] = useState(() => {
     try {
       return localStorage.getItem(COLLAPSED_KEY) === '1';
     } catch {
@@ -26,11 +27,14 @@ export function AppSidebar({ area }: { area: AreaKey }) {
 
   useEffect(() => {
     try {
-      localStorage.setItem(COLLAPSED_KEY, collapsed ? '1' : '0');
+      localStorage.setItem(COLLAPSED_KEY, storedCollapsed ? '1' : '0');
     } catch {
       // The choice still applies for this session.
     }
-  }, [collapsed]);
+  }, [storedCollapsed]);
+
+  const compact = useMediaQuery('(max-width: 1023px)');
+  const collapsed = storedCollapsed || compact;
 
   const sections = getSections(area);
   const current = areaByKey(area);
@@ -40,7 +44,7 @@ export function AppSidebar({ area }: { area: AreaKey }) {
     <div className="relative z-30 hidden h-full flex-shrink-0 py-3 pl-3 md:block">
       <aside
         className={cn(
-          'flex h-full flex-col gap-3 text-white transition-[width] duration-300 motion-reduce:transition-none',
+          'flex h-full flex-col gap-3 text-foreground transition-[width] duration-300 motion-reduce:transition-none',
           collapsed ? 'w-16' : 'w-60'
         )}
       >
@@ -56,7 +60,8 @@ export function AppSidebar({ area }: { area: AreaKey }) {
               <button
                 key={entry.key}
                 type="button"
-                title={collapsed ? entry.label : undefined}
+                title={entry.label}
+                aria-label={entry.label}
                 aria-current={active ? 'page' : undefined}
                 onClick={() => navigate(entry.home)}
                 className={pillClass(active, collapsed)}
@@ -76,7 +81,7 @@ export function AppSidebar({ area }: { area: AreaKey }) {
         <div className={cn(CARD_NAV, 'flex min-h-0 flex-1 flex-col overflow-hidden')}>
           <div
             className={cn(
-              'flex flex-shrink-0 items-center pt-3.5 pb-1.5',
+              'hidden lg:flex flex-shrink-0 items-center pt-3.5 pb-1.5',
               collapsed ? 'justify-center px-2' : 'gap-2 px-4'
             )}
           >
@@ -95,7 +100,7 @@ export function AppSidebar({ area }: { area: AreaKey }) {
               aria-label={collapsed ? 'Espandi la barra' : 'Comprimi la barra'}
               aria-expanded={!collapsed}
               className={cn(
-                'flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-white/50 transition-colors hover:bg-white/[0.08] hover:text-white',
+                'flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.08] hover:text-foreground',
                 !collapsed && 'ml-auto'
               )}
             >
@@ -121,7 +126,8 @@ export function AppSidebar({ area }: { area: AreaKey }) {
                 <Link
                   key={section.id}
                   to={section.href}
-                  title={collapsed ? section.label : undefined}
+                  title={section.label}
+                  aria-label={section.label}
                   aria-current={active ? 'page' : undefined}
                   className={pillClass(active, collapsed)}
                 >
@@ -150,14 +156,16 @@ function pillClass(active: boolean, collapsed: boolean): string {
     'group flex h-10 w-full items-center rounded-full font-medium transition-colors',
     collapsed ? 'justify-center px-1' : 'gap-2.5 pl-1.5 pr-3',
     active
-      ? 'bg-neutral-200 text-neutral-900'
-      : 'text-white/70 hover:bg-white/[0.05] hover:text-white'
+      ? 'bg-selected text-selected-foreground'
+      : 'text-secondary hover:bg-foreground/[0.05] hover:text-foreground'
   );
 }
 
 function chipClass(active: boolean): string {
   return cn(
     'flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full transition-colors',
-    active ? 'bg-neutral-900/10 text-neutral-900' : 'bg-white/[0.07] text-white'
+    active
+      ? 'bg-selected-foreground/10 text-selected-foreground'
+      : 'bg-foreground/[0.07] text-foreground'
   );
 }

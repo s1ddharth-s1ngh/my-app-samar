@@ -1,22 +1,27 @@
-import { useSyncExternalStore } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 
 /** The single breakpoint that decides which shell renders. */
 export const MOBILE_QUERY = '(max-width: 767px)';
 
-function query(): MediaQueryList | null {
+function query(mediaQuery: string): MediaQueryList | null {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return null;
-  return window.matchMedia(MOBILE_QUERY);
+  return window.matchMedia(mediaQuery);
 }
 
-function subscribe(onChange: () => void): () => void {
-  const list = query();
+function subscribe(mediaQuery: string, onChange: () => void): () => void {
+  const list = query(mediaQuery);
   if (!list) return () => {};
   list.addEventListener('change', onChange);
   return () => list.removeEventListener('change', onChange);
 }
 
-function getSnapshot(): boolean {
-  return query()?.matches ?? false;
+export function useMediaQuery(mediaQuery: string): boolean {
+  const subscribeQuery = useCallback(
+    (onChange: () => void) => subscribe(mediaQuery, onChange),
+    [mediaQuery]
+  );
+  const getSnapshot = useCallback(() => query(mediaQuery)?.matches ?? false, [mediaQuery]);
+  return useSyncExternalStore(subscribeQuery, getSnapshot, () => false);
 }
 
 /**
@@ -24,5 +29,5 @@ function getSnapshot(): boolean {
  * already has the right answer and no effect has to correct it afterwards.
  */
 export function useIsMobile(): boolean {
-  return useSyncExternalStore(subscribe, getSnapshot, () => false);
+  return useMediaQuery(MOBILE_QUERY);
 }

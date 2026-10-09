@@ -1,0 +1,78 @@
+﻿.mobile-shell {
+  min-height: 100dvh;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+@media (max-width: 390px) {
+  .touch-tab svg {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .mobile-page {
+    padding-inline: clamp(0.75rem, 4vw, 1.25rem);
+    padding-top: clamp(0.75rem, 3vw, 1rem);
+  }
+
+  .mobile-shell main {
+    scroll-padding-block: 1rem 6rem;
+  }
+
+  .touch-button,
+  .touch-icon {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+  }
+
+  .touch-button {
+    font-size: 13px;
+    padding-inline: 14px;
+  }
+
+  .touch-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .touch-tab {
+    min-height: 40px;
+    flex: 1 0 auto;
+    padding-inline: 10px;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']),
+  select,
+  textarea {
+    box-sizing: border-box;
+    min-height: 44px;
+    font-size: 16px;
+    line-height: 1.25;
+  }
+
+  .mobile-page > div > [role='tablist'] {
+    width: 100%;
+  }
+
+  .mobile-page .overflow-x-auto {
+    scrollbar-width: none;
+  }
+
+  .mobile-page .overflow-x-auto::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobile-page [role='tablist'] {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 768px) {
+  .desktop-page {
+    padding-inline: clamp(1rem, 2.2vw, 2.5rem);
+    padding-block: clamp(1rem, 1.8vw, 1.75rem);
+  }
+}

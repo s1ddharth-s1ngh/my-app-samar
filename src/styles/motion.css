@@ -1,0 +1,344 @@
+﻿/*
+ * Shared interaction motion. Keep movement short, purposeful, and tied to a
+ * state change; color and opacity carry most of the feedback.
+ */
+:root {
+  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-ui: cubic-bezier(0.32, 0.72, 0, 1);
+  --motion-fast: 140ms;
+  --motion-base: 240ms;
+  --motion-enter: 320ms;
+}
+
+.page-transition {
+  animation: page-enter var(--motion-enter) var(--motion-ease-out) backwards;
+  transform-origin: top center;
+}
+
+.mobile-page {
+  view-transition-name: app-page;
+  animation: mobile-page-fade 300ms ease-out backwards;
+}
+
+.content-swap {
+  animation: content-swap-enter 300ms var(--motion-ease-out) backwards;
+}
+
+::view-transition-old(app-page) {
+  animation: mobile-page-out 280ms ease-in both;
+}
+
+::view-transition-new(app-page) {
+  animation: mobile-page-enter 380ms var(--motion-ease-out) both;
+}
+
+.motion-control {
+  transition:
+    transform var(--motion-fast) var(--motion-ease-ui),
+    filter var(--motion-fast) ease,
+    background-color var(--motion-base) var(--motion-ease-out),
+    color var(--motion-base) var(--motion-ease-out),
+    border-color var(--motion-base) var(--motion-ease-out),
+    box-shadow var(--motion-base) var(--motion-ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.motion-control:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+button:not(:disabled) {
+  transition:
+    transform var(--motion-fast) var(--motion-ease-ui),
+    background-color var(--motion-base) var(--motion-ease-out),
+    color var(--motion-base) var(--motion-ease-out),
+    border-color var(--motion-base) var(--motion-ease-out),
+    opacity var(--motion-fast) ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+a {
+  transition:
+    color var(--motion-base) var(--motion-ease-out),
+    opacity var(--motion-fast) ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a:active {
+  opacity: 0.78;
+}
+
+.motion-tab {
+  transition:
+    transform var(--motion-fast) var(--motion-ease-ui),
+    background-color var(--motion-base) var(--motion-ease-out),
+    color var(--motion-base) var(--motion-ease-out);
+}
+
+.motion-tab[aria-selected='true'] {
+  color: var(--color-on-brand);
+}
+
+.motion-tab-indicator {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 0;
+  z-index: 0;
+  opacity: 0;
+  border-radius: 9999px;
+  background: var(--color-brand);
+  box-shadow: var(--theme-shadow);
+  transition:
+    transform 360ms var(--motion-ease-out),
+    width 360ms var(--motion-ease-out),
+    opacity 180ms ease;
+  pointer-events: none;
+}
+
+.mobile-title {
+  animation: mobile-title-enter 300ms var(--motion-ease-out) backwards;
+}
+
+.mobile-nav-slot {
+  transition: transform var(--motion-fast) var(--motion-ease-ui);
+}
+
+.mobile-nav-slot:active {
+  transform: scale(0.94);
+}
+
+.mobile-nav-icon {
+  transition:
+    transform 300ms var(--motion-ease-out),
+    background-color 260ms var(--motion-ease-out),
+    color 260ms var(--motion-ease-out),
+    box-shadow 260ms var(--motion-ease-out);
+}
+
+.mobile-nav-slot[aria-current='page'] .mobile-nav-icon {
+  transform: translateY(-2px) scale(1.16);
+  box-shadow: 0 5px 16px rgb(255 255 255 / 0.08);
+}
+
+.mobile-nav-label {
+  transition:
+    color 240ms ease,
+    transform 300ms var(--motion-ease-out);
+}
+
+.mobile-nav-slot[aria-current='page'] .mobile-nav-label {
+  transform: translateY(-1px);
+}
+
+.mobile-launcher-button {
+  transition:
+    transform 220ms var(--motion-ease-out),
+    background-color 260ms ease,
+    box-shadow 260ms ease,
+    border-radius 260ms var(--motion-ease-out);
+}
+
+.mobile-launcher-button[aria-expanded='true'] {
+  transform: rotate(90deg) scale(0.96);
+  border-radius: 50%;
+}
+
+.mobile-launcher-icon {
+  transition:
+    opacity 180ms ease,
+    transform 260ms var(--motion-ease-out);
+}
+
+.mobile-launcher-icon.is-hidden {
+  opacity: 0;
+  transform: rotate(-45deg) scale(0.6);
+}
+
+.mobile-launcher {
+  visibility: hidden;
+  pointer-events: none;
+  transition: visibility 320ms;
+}
+
+.mobile-launcher.is-open {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.mobile-launcher > button {
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+.mobile-launcher > button:active {
+  transform: none;
+}
+
+.mobile-launcher.is-open > button {
+  opacity: 1;
+}
+
+.mobile-launcher > div {
+  opacity: 0;
+  transform: translateY(30px) scale(0.96);
+  transform-origin: bottom center;
+  transition:
+    opacity 220ms ease,
+    transform 360ms var(--motion-ease-out);
+}
+
+.mobile-launcher.is-open > div {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+input:not([type='checkbox']):not([type='radio']):not([type='range']),
+select,
+textarea {
+  transition:
+    background-color var(--motion-base) var(--motion-ease-out),
+    border-color var(--motion-base) var(--motion-ease-out),
+    box-shadow var(--motion-base) var(--motion-ease-out);
+}
+
+input:not([type='checkbox']):not([type='radio']):not([type='range']):focus,
+select:focus,
+textarea:focus {
+  box-shadow: 0 0 0 3px rgb(157 181 96 / 0.1);
+}
+
+.motion-sheet[open] {
+  animation: sheet-enter 360ms var(--motion-ease-out) backwards;
+}
+
+.motion-sheet[open]::backdrop {
+  animation: backdrop-enter 220ms ease-out both;
+}
+
+.toast-enter {
+  animation: toast-enter 220ms var(--motion-ease-out) both;
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobile-page-enter {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes mobile-page-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mobile-page-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+}
+
+@keyframes mobile-title-enter {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes content-swap-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheet-enter {
+  from {
+    opacity: 0;
+    transform: translateY(34px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes backdrop-enter {
+  from {
+    background-color: rgb(0 0 0 / 0);
+  }
+  to {
+    background-color: rgb(0 0 0 / 0.25);
+  }
+}
+
+@media (min-width: 768px) {
+  @keyframes sheet-enter {
+    from {
+      opacity: 0;
+      transform: translateY(18px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -33,7 +33,7 @@ export function Layout() {
   if (isMobile) {
     return (
       <MobileShell area={area}>
-        <div className="w-full px-2 py-2 pb-4">
+        <div key={location.pathname} className="page-transition mobile-page w-full pb-4">
           <Outlet />
         </div>
       </MobileShell>
@@ -41,13 +41,13 @@ export function Layout() {
   }
 
   return (
-    <div className="h-screen w-full overflow-hidden bg-black">
+    <div className="h-[100dvh] w-full overflow-hidden bg-canvas">
       <div className="relative flex h-full w-full flex-col">
         <PlatformHeader />
         <div className="flex flex-1 overflow-hidden">
           <AppSidebar area={area} />
-          <main ref={mainRef} className="scrollbar-thin flex-1 overflow-y-auto">
-            <div className="w-full px-3 py-3 pb-6">
+          <main ref={mainRef} className="scrollbar-thin min-w-0 flex-1 overflow-y-auto">
+            <div key={location.pathname} className="desktop-page page-transition w-full pb-6">
               <Outlet />
             </div>
           </main>

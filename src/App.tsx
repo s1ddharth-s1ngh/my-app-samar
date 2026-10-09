@@ -122,7 +122,7 @@ export default function App() {
   // Saying so beats a spinner that never stops.
   if (failed) {
     return (
-      <div className="flex h-screen items-center justify-center p-6 text-center text-[13px] text-white/60">
+      <div className="flex h-screen items-center justify-center p-6 text-center text-[13px] text-secondary">
         Non riesco ad aprire l’archivio locale. Controlla che il browser permetta i dati dei siti,
         poi ricarica la pagina.
       </div>
@@ -131,7 +131,7 @@ export default function App() {
 
   if (!isHydrated) {
     return (
-      <div className="flex h-screen items-center justify-center text-[12px] text-white/35">
+      <div className="flex h-screen items-center justify-center text-[12px] text-muted-foreground">
         Carico i tuoi dati…
       </div>
     );
