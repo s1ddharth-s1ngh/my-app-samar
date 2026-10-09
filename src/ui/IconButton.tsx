@@ -29,10 +29,10 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
         variant === 'danger'
           ? ICON_ACTION_DANGER
           : variant === 'solid'
-            ? 'h-7 w-7 inline-flex items-center justify-center rounded-full bg-white/[0.06] text-white hover:bg-white/[0.12] transition-colors'
+            ? 'h-7 w-7 inline-flex items-center justify-center rounded-full bg-foreground/[0.06] text-foreground hover:bg-foreground/[0.12] transition-colors'
             : ICON_ACTION,
         size === 'md' ? 'h-8 w-8' : 'h-7 w-7',
-        'disabled:pointer-events-none disabled:opacity-40',
+        'touch-icon shrink-0 disabled:pointer-events-none disabled:opacity-40',
         className
       )}
       {...props}

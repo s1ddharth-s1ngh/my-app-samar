@@ -28,11 +28,11 @@ export const Field = forwardRef<HTMLInputElement, FieldProps>(
           {...props}
         />
         {error ? (
-          <p id={`${id}-error`} className="text-[11px] text-red-300">
+          <p id={`${id}-error`} className="text-[11px] text-bad">
             {error}
           </p>
         ) : helpText ? (
-          <p id={`${id}-help`} className="text-[11px] text-white/35">
+          <p id={`${id}-help`} className="text-[11px] text-muted-foreground">
             {helpText}
           </p>
         ) : null}

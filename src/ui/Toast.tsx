@@ -6,7 +6,7 @@ import { cn } from '@/lib/cn';
 const TOAST_TONE = {
   success: { icon: Check, iconClass: 'bg-good/15 text-good' },
   error: { icon: CircleAlert, iconClass: 'bg-bad/10 text-bad' },
-  info: { icon: Info, iconClass: 'bg-brand/10 text-brand' },
+  info: { icon: Info, iconClass: 'bg-brand/10 text-brand-soft' },
 } as const;
 
 function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }) {
@@ -70,7 +70,7 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
               toast.action!.onClick();
               onDismiss();
             }}
-            className="min-h-8 shrink-0 rounded-full px-2 text-[11px] font-semibold text-brand hover:bg-brand/10"
+            className="min-h-8 shrink-0 rounded-full px-2 text-[11px] font-semibold text-brand-soft hover:bg-brand/10"
           >
             {toast.action.label}
           </button>

@@ -16,19 +16,19 @@ export interface StatCardProps {
 }
 
 const TONE_TEXT = {
-  neutral: 'text-white',
-  brand: 'text-[#D1D9B0]',
-  good: 'text-emerald-300',
-  warn: 'text-amber-300',
-  bad: 'text-red-300',
+  neutral: 'text-foreground',
+  brand: 'text-brand-soft',
+  good: 'text-good',
+  warn: 'text-warn',
+  bad: 'text-bad',
 } as const;
 
 const TONE_FILL = {
-  neutral: 'bg-white/30',
-  brand: 'bg-[#9DB560]',
-  good: 'bg-emerald-400',
-  warn: 'bg-amber-400',
-  bad: 'bg-red-400',
+  neutral: 'bg-foreground/30',
+  brand: 'bg-brand-soft',
+  good: 'bg-good',
+  warn: 'bg-warn',
+  bad: 'bg-bad',
 } as const;
 
 /**
@@ -51,7 +51,7 @@ export function StatCard({
     <div className={cn(CARD, className)}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-[9.5px] font-semibold tracking-[0.07em] text-white/30 uppercase">
+          <p className="text-[9.5px] font-semibold tracking-[0.07em] text-muted-foreground uppercase">
             {label}
           </p>
           <p
@@ -62,14 +62,14 @@ export function StatCard({
           </p>
         </div>
         {Icon && (
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/50">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-foreground/[0.06] text-muted-foreground">
             <Icon className="h-3.5 w-3.5" aria-hidden="true" />
           </span>
         )}
       </div>
 
       {clamped !== undefined && (
-        <div className="mt-3 h-1 overflow-hidden rounded-full bg-white/[0.06]">
+        <div className="mt-3 h-1 overflow-hidden rounded-full bg-foreground/[0.06]">
           <div
             className={cn(
               'h-full rounded-full transition-[width] duration-500 motion-reduce:transition-none',
@@ -80,7 +80,7 @@ export function StatCard({
         </div>
       )}
 
-      {hint && <p className="mt-2 text-[10.5px] text-white/35">{hint}</p>}
+      {hint && <p className="mt-2 text-[10.5px] text-muted-foreground">{hint}</p>}
     </div>
   );
 }

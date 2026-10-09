@@ -10,11 +10,11 @@ import { cn } from '@/lib/cn';
  * everywhere; do not hand-roll a second one in a page.
  */
 export const TAB_PILLS_CONTAINER =
-  'flex items-center gap-0.5 p-0.5 rounded-full bg-white/[0.04] border border-white/[0.08]';
+  'flex items-center gap-0.5 p-0.5 rounded-full bg-foreground/[0.04] border border-border';
 export const TAB_PILL_ITEM =
-  'shrink-0 h-7 px-3 rounded-full inline-flex items-center gap-1.5 text-xs font-medium transition-colors whitespace-nowrap';
-export const TAB_PILL_ACTIVE = 'bg-[#1F523A] text-white';
-export const TAB_PILL_INACTIVE = 'text-white/45 hover:text-white/80';
+  'touch-tab shrink-0 h-8 px-3 rounded-full inline-flex items-center gap-1.5 text-xs font-medium transition-colors whitespace-nowrap';
+export const TAB_PILL_ACTIVE = 'bg-brand text-on-brand';
+export const TAB_PILL_INACTIVE = 'text-muted-foreground hover:text-secondary';
 
 export interface TabPillItem<T extends string = string> {
   id: T;
@@ -46,7 +46,7 @@ export function TabPills<T extends string = string>({
         TAB_PILLS_CONTAINER,
         // On a phone the row scrolls sideways instead of blowing up the layout.
         'scrollbar-hide max-w-full flex-nowrap overflow-x-auto',
-        'sm:inline-flex sm:max-w-none sm:overflow-visible',
+        'sm:inline-flex',
         className
       )}
     >
@@ -68,7 +68,9 @@ export function TabPills<T extends string = string>({
               <span
                 className={cn(
                   'inline-flex h-[16px] min-w-[18px] items-center justify-center rounded-full px-1 text-[10px] font-semibold tabular-nums',
-                  active ? 'bg-white/20 text-white' : 'bg-white/[0.06] text-white/50'
+                  active
+                    ? 'bg-white/20 text-on-brand'
+                    : 'bg-foreground/[0.06] text-muted-foreground'
                 )}
               >
                 {item.count}

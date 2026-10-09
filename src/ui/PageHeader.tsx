@@ -24,11 +24,11 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <div className={cn('space-y-3', className)}>
+    <div className={cn('space-y-3 sm:space-y-4', className)}>
       {breadcrumb && (
         <Link
           to={breadcrumb.to}
-          className="inline-flex items-center gap-1.5 text-[12px] text-white/45 transition-colors hover:text-white"
+          className="inline-flex items-center gap-1.5 text-[12px] text-muted-foreground transition-colors hover:text-foreground"
         >
           <ChevronLeft className="h-4 w-4" />
           {breadcrumb.label}
@@ -37,14 +37,19 @@ export function PageHeader({
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
           {eyebrow && (
-            <p className="text-[10px] font-semibold tracking-wider text-white/40 uppercase">
+            <p className="text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
               {eyebrow}
             </p>
           )}
-          <h1 className={cn('text-2xl font-bold tracking-tight text-white', eyebrow && 'mt-1')}>
+          <h1
+            className={cn(
+              'text-[clamp(1.45rem,3vw,2rem)] leading-tight font-bold tracking-tight text-foreground',
+              eyebrow && 'mt-1'
+            )}
+          >
             {title}
           </h1>
-          {subtitle && <p className="mt-0.5 text-[12px] text-white/40">{subtitle}</p>}
+          {subtitle && <p className="mt-0.5 text-[12px] text-muted-foreground">{subtitle}</p>}
         </div>
         {actions && <div className="flex shrink-0 flex-wrap items-center gap-1.5">{actions}</div>}
       </div>

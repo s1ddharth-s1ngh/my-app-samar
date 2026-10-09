@@ -25,11 +25,13 @@ export function EmptyState({
       )}
       {...props}
     >
-      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03]">
-        <Icon className="h-5 w-5 text-white/40" aria-hidden="true" />
+      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl border border-border bg-foreground/[0.03]">
+        <Icon className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
       </div>
-      <h3 className="text-[13px] font-medium text-white">{title}</h3>
-      {description && <p className="mt-1 max-w-sm text-[11.5px] text-white/35">{description}</p>}
+      <h3 className="text-[13px] font-medium text-foreground">{title}</h3>
+      {description && (
+        <p className="mt-1 max-w-sm text-[11.5px] text-muted-foreground">{description}</p>
+      )}
       {actions && <div className="mt-4">{actions}</div>}
     </div>
   );

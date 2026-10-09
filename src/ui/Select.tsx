@@ -31,7 +31,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             {...props}
           >
             {options.map((option) => (
-              <option key={option.value} value={option.value} className="bg-[#111111]">
+              <option key={option.value} value={option.value} className="bg-card">
                 {option.label}
               </option>
             ))}
@@ -39,15 +39,15 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           <ChevronDown
             size={16}
             aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-3.5 my-auto text-white/35"
+            className="pointer-events-none absolute inset-y-0 right-3.5 my-auto text-muted-foreground"
           />
         </div>
         {error ? (
-          <p id={`${id}-error`} className="text-[11px] text-red-300">
+          <p id={`${id}-error`} className="text-[11px] text-bad">
             {error}
           </p>
         ) : helpText ? (
-          <p id={`${id}-help`} className="text-[11px] text-white/35">
+          <p id={`${id}-help`} className="text-[11px] text-muted-foreground">
             {helpText}
           </p>
         ) : null}

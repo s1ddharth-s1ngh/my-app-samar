@@ -1,223 +1,153 @@
 @import 'tailwindcss';
 
-/*
- * Design tokens — transcribed from the NexSuite frontend.
- *
- * The rules that system actually follows, in its own idiom:
- *  - the canvas is pure black; every surface is a card floating on it, told
- *    apart by a hairline `border-white/[0.06]`, not by a shadow;
- *  - text is white at a fixed opacity ladder (85 / 70 / 55 / 45 / 40 / 35 / 30)
- *    — that ladder IS the hierarchy, so there are no grey hexes;
- *  - one deep green, `#1F523A`, for selected states and primary actions;
- *    `#D1D9B0` for inline links. Green and red only for deltas;
- *  - dense type: 9.5 / 10 / 10.5 / 11 / 12 / 13 / 14px, with 28px reserved for
- *    the headline figure of a metric card;
- *  - containers are `rounded-[20px]`, controls are `rounded-full`.
- */
-
-@theme {
-  --color-canvas: #000000;
-  --color-card: #111111;
-  --color-card-raised: #121212;
-
-  --color-brand: #1f523a;
-  --color-brand-soft: #d1d9b0;
-
-  --color-good: #34d399;
-  --color-bad: #fca5a5;
-  --color-warn: #f59e0b;
-
+/* Surfaces and text resolve together. White is reserved for filled actions. */
+@theme inline {
+  --color-canvas: var(--theme-canvas);
+  --color-card: var(--theme-card);
+  --color-card-raised: var(--theme-card-raised);
+  --color-foreground: var(--theme-foreground);
+  --color-secondary: var(--theme-secondary);
+  --color-muted-foreground: var(--theme-muted);
+  --color-muted: var(--theme-card-raised);
+  --color-border: var(--theme-border);
+  --color-strong: var(--theme-border-strong);
+  --color-brand: var(--theme-brand);
+  --color-brand-hover: var(--theme-brand-hover);
+  --color-brand-soft: var(--theme-accent);
+  --color-on-brand: #ffffff;
+  --color-selected: var(--theme-selected);
+  --color-selected-foreground: var(--theme-selected-foreground);
+  --color-good: var(--theme-good);
+  --color-bad: var(--theme-bad);
+  --color-warn: var(--theme-warn);
+  --color-destructive: var(--theme-bad);
+  --color-surface-3: var(--theme-card-raised);
   --font-sans: 'Urbanist Variable', 'Urbanist', system-ui, sans-serif;
-
-  --radius-xl: 0.75rem;
+  --radius-xl: 1rem;
+  --shadow-card: var(--theme-shadow);
 }
-
 :root {
   color-scheme: dark;
-  --theme-canvas: #000000;
-  --theme-card: #111111;
-  --theme-card-raised: #181818;
-  --theme-foreground: #ffffff;
-  --theme-muted: #a3a3a3;
-  --theme-border: rgb(255 255 255 / 0.1);
+  --theme-canvas: #0b100d;
+  --theme-card: #141c17;
+  --theme-card-raised: #202b23;
+  --theme-foreground: #f4f7f2;
+  --theme-secondary: #c7d2c9;
+  --theme-muted: #a4b1a7;
+  --theme-border: #34463a;
+  --theme-border-strong: #6b8273;
+  --theme-brand: #326b4d;
+  --theme-brand-hover: #397753;
+  --theme-accent: #c7d9ad;
+  --theme-selected: #d9e8d0;
+  --theme-selected-foreground: #253b29;
+  --theme-good: #6ee7b7;
+  --theme-bad: #fca5a5;
+  --theme-warn: #fcd34d;
+  --theme-metric-start: #1e2d22;
+  --theme-metric-end: #141c17;
+  --theme-shadow: 0 5px 20px rgb(0 0 0 / 0.14);
 }
-
 :root[data-theme='light'] {
   color-scheme: light;
-  --theme-canvas: #f5f5f5;
+  --theme-canvas: #f3f6f0;
   --theme-card: #ffffff;
-  --theme-card-raised: #ededed;
-  --theme-foreground: #171717;
-  --theme-muted: #666666;
-  --theme-border: rgb(0 0 0 / 0.12);
+  --theme-card-raised: #e8eee5;
+  --theme-foreground: #202a22;
+  --theme-secondary: #405347;
+  --theme-muted: #596b5e;
+  --theme-border: #c9d4c8;
+  --theme-border-strong: #7a9080;
+  --theme-brand: #286040;
+  --theme-brand-hover: #204e34;
+  --theme-accent: #35613e;
+  --theme-selected: #dcebd5;
+  --theme-selected-foreground: #253b29;
+  --theme-good: #126943;
+  --theme-bad: #b12535;
+  --theme-warn: #805100;
+  --theme-metric-start: #f0f6ec;
+  --theme-metric-end: #ffffff;
+  --theme-shadow: 0 5px 20px rgb(42 65 43 / 0.045);
 }
-
-html,
-body {
-  background-color: var(--theme-canvas);
+html, body {
+  min-height: 100%;
+  background: var(--theme-canvas);
   color: var(--theme-foreground);
 }
-
-:root[data-theme='light'] .bg-black,
-:root[data-theme='light'] .bg-\[\#000000\] {
-  background-color: var(--theme-canvas) !important;
-}
-
-:root[data-theme='light'] .bg-\[\#111111\] {
-  background-color: var(--theme-card) !important;
-}
-
-:root[data-theme='light'] .bg-\[\#121212\],
-:root[data-theme='light'] [class*='bg-[#0b0b0d]'] {
-  background-color: var(--theme-card-raised) !important;
-}
-
-:root[data-theme='light'] .text-white {
-  color: var(--theme-foreground) !important;
-}
-
-:root[data-theme='light'] [class*='text-white/'] {
-  color: var(--theme-muted) !important;
-}
-
-:root[data-theme='light'] [class*='bg-white/'] {
-  background-color: rgb(0 0 0 / 0.045) !important;
-}
-
-:root[data-theme='light'] [class*='border-white/'],
-:root[data-theme='light'] [class*='divide-white/'] {
-  border-color: var(--theme-border) !important;
-}
-
-:root[data-theme='light'] [class*='text-[#D1D9B0]'],
-:root[data-theme='light'] .status-brand {
-  color: #1f523a !important;
-}
-
-:root[data-theme='light'] .status-chip {
-  background-color: rgb(0 0 0 / 0.05);
-  color: var(--theme-muted);
-}
-
 body {
+  margin: 0;
   font-family: var(--font-sans);
-  font-size: 13px;
-  line-height: 1.45;
+  font-size: 14px;
+  line-height: 1.5;
   letter-spacing: -0.01em;
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: none;
 }
+#root { min-height: 100dvh; isolation: isolate; }
+button, a, input, select, textarea { touch-action: manipulation; }
+button:not(:disabled), [role='button']:not([aria-disabled='true']) { cursor: pointer; }
+input, select, textarea { max-width: 100%; accent-color: var(--theme-brand); }
+::selection { color: #ffffff; background: #326b4d; }
 
-/* iOS zooms any field under 16px on focus; only phones need the bump. */
-input,
-select,
-textarea {
-  font-size: 16px;
+.metric-surface {
+  background: linear-gradient(135deg, var(--theme-metric-start), var(--theme-metric-end));
+  box-shadow: var(--theme-shadow);
 }
-
-@media (min-width: 768px) {
-  input,
-  select,
-  textarea {
-    font-size: 13px;
-  }
-}
-
-/* Micro label above a figure, and a table column head. */
-.kpi-label,
-.micro-label {
-  font-size: 9.5px;
+.kpi-label, .micro-label {
+  font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: rgb(255 255 255 / 0.3);
+  color: var(--theme-muted);
 }
-
 .kpi-number {
   font-size: 20px;
   font-weight: 700;
   line-height: 1.1;
-  color: #ffffff;
+  color: var(--theme-foreground);
   font-variant-numeric: tabular-nums;
 }
-
-/* Figures line up in columns wherever they are stacked. */
-.tabular,
-[data-numeric] {
-  font-variant-numeric: tabular-nums;
-}
-
-/* --- status chips: soft, never a filled badge --- */
+.page-title { font-size: 1.25rem; font-weight: 700; color: var(--theme-foreground); }
+.tabular, [data-numeric] { font-variant-numeric: tabular-nums; }
 .status-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  height: 18px;
-  padding: 0 0.5rem;
+  min-height: 22px;
+  padding: 2px 0.5rem;
   border-radius: 9999px;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.02em;
   white-space: nowrap;
-  background-color: rgb(255 255 255 / 0.06);
-  color: rgb(255 255 255 / 0.5);
+  background: var(--theme-card-raised);
+  color: var(--theme-secondary);
 }
+.status-good { background: color-mix(in srgb, var(--theme-good) 10%, transparent); color: var(--theme-good); }
+.status-warn { background: color-mix(in srgb, var(--theme-warn) 10%, transparent); color: var(--theme-warn); }
+.status-bad { background: color-mix(in srgb, var(--theme-bad) 10%, transparent); color: var(--theme-bad); }
+.status-brand { background: color-mix(in srgb, var(--theme-accent) 10%, transparent); color: var(--theme-accent); }
 
-.status-good {
-  background-color: rgb(16 185 129 / 0.12);
-  color: #6ee7b7;
-}
-
-.status-warn {
-  background-color: rgb(245 158 11 / 0.12);
-  color: #fcd34d;
-}
-
-.status-bad {
-  background-color: rgb(239 68 68 / 0.12);
-  color: #fca5a5;
-}
-
-.status-brand {
-  background-color: rgb(31 82 58 / 0.25);
-  border: 1px solid rgb(31 82 58 / 0.5);
-  color: #d1d9b0;
-}
-
-/* --- scrollbars: thin, present, never loud --- */
-.scrollbar-thin {
+.scrollbar-thin, .scrollbar-glass {
   scrollbar-width: thin;
-  scrollbar-color: rgb(255 255 255 / 0.12) transparent;
+  scrollbar-color: var(--theme-border-strong) transparent;
 }
+.scrollbar-hide { scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+:focus-visible { outline: 2px solid var(--theme-accent); outline-offset: 3px; }
 
-.scrollbar-thin::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Tooltips and legends inherit the same palette as their chart surface. */
+.recharts-default-tooltip {
+  background: var(--theme-card) !important;
+  border-color: var(--theme-border) !important;
+  color: var(--theme-foreground) !important;
+  box-shadow: var(--theme-shadow);
 }
-
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgb(255 255 255 / 0.12);
-  border-radius: 9999px;
-}
-
-.scrollbar-thin:hover::-webkit-scrollbar-thumb {
-  background: rgb(255 255 255 / 0.22);
-}
-
-.scrollbar-hide {
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-:focus-visible {
-  outline: 2px solid #9db560;
-  outline-offset: 2px;
+.recharts-tooltip-label, .recharts-tooltip-item { color: var(--theme-foreground) !important; }
+.recharts-legend-item-text { color: var(--theme-secondary) !important; }
+@media (prefers-contrast: more) {
+  :root { --theme-muted: var(--theme-foreground); --theme-secondary: var(--theme-foreground); }
+  .metric-surface { background: var(--theme-card); }
 }

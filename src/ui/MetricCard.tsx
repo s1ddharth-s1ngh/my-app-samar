@@ -3,7 +3,7 @@ import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import { cn } from '@/lib/cn';
 import { CARD_METRIC } from '@/lib/surfaces';
 
-const BRAND = '#9DB560';
+const BRAND = 'var(--theme-accent)';
 
 export interface MetricSub {
   label: string;
@@ -12,10 +12,10 @@ export interface MetricSub {
 }
 
 const SUB_TONE = {
-  default: 'text-white',
-  good: 'text-emerald-300',
-  warn: 'text-amber-300',
-  bad: 'text-red-300',
+  default: 'text-foreground',
+  good: 'text-good',
+  warn: 'text-warn',
+  bad: 'text-bad',
 } as const;
 
 export interface MetricCardProps {
@@ -57,15 +57,15 @@ export function MetricCard({
   const hasChart = Boolean(chartData && chartKey && chartData.length > 1);
 
   return (
-    <div className={cn(CARD_METRIC, alert ? 'border-amber-500/25' : '', className)}>
+    <div className={cn(CARD_METRIC, alert ? 'border-warn/25' : '', className)}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="text-[10px] font-semibold tracking-[0.07em] text-white/45 uppercase">
+          <div className="text-[10px] font-semibold tracking-[0.07em] text-muted-foreground uppercase">
             {label}
           </div>
           <div
             data-numeric=""
-            className="mt-1 text-[28px] leading-none font-bold text-white tabular-nums"
+            className="mt-1 text-[28px] leading-none font-bold text-foreground tabular-nums"
           >
             {value}
           </div>
@@ -81,15 +81,12 @@ export function MetricCard({
 
       {subs && subs.length > 0 && (
         <div
-          className={cn(
-            'mt-3 grid gap-2 border-t border-white/[0.06] pt-3',
-            !hasChart && 'mt-auto'
-          )}
+          className={cn('mt-4 grid gap-3 border-t border-border pt-3')}
           style={{ gridTemplateColumns: `repeat(${subs.length}, minmax(0, 1fr))` }}
         >
           {subs.map((sub) => (
             <div key={sub.label} className="min-w-0">
-              <div className="truncate text-[9.5px] font-medium tracking-[0.05em] text-white/35 uppercase">
+              <div className="text-[10px] font-medium tracking-[0.05em] text-muted-foreground uppercase">
                 {sub.label}
               </div>
               <div
@@ -123,7 +120,7 @@ export function DeltaPill({
     <span
       className={cn(
         'inline-flex h-[22px] shrink-0 items-center gap-1 rounded-full px-2 text-[11px] font-semibold tabular-nums',
-        up ? 'bg-emerald-500/12 text-emerald-300' : 'bg-red-500/12 text-red-300'
+        up ? 'bg-good/12 text-good' : 'bg-bad/12 text-bad'
       )}
     >
       {up ? '↑' : '↓'}

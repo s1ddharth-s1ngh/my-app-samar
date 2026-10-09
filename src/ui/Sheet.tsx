@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { IconButton } from './IconButton';
 import { useIsMobile } from '@/lib/useIsMobile';
@@ -25,6 +25,7 @@ export function Sheet({ isOpen, onClose, title, children }: SheetProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const reduceMotion = useReducedMotion();
   // Stays true until the exit animation has finished, so the panel can leave.
   const [mounted, setMounted] = useState(isOpen);
 
@@ -89,11 +90,11 @@ export function Sheet({ isOpen, onClose, title, children }: SheetProps) {
           <motion.div
             ref={panelRef}
             key="panel"
-            initial={panelMotion.initial}
+            initial={reduceMotion ? false : panelMotion.initial}
             animate={panelMotion.animate}
             exit={panelMotion.exit}
-            transition={PANEL_TRANSITION}
-            className="glass scrollbar-glass fixed inset-x-0 bottom-0 rounded-t-xl md:top-[10vh] md:bottom-auto md:mx-auto md:max-w-lg md:rounded-xl"
+            transition={reduceMotion ? { duration: 0 } : PANEL_TRANSITION}
+            className="glass scrollbar-glass fixed inset-x-0 bottom-0 max-h-[95dvh] rounded-t-xl pb-[env(safe-area-inset-bottom,0px)] md:top-[5dvh] md:bottom-auto md:mx-auto md:max-w-lg md:rounded-xl"
           >
             {/* Mobile drag handle */}
             <button
@@ -110,7 +111,7 @@ export function Sheet({ isOpen, onClose, title, children }: SheetProps) {
                 <h2 className="page-title">{title}</h2>
                 <IconButton icon={X} label="Chiudi" onClick={onClose} className="-mr-2" />
               </div>
-              <div className="max-h-[70vh] overflow-y-auto overscroll-contain md:max-h-[65vh]">
+              <div className="max-h-[calc(95dvh-130px)] overflow-y-auto overscroll-contain pr-1">
                 {children}
               </div>
             </div>

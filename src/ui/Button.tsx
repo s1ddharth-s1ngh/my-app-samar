@@ -18,7 +18,7 @@ const VARIANTS: Record<NonNullable<ButtonProps['variant']>, string> = {
   brand: PILL_BRAND,
   quiet: PILL_QUIET,
   ghost:
-    'px-3 h-7 rounded-full text-[11px] font-medium text-white/45 hover:text-white hover:bg-white/[0.06] transition-colors',
+    'px-3 h-7 rounded-full text-[11px] font-medium text-muted-foreground hover:text-foreground hover:bg-foreground/[0.06] transition-colors',
   danger: PILL_DANGER,
 };
 
@@ -32,7 +32,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       whileTap={props.disabled ? undefined : TAP}
       transition={TAP_SPRING}
       className={cn(
-        'inline-flex items-center justify-center gap-1.5 whitespace-nowrap',
+        'touch-button inline-flex items-center justify-center gap-1.5 whitespace-nowrap',
         'disabled:pointer-events-none disabled:opacity-40',
         VARIANTS[variant],
         SIZES[size],

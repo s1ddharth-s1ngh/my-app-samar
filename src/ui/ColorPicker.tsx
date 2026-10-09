@@ -49,7 +49,10 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
                 style={{ backgroundColor: color }}
               >
                 {selected && (
-                  <Check className="h-4 w-4 text-white drop-shadow-sm" aria-hidden="true" />
+                  <Check
+                    className="h-4 w-4 text-white drop-shadow-[0_1px_2px_black]"
+                    aria-hidden="true"
+                  />
                 )}
               </button>
             );

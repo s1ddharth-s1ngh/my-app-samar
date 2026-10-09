@@ -47,9 +47,9 @@ export function WeekdayPicker({ label, value, onChange, error, helpText }: Weekd
         })}
       </div>
       {error ? (
-        <p className="text-[11px] text-red-300">{error}</p>
+        <p className="text-[11px] text-bad">{error}</p>
       ) : helpText ? (
-        <p className="text-[11px] text-white/35">{helpText}</p>
+        <p className="text-[11px] text-muted-foreground">{helpText}</p>
       ) : null}
     </div>
   );
