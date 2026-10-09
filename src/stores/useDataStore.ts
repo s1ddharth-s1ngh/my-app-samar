@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { dbAdapter } from './db';
 import { useToastStore } from './toast';
 import { defaultSettings } from '../data/defaults';
+import { markCloudReset, requestCloudSync } from './cloud';
 import type * as T from '../data/types';
 
 /** Soft-deleted rows stay in IndexedDB but must never reach a screen. */
@@ -20,7 +21,8 @@ async function runHydrate(): Promise<void> {
 
   // Without settings the app is unusable: the cycle banner hides itself when
   // they are missing, and that banner is the only way to open a first cycle.
-  let settings = c.settings?.[0] ?? null;
+  let settings =
+    (c.settings ?? []).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0] ?? null;
   if (!settings) {
     settings = defaultSettings();
     await dbAdapter.settings.create(settings);
@@ -115,6 +117,7 @@ export const useDataStore = create<State & Actions>((set, get) => ({
 
     try {
       await (dbAdapter[collection] as any).create(item);
+      requestCloudSync();
     } catch (err) {
       // Rollback
       set({ [collection]: prev } as any);
@@ -137,6 +140,7 @@ export const useDataStore = create<State & Actions>((set, get) => ({
 
     try {
       await (dbAdapter[collection] as any).update(id, data);
+      requestCloudSync();
     } catch (err) {
       // Rollback
       set({ [collection]: prev } as any);
@@ -154,6 +158,7 @@ export const useDataStore = create<State & Actions>((set, get) => ({
 
     try {
       await (dbAdapter[collection] as any).remove(id);
+      requestCloudSync();
     } catch (err) {
       set({ [collection]: prev } as unknown as Partial<State>);
       useToastStore.getState().addToast('Non è stato possibile eliminare. Riprova.', 'error');
@@ -165,6 +170,7 @@ export const useDataStore = create<State & Actions>((set, get) => ({
     try {
       await (dbAdapter[collection] as any).update(id, { deletedAt: null });
       const record = await (dbAdapter[collection] as any).get(id);
+      requestCloudSync();
 
       const prev = get()[collection];
       set({
@@ -187,6 +193,7 @@ export const useDataStore = create<State & Actions>((set, get) => ({
       } else {
         await dbAdapter.settings.create(settings);
       }
+      requestCloudSync();
     } catch (err) {
       set({ settings: prev });
       useToastStore.getState().addToast('Non è stato possibile salvare. Riprova.', 'error');
@@ -199,7 +206,9 @@ export const useDataStore = create<State & Actions>((set, get) => ({
     const seed = generateSeedData();
     const exportData = { version: 1, timestamp: new Date().toISOString(), collections: seed };
     await dbAdapter.importAll(exportData, 'replace');
+    markCloudReset();
     await get().hydrate();
+    requestCloudSync();
     useToastStore.getState().addToast('Dati di esempio caricati con successo.', 'info');
   },
 
@@ -228,7 +237,9 @@ export const useDataStore = create<State & Actions>((set, get) => ({
       collections: emptyCollections,
     };
     await dbAdapter.importAll(exportData, 'replace');
+    markCloudReset();
     await get().hydrate();
+    requestCloudSync();
     useToastStore.getState().addToast('Tutti i dati sono stati eliminati.', 'info');
   },
 }));

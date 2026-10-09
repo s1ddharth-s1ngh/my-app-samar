@@ -12,6 +12,8 @@ import { DevUIScreen } from './features/dev/DevUIScreen';
 import { ToastContainer } from './ui/Toast';
 import { GoalsScreen } from './features/goals/GoalsScreen';
 import { onReminderTap, syncReminders } from './lib/notifier';
+import { getSupabaseClient, isSupabaseConfigured } from './data/supabase/client';
+import { requestCloudSync, syncCloud, useCloudStore } from './stores/cloud';
 
 import { IncomeSourcesScreen } from './features/finance/sources/IncomeSourcesScreen';
 import { BucketsScreen } from './features/finance/buckets/BucketsScreen';
@@ -62,6 +64,49 @@ function Reminders() {
   return null;
 }
 
+/** Starts cloud sync after local data has hydrated and whenever auth or network changes. */
+function CloudBridge() {
+  const hydrate = useDataStore((state) => state.hydrate);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+    const client = getSupabaseClient();
+    const run = () => void syncCloud(hydrate);
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') run();
+    };
+    const {
+      data: { subscription },
+    } = client.auth.onAuthStateChange((_event, session) => {
+      useCloudStore.setState({
+        userId: session?.user.id ?? null,
+        email: session?.user.email ?? null,
+        status: session ? 'idle' : 'local',
+      });
+      setTimeout(requestCloudSync, 0);
+    });
+    window.addEventListener('samar:sync', run);
+    window.addEventListener('online', run);
+    document.addEventListener('visibilitychange', onVisible);
+    void client.auth.getSession().then(({ data }) => {
+      useCloudStore.setState({
+        userId: data.session?.user.id ?? null,
+        email: data.session?.user.email ?? null,
+      });
+      requestCloudSync();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener('samar:sync', run);
+      window.removeEventListener('online', run);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, [hydrate]);
+
+  return null;
+}
+
 export default function App() {
   const hydrate = useDataStore((state) => state.hydrate);
   const isHydrated = useDataStore((state) => state.isHydrated);
@@ -96,6 +141,7 @@ export default function App() {
     <Router>
       <GlobalErrorBoundary>
         <Reminders />
+        <CloudBridge />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<ScheduleScreen />} />

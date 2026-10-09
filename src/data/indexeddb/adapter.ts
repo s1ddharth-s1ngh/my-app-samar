@@ -4,6 +4,7 @@ import type { Schema } from './schema';
 import { runMigrationV1 } from './migrations/v1';
 import { runMigrationV2 } from './migrations/v2';
 import { IndexedDBRepository } from './repository';
+import type { OutboxEntry } from '../types';
 
 export class IndexedDBAdapter implements DataAdapter {
   private db!: IDBPDatabase<Schema>;
@@ -63,6 +64,24 @@ export class IndexedDBAdapter implements DataAdapter {
       timestamp: new Date().toISOString(),
       collections: data,
     };
+  }
+
+  async pendingChanges(): Promise<OutboxEntry[]> {
+    return (await this.db.getAll('outbox')).filter((entry) => entry.syncedAt === null);
+  }
+
+  async clearPendingChanges(ids: string[]): Promise<void> {
+    if (ids.length === 0) return;
+    const tx = this.db.transaction('outbox', 'readwrite');
+    for (const id of ids) await tx.store.delete(id);
+    await tx.done;
+  }
+
+  async replaceSettings(records: Schema['settings']['value'][]): Promise<void> {
+    const tx = this.db.transaction('settings', 'readwrite');
+    await tx.store.clear();
+    for (const record of records) await tx.store.put(record);
+    await tx.done;
   }
 
   async importAll(data: ExportData, mode: 'merge' | 'replace'): Promise<void> {

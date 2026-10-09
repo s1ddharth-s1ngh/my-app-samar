@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+﻿import { createClient } from '@supabase/supabase-js';
 
 /**
  * The Supabase connection.
@@ -38,9 +38,9 @@ function create() {
   return createClient(url, publishableKey, {
     db: { schema: SUPABASE_SCHEMA },
     auth: {
-      // No login yet: without this the client keeps a session it never gets.
-      persistSession: false,
-      autoRefreshToken: false,
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
     },
   });
 }
@@ -72,19 +72,9 @@ export interface ConnectionCheck {
   schemaExposed?: boolean;
 }
 
-/** A name no real table will ever have: the probe only wants the error code. */
-const PROBE_TABLE = '__ciclo_connection_probe__';
-
 /**
- * Proves the connection end to end without needing a single table.
- *
- * Asking PostgREST for a table that does not exist is enough, because the error
- * it returns says which problem you have:
- *   PGRST106 — the schema is not in "Exposed schemas" (the usual blocker);
- *   PGRST205 — the schema is served, the table simply is not there (all good).
- *
- * The root `/rest/v1/` endpoint would be the obvious probe, but it now requires
- * a secret key, and the only key a browser may hold is the publishable one.
+ * Before sign-in, check that the project answers. After sign-in, query the
+ * actual records table so the badge means the full data path is available.
  */
 export async function checkConnection(): Promise<ConnectionCheck> {
   if (!isSupabaseConfigured()) {
@@ -92,38 +82,41 @@ export async function checkConnection(): Promise<ConnectionCheck> {
   }
 
   try {
-    const response = await fetch(`${url}/rest/v1/${PROBE_TABLE}?select=*&limit=1`, {
-      headers: { apikey: publishableKey, 'Accept-Profile': SUPABASE_SCHEMA },
-    });
-
-    if (response.status === 401 || response.status === 403) {
-      return { ok: false, message: 'Chiave rifiutata: controlla VITE_SUPABASE_PUBLISHABLE_KEY.' };
-    }
-
-    const body: unknown = await response.json().catch(() => null);
-    const code =
-      typeof body === 'object' && body !== null && 'code' in body
-        ? String((body as { code: unknown }).code)
-        : '';
-
-    if (code === 'PGRST106') {
-      return {
-        ok: false,
-        schemaExposed: false,
-        message: `Il progetto risponde, ma lo schema "${SUPABASE_SCHEMA}" non è esposto. Aggiungilo in Project Settings → API → Exposed schemas.`,
-      };
-    }
-
-    // The table is missing, as intended: the schema is served and the key works.
-    if (code === 'PGRST205' || response.ok) {
+    const client = getSupabaseClient();
+    const {
+      data: { session },
+    } = await client.auth.getSession();
+    if (session) {
+      const { error } = await client.from('records').select('record_id').limit(1);
+      if (error?.code === 'PGRST106') {
+        return {
+          ok: false,
+          schemaExposed: false,
+          message: `Il progetto risponde, ma lo schema "${SUPABASE_SCHEMA}" non è esposto. Aggiungilo in Project Settings → API → Exposed schemas.`,
+        };
+      }
+      if (error)
+        return { ok: false, message: `La tabella dei dati non è disponibile (${error.code}).` };
       return {
         ok: true,
         schemaExposed: true,
-        message: `Connesso. Lo schema "${SUPABASE_SCHEMA}" risponde.`,
+        message: `Connesso. Lo schema "${SUPABASE_SCHEMA}" e la tabella dei dati rispondono.`,
       };
     }
 
-    return { ok: false, message: `Risposta inattesa dal progetto (HTTP ${response.status}).` };
+    const response = await fetch(`${url}/rest/v1/__samar_connection_probe__?select=*&limit=1`, {
+      headers: { apikey: publishableKey },
+    });
+    if (response.status === 401 || response.status === 403) {
+      return { ok: false, message: 'Chiave rifiutata: controlla VITE_SUPABASE_PUBLISHABLE_KEY.' };
+    }
+    if (response.status >= 500) {
+      return {
+        ok: false,
+        message: `Il progetto non risponde correttamente (HTTP ${response.status}).`,
+      };
+    }
+    return { ok: true, message: 'API raggiungibile. Accedi per verificare lo schema dei dati.' };
   } catch {
     return { ok: false, message: 'Nessuna risposta dal progetto: controlla URL e connessione.' };
   }
