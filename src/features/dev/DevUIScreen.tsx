@@ -173,7 +173,7 @@ export function DevUIScreen() {
       <Section title="Contenitori">
         <div className="grid gap-3 md:grid-cols-2">
           <Card>Card standard</Card>
-          <Card className="cursor-pointer transition-colors hover:bg-white/[0.03]">
+          <Card className="cursor-pointer transition-colors hover:bg-foreground/[0.03]">
             Card cliccabile
           </Card>
         </div>
@@ -202,7 +202,7 @@ export function DevUIScreen() {
 
       <Sheet isOpen={isSheetOpen} onClose={() => setIsSheetOpen(false)} title="Uno sheet">
         <div className="space-y-4 py-2">
-          <p className="text-sm text-white/45">
+          <p className="text-sm text-muted-foreground">
             Sul telefono sale dal basso, da tablet in su è una modale centrata.
           </p>
           <Field label="Un campo" placeholder="Scrivi qui" />

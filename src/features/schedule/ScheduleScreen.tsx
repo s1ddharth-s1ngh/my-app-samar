@@ -23,6 +23,7 @@ import {
   PageHeader,
   StatCard,
   TabPills,
+  TabPanel,
   type TabPillItem,
 } from '@/ui';
 import { LINK_SOFT } from '@/lib/surfaces';
@@ -186,43 +187,45 @@ export default function ScheduleScreen() {
           }
         />
 
-        {view === 'giorno' && day.length === 0 ? (
-          <EmptyState
-            icon={CalendarDays}
-            title="Giornata libera"
-            description="Nessun blocco previsto. Parti dall’orario predefinito — lavoro 8:30–17:00 e pausa pranzo, dal lunedì al venerdì — oppure aggiungi il tuo."
-            actions={
-              <div className="flex flex-wrap justify-center gap-2">
-                <Button variant="quiet" size="md" onClick={() => void installDefaults()}>
-                  Usa l’orario predefinito
-                </Button>
-                <Button size="md" onClick={() => openNew(date)}>
-                  Aggiungi blocco
-                </Button>
-              </div>
-            }
-          />
-        ) : view === 'giorno' || view === 'settimana' ? (
-          <Timeline
-            dates={view === 'giorno' ? [date] : weekDates(date)}
-            blocks={blocks}
-            onSelect={openBlock}
-            onCreate={(on, start, end) => openNew(on, { title: '', kind: 'custom', start, end })}
-            onPickDate={pickDate}
-          />
-        ) : view === 'mese' ? (
-          <MonthGrid date={date} blocks={blocks} onPickDate={pickDate} onSelect={openBlock} />
-        ) : (
-          <YearGrid
-            date={date}
-            blocks={blocks}
-            onPickDate={pickDate}
-            onPickMonth={(month) => {
-              setDate(month);
-              setView('mese');
-            }}
-          />
-        )}
+        <TabPanel value={view} label={CARD_TITLE[view]}>
+          {view === 'giorno' && day.length === 0 ? (
+            <EmptyState
+              icon={CalendarDays}
+              title="Giornata libera"
+              description="Nessun blocco previsto. Parti dall’orario predefinito — lavoro 8:30–17:00 e pausa pranzo, dal lunedì al venerdì — oppure aggiungi il tuo."
+              actions={
+                <div className="flex flex-wrap justify-center gap-2">
+                  <Button variant="quiet" size="md" onClick={() => void installDefaults()}>
+                    Usa l’orario predefinito
+                  </Button>
+                  <Button size="md" onClick={() => openNew(date)}>
+                    Aggiungi blocco
+                  </Button>
+                </div>
+              }
+            />
+          ) : view === 'giorno' || view === 'settimana' ? (
+            <Timeline
+              dates={view === 'giorno' ? [date] : weekDates(date)}
+              blocks={blocks}
+              onSelect={openBlock}
+              onCreate={(on, start, end) => openNew(on, { title: '', kind: 'custom', start, end })}
+              onPickDate={pickDate}
+            />
+          ) : view === 'mese' ? (
+            <MonthGrid date={date} blocks={blocks} onPickDate={pickDate} onSelect={openBlock} />
+          ) : (
+            <YearGrid
+              date={date}
+              blocks={blocks}
+              onPickDate={pickDate}
+              onPickMonth={(month) => {
+                setDate(month);
+                setView('mese');
+              }}
+            />
+          )}
+        </TabPanel>
       </Card>
 
       {view === 'giorno' && (

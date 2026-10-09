@@ -71,10 +71,10 @@ export function WeekScheduleScreen() {
                   />
 
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[13px] font-semibold text-white">
+                    <p className="truncate text-[13px] font-semibold text-foreground">
                       {template.title}
                     </p>
-                    <p className="text-[10.5px] text-white/40 tabular-nums">
+                    <p className="text-[10.5px] text-muted-foreground tabular-nums">
                       {template.start}–{template.end} · {kind.label}
                     </p>
                   </div>
@@ -92,8 +92,8 @@ export function WeekScheduleScreen() {
                           className={cn(
                             'h-7 w-8 rounded-full text-[10px] font-semibold transition-colors',
                             isOn
-                              ? 'bg-[#1F523A] text-white'
-                              : 'bg-white/[0.04] text-white/35 hover:bg-white/[0.08] hover:text-white/70'
+                              ? 'bg-brand text-on-brand'
+                              : 'bg-foreground/[0.04] text-muted-foreground hover:bg-foreground/[0.08] hover:text-secondary'
                           )}
                         >
                           {WEEKDAY_LABELS[weekday - 1]}
@@ -118,7 +118,7 @@ export function WeekScheduleScreen() {
       {templates.length > 0 && (
         <Card>
           <CardHeader title="Come funziona" />
-          <ul className="space-y-1.5 text-[11.5px] text-white/45">
+          <ul className="space-y-1.5 text-[11.5px] text-muted-foreground">
             <li>
               <span className={MICRO_LABEL}>Qui</span> — cambi la settimana: vale da adesso in poi,
               su tutti i giorni accesi.

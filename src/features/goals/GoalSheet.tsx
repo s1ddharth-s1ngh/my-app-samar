@@ -98,7 +98,7 @@ export function GoalSheet({ goal, isOpen, onClose }: GoalSheetProps) {
           onChange={(e) => setForm({ ...form, notes: e.target.value })}
         />
 
-        <div className="space-y-3 border-t border-white/[0.06] pt-3">
+        <div className="space-y-3 border-t border-border pt-3">
           <Toggle
             label="Promemoria ricorrenti"
             description="Ti scrivo nei giorni che scegli, fino alla data."
@@ -135,7 +135,7 @@ export function GoalSheet({ goal, isOpen, onClose }: GoalSheetProps) {
           )}
         </div>
 
-        <div className="space-y-3 border-t border-white/[0.06] pt-3">
+        <div className="space-y-3 border-t border-border pt-3">
           <Toggle
             label="Avvisami prima della scadenza"
             description="Un solo promemoria, vicino alla data."
@@ -153,22 +153,22 @@ export function GoalSheet({ goal, isOpen, onClose }: GoalSheetProps) {
             />
           )}
           {!form.beforeDue && errors.beforeDue && (
-            <p className="text-[11px] text-red-300">{errors.beforeDue}</p>
+            <p className="text-[11px] text-bad">{errors.beforeDue}</p>
           )}
         </div>
 
-        <div className="space-y-1.5 border-t border-white/[0.06] pt-3">
+        <div className="space-y-1.5 border-t border-border pt-3">
           <span className={MICRO_LABEL}>Prossimi promemoria</span>
           {preview.length > 0 ? (
             <ul className="space-y-0.5">
               {preview.map((time) => (
-                <li key={time.at.getTime()} className="text-[12px] text-white/70">
+                <li key={time.at.getTime()} className="text-[12px] text-secondary">
                   {formatFireTime(time.at)}
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="text-[12px] text-white/35">
+            <p className="text-[12px] text-muted-foreground">
               Scegli una data e una cadenza per vederli qui.
             </p>
           )}

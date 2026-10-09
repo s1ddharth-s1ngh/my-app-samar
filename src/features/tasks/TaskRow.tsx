@@ -41,29 +41,29 @@ export function TaskRow({
   const isOverdue = task.dueAt !== null && !isDone && new Date(task.dueAt) < new Date();
 
   return (
-    <Card className={`flex items-center gap-3 ${isDone ? 'opacity-60' : ''}`}>
+    <Card className="flex items-center gap-3">
       <button
         type="button"
         onClick={() => onToggle(task)}
         aria-pressed={isDone}
         aria-label={isDone ? `Riapri ${task.title}` : `Completa ${task.title}`}
         className={`h-6 w-6 shrink-0 rounded-full border-2 flex items-center justify-center transition-colors motion-reduce:transition-none ${
-          isDone
-            ? 'bg-[#1F523A] border-[#1F523A] text-white'
-            : 'border-white/[0.06] hover:border-[#9DB560]'
+          isDone ? 'bg-brand border-brand text-on-brand' : 'border-border hover:border-brand-soft'
         }`}
       >
         {isDone && <Check size={14} strokeWidth={3} aria-hidden="true" />}
       </button>
 
       <div className="min-w-0 flex-1">
-        <p className={`truncate ${isDone ? 'line-through text-white/45' : 'text-white'}`}>
+        <p
+          className={`truncate ${isDone ? 'line-through text-muted-foreground' : 'text-foreground'}`}
+        >
           {task.title}
         </p>
-        <div className="flex items-center gap-2 text-sm text-white/45">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
           {contextLabel && <span className="truncate">{contextLabel}</span>}
           {task.dueAt && (
-            <span className={isOverdue ? 'text-red-300' : undefined}>
+            <span className={isOverdue ? 'text-bad' : undefined}>
               {DUE_FORMAT.format(new Date(task.dueAt))}
             </span>
           )}

@@ -123,7 +123,7 @@ export function BlockSheet({
           />
         </div>
 
-        {error && <p className="text-[11px] text-red-300">{error}</p>}
+        {error && <p className="text-[11px] text-bad">{error}</p>}
 
         <div className="space-y-2">
           <p className={MICRO_LABEL}>Applica a</p>

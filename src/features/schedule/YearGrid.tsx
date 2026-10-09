@@ -7,10 +7,10 @@ const MONTH_NAME = new Intl.DateTimeFormat('it-IT', { month: 'long' });
 
 /** How full a day looks. Four steps is all the eye reads at this size. */
 function density(count: number): string {
-  if (count === 0) return 'text-white/25';
-  if (count === 1) return 'bg-brand/20 text-white/70';
-  if (count === 2) return 'bg-brand/40 text-white';
-  return 'bg-brand/70 text-white';
+  if (count === 0) return 'text-muted-foreground';
+  if (count === 1) return 'bg-brand/20 text-secondary';
+  if (count === 2) return 'bg-selected text-selected-foreground';
+  return 'bg-brand text-on-brand';
 }
 
 export interface YearGridProps {
@@ -30,13 +30,13 @@ export function YearGrid({ date, blocks, onPickDate, onPickMonth }: YearGridProp
   const today = todayCalendarDate();
 
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 min-[400px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
       {monthsOfYear(date).map((month) => (
         <div key={month}>
           <button
             type="button"
             onClick={() => onPickMonth(month)}
-            className="mb-1.5 text-[11px] font-semibold text-white/70 capitalize transition-colors hover:text-white"
+            className="mb-1.5 text-[11px] font-semibold text-secondary capitalize transition-colors hover:text-foreground"
           >
             {MONTH_NAME.format(new Date(Number(month.slice(0, 4)), Number(month.slice(5, 7)) - 1))}
           </button>
@@ -58,9 +58,9 @@ export function YearGrid({ date, blocks, onPickDate, onPickMonth }: YearGridProp
                   aria-label={`${cell}, ${count} blocchi`}
                   className={cn(
                     'flex aspect-square items-center justify-center rounded-[4px]',
-                    'text-[8.5px] font-medium tabular-nums transition-colors hover:ring-1 hover:ring-white/30',
+                    'text-[11px] font-medium tabular-nums transition-colors hover:ring-1 hover:ring-brand-soft',
                     density(count),
-                    isToday && 'ring-1 ring-white/70'
+                    isToday && 'ring-1 ring-brand-soft'
                   )}
                 >
                   {Number(cell.slice(8))}

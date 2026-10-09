@@ -28,6 +28,7 @@ export interface TimelineProps {
   onCreate: (date: CalendarDate, start: string, end: string) => void;
   /** Clicking a column heading, in the week view. */
   onPickDate?: (date: CalendarDate) => void;
+  compactWeek?: boolean;
 }
 
 /** Minutes since midnight, refreshed each minute. */
@@ -53,7 +54,15 @@ function useNowMinutes(): number {
  * side by side rather than hiding each other — a lunch break lives inside the
  * work block, and both have to stay clickable.
  */
-export function Timeline({ dates, blocks, onSelect, onCreate, onPickDate }: TimelineProps) {
+export function Timeline({
+  dates,
+  blocks,
+  onSelect,
+  onCreate,
+  onPickDate,
+  compactWeek = true,
+}: TimelineProps) {
+  const [mobileDate, setMobileDate] = useState<CalendarDate>(() => dates[0] ?? todayCalendarDate());
   const nowMinutes = useNowMinutes();
   const today = todayCalendarDate();
 
@@ -74,9 +83,84 @@ export function Timeline({ dates, blocks, onSelect, onCreate, onPickDate }: Time
     onCreate(date, clockFromMinutes(start), clockFromMinutes(start + 60));
   };
 
+  if (isWeek && compactWeek) {
+    const selectedDate = dates.includes(mobileDate) ? mobileDate : (dates[0] ?? today);
+    return (
+      <>
+        <div className="mb-2 grid grid-cols-7 gap-1 md:hidden">
+          {perDay.map(({ date, blocks: dayBlocks }) => {
+            const isToday = date === today;
+            const isSelected = date === selectedDate;
+            return (
+              <button
+                key={date}
+                type="button"
+                onClick={() => setMobileDate(date)}
+                aria-label={`${DAY_NAME.format(parseCalendarDate(date))} ${Number(date.slice(8))}`}
+                aria-pressed={isSelected}
+                className={cn(
+                  'flex min-h-14 flex-col items-center justify-center rounded-xl transition-colors',
+                  isSelected
+                    ? 'bg-brand text-on-brand'
+                    : 'text-foreground hover:bg-foreground/[0.05]'
+                )}
+              >
+                <span
+                  className={cn(
+                    'text-[9px] font-semibold uppercase',
+                    isSelected ? 'text-on-brand' : 'text-muted-foreground'
+                  )}
+                >
+                  {DAY_NAME.format(parseCalendarDate(date)).replace('.', '')}
+                </span>
+                <span
+                  className={cn(
+                    'mt-0.5 text-[12px] font-semibold tabular-nums',
+                    isToday && !isSelected && 'text-brand-soft'
+                  )}
+                >
+                  {Number(date.slice(8))}
+                </span>
+                <span
+                  className={cn(
+                    'mt-0.5 h-1 w-1 rounded-full',
+                    dayBlocks.length > 0
+                      ? isSelected
+                        ? 'bg-white/80'
+                        : 'bg-brand/60'
+                      : 'bg-transparent'
+                  )}
+                />
+              </button>
+            );
+          })}
+        </div>
+        <div className="hidden md:block">
+          <Timeline
+            dates={dates}
+            blocks={blocks}
+            onSelect={onSelect}
+            onCreate={onCreate}
+            onPickDate={onPickDate}
+            compactWeek={false}
+          />
+        </div>
+        <div className="md:hidden">
+          <Timeline
+            dates={[selectedDate]}
+            blocks={blocks}
+            onSelect={onSelect}
+            onCreate={onCreate}
+            onPickDate={onPickDate}
+          />
+        </div>
+      </>
+    );
+  }
+
   return (
-    <div className={cn('pt-1.5', isWeek && 'scrollbar-hide overflow-x-auto')}>
-      <div className={cn('min-w-full', isWeek && 'min-w-[640px]')}>
+    <div className="pt-1.5">
+      <div className="min-w-0">
         {isWeek && (
           <div className="flex pb-2">
             <div className="w-11 shrink-0" />
@@ -87,23 +171,20 @@ export function Timeline({ dates, blocks, onSelect, onCreate, onPickDate }: Time
                   key={date}
                   type="button"
                   onClick={() => onPickDate?.(date)}
-                  className={cn(
-                    'flex-1 rounded-xl px-1 py-1 text-center transition-colors',
-                    'hover:bg-white/[0.04]'
-                  )}
+                  className="flex-1 rounded-xl px-1 py-1 text-center transition-colors hover:bg-foreground/[0.04]"
                 >
-                  <span className="block text-[9.5px] font-semibold tracking-[0.07em] text-white/30 uppercase">
+                  <span className="block text-[9.5px] font-semibold tracking-[0.07em] text-muted-foreground uppercase">
                     {DAY_NAME.format(parseCalendarDate(date)).replace('.', '')}
                   </span>
                   <span
                     className={cn(
                       'mt-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-[12px] font-semibold tabular-nums',
-                      isToday ? 'bg-brand text-white' : 'text-white/70'
+                      isToday ? 'bg-brand text-on-brand' : 'text-secondary'
                     )}
                   >
                     {Number(date.slice(8))}
                   </span>
-                  <span className="mt-0.5 block text-[9.5px] text-white/25 tabular-nums">
+                  <span className="mt-0.5 block text-[9.5px] text-muted-foreground tabular-nums">
                     {dayBlocks.length === 0 ? '—' : dayBlocks.length}
                   </span>
                 </button>
@@ -111,13 +192,12 @@ export function Timeline({ dates, blocks, onSelect, onCreate, onPickDate }: Time
             })}
           </div>
         )}
-
         <div className="flex" style={{ height: totalHeight }}>
           <div className="w-11 shrink-0">
             {hours.map((hour) => (
               <div
                 key={hour}
-                className="relative text-[9.5px] font-semibold text-white/30 tabular-nums"
+                className="relative text-[9.5px] font-semibold text-muted-foreground tabular-nums"
                 style={{ height: HOUR_HEIGHT }}
               >
                 <span className="absolute -top-1.5 right-2">{String(hour).padStart(2, '0')}</span>
@@ -131,7 +211,7 @@ export function Timeline({ dates, blocks, onSelect, onCreate, onPickDate }: Time
               onClick={(event) => handleBackgroundClick(date, event)}
               className={cn(
                 'relative flex-1 cursor-copy',
-                isWeek && 'border-l border-white/[0.04] first:border-l-0'
+                isWeek && 'border-l border-border first:border-l-0'
               )}
             >
               {/* The hour rules sit behind everything and are decoration only. */}
@@ -139,13 +219,13 @@ export function Timeline({ dates, blocks, onSelect, onCreate, onPickDate }: Time
                 <div
                   key={hour}
                   aria-hidden="true"
-                  className="absolute inset-x-0 border-t border-white/[0.05]"
+                  className="absolute inset-x-0 border-t border-border"
                   style={{ top: index * HOUR_HEIGHT }}
                 />
               ))}
               <div
                 aria-hidden="true"
-                className="absolute inset-x-0 border-t border-white/[0.05]"
+                className="absolute inset-x-0 border-t border-border"
                 style={{ top: totalHeight }}
               />
 
@@ -166,8 +246,8 @@ export function Timeline({ dates, blocks, onSelect, onCreate, onPickDate }: Time
                     aria-label={`${block.title}, dalle ${block.start} alle ${block.end}. Modifica.`}
                     className={cn(
                       'absolute flex cursor-pointer flex-col justify-start overflow-hidden',
-                      'rounded-xl border border-white/[0.06] px-2 py-1 text-left',
-                      'transition-colors hover:border-white/20',
+                      'rounded-xl border border-border px-2 py-1 text-left',
+                      'transition-colors hover:border-border',
                       kind.fill
                     )}
                     style={{
@@ -183,14 +263,14 @@ export function Timeline({ dates, blocks, onSelect, onCreate, onPickDate }: Time
                     />
                     <span
                       className={cn(
-                        'ml-1.5 block truncate text-[11px] font-semibold text-white',
+                        'ml-1.5 block truncate text-[11px] font-semibold text-foreground',
                         isShort && 'text-[10px]'
                       )}
                     >
                       {block.title}
                     </span>
                     {!isShort && !isWeek && (
-                      <span className="ml-1.5 block text-[10px] tabular-nums opacity-60">
+                      <span className="ml-1.5 block text-[10px] text-secondary tabular-nums">
                         {block.start}–{block.end}
                       </span>
                     )}

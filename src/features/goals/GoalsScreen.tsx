@@ -114,7 +114,7 @@ export function GoalsScreen() {
                         <div className="flex items-center gap-2">
                           <span
                             className={`truncate text-[13px] font-semibold ${
-                              reached ? 'text-white/35 line-through' : 'text-white'
+                              reached ? 'text-muted-foreground line-through' : 'text-foreground'
                             }`}
                           >
                             {goal.title}
@@ -125,7 +125,7 @@ export function GoalsScreen() {
                             </Chip>
                           )}
                         </div>
-                        <p className="mt-0.5 truncate text-[11px] text-white/45">
+                        <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
                           {reached ? 'Raggiunto.' : cadenceLabel(goal)}
                         </p>
                       </div>

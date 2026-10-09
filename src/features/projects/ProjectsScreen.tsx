@@ -199,10 +199,12 @@ export default function ProjectsScreen() {
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-2">
-                        <span className="truncate font-semibold text-white">{project.name}</span>
+                        <span className="truncate font-semibold text-foreground">
+                          {project.name}
+                        </span>
                         {badge && <span className="status-chip">{badge}</span>}
                       </span>
-                      <span className="mt-0.5 block truncate text-xs text-white/45">
+                      <span className="mt-0.5 block truncate text-xs text-muted-foreground">
                         {project.description ?? `${open} da fare`}
                       </span>
                     </span>

@@ -8,23 +8,23 @@ import type { ScheduleKind } from '@/data/types';
 export const SCHEDULE_KINDS: Record<ScheduleKind, { label: string; rail: string; fill: string }> = {
   work: {
     label: 'Lavoro',
-    rail: 'bg-[#1F523A]',
-    fill: 'bg-[#1F523A]/[0.25]',
+    rail: 'bg-brand',
+    fill: 'bg-brand/[0.10]',
   },
   break: {
     label: 'Pausa',
-    rail: 'bg-amber-400',
-    fill: 'bg-amber-400/[0.12]',
+    rail: 'bg-warn',
+    fill: 'bg-warn/[0.12]',
   },
   gym: {
     label: 'Palestra',
-    rail: 'bg-emerald-400',
-    fill: 'bg-emerald-400/[0.12]',
+    rail: 'bg-good',
+    fill: 'bg-good/[0.12]',
   },
   custom: {
     label: 'Altro',
-    rail: 'bg-white/40',
-    fill: 'bg-white/[0.05]',
+    rail: 'bg-foreground/40',
+    fill: 'bg-foreground/[0.05]',
   },
 };
 

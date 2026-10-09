@@ -74,7 +74,7 @@ export function TimerModal({ taskId, onClose }: { taskId: string | null; onClose
         <div className="text-6xl font-bold tabular-nums" role="timer" aria-live="off">
           {formatClock(elapsed)}
         </div>
-        <div className="text-sm text-white/45">
+        <div className="text-sm text-muted-foreground">
           Obiettivo: {Math.round(targetSeconds / 60)} min
           {minSeconds !== targetSeconds && ` · minimo ${Math.ceil(minSeconds / 60)} min`}
         </div>

@@ -104,7 +104,9 @@ export function TabPills<T extends string = string>({
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0 -z-10 rounded-full bg-brand"
                   transition={
-                    reduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 480, damping: 38 }
+                    reduceMotion
+                      ? { duration: 0 }
+                      : { type: 'spring', stiffness: 480, damping: 25, mass: 0.8 }
                   }
                 />
               )}
