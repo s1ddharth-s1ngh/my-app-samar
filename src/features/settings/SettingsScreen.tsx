@@ -3,6 +3,7 @@ import { useThemeStore } from '@/stores/useThemeStore';
 import { Button, Card, CardHeader, PageHeader, TabPills } from '@/ui';
 import { GLASS_TRANSPARENCY_PRESETS } from '@/lib/glass';
 import { FinancialSettingsSection } from './FinancialSettingsSection';
+import { NotificationsSection } from './NotificationsSection';
 import { SupabaseSection } from './SupabaseSection';
 
 export function SettingsScreen() {
@@ -63,6 +64,10 @@ export function SettingsScreen() {
             sistema, il vetro resta opaco comunque.
           </p>
         </div>
+      </Card>
+
+      <Card>
+        <NotificationsSection />
       </Card>
 
       <Card>
