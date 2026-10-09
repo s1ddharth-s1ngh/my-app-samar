@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core';
 import type { Settings, Task } from '@/data/types';
 import { formatCalendarDate } from '@/domain/cycles';
 import { daysToDeadline, deadlineLabel, isGoal, isGoalOpen, reminderTimes } from '@/domain/goals';
@@ -61,17 +62,12 @@ export function planNotifications(tasks: Task[], from: Date = new Date()): Plann
 
 type NativeApi = typeof import('@capacitor/local-notifications').LocalNotifications;
 
-/** The plugin, or null on the web. Imported lazily: the browser never needs it. */
+/** The plugin, or null on the web. Loaded lazily: a browser never needs it. */
 async function nativeApi(): Promise<NativeApi | null> {
-  try {
-    const { Capacitor } = await import('@capacitor/core');
-    if (!Capacitor.isNativePlatform()) return null;
+  if (!Capacitor.isNativePlatform()) return null;
 
-    const { LocalNotifications } = await import('@capacitor/local-notifications');
-    return LocalNotifications;
-  } catch {
-    return null;
-  }
+  const { LocalNotifications } = await import('@capacitor/local-notifications');
+  return LocalNotifications;
 }
 
 /**
@@ -145,4 +141,33 @@ export async function syncReminders(tasks: Task[], settings: Settings | null): P
 
   webPlan = planned;
   armWeb();
+}
+
+/**
+ * Where a tapped notification wants to go. Returns the unsubscribe.
+ *
+ * Android only: a web notification just focuses the tab it came from.
+ */
+export function onReminderTap(handler: (path: string) => void): () => void {
+  if (!Capacitor.isNativePlatform()) return () => {};
+
+  let remove: (() => void) | undefined;
+  let cancelled = false;
+
+  void import('@capacitor/local-notifications').then(async ({ LocalNotifications }) => {
+    const handle = await LocalNotifications.addListener(
+      'localNotificationActionPerformed',
+      (event) => {
+        const path = event.notification.extra?.path;
+        if (typeof path === 'string') handler(path);
+      }
+    );
+    if (cancelled) void handle.remove();
+    else remove = () => void handle.remove();
+  });
+
+  return () => {
+    cancelled = true;
+    remove?.();
+  };
 }

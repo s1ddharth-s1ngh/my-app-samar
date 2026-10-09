@@ -75,7 +75,7 @@ export function Timeline({ dates, blocks, onSelect, onCreate, onPickDate }: Time
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className={cn('pt-1.5', isWeek && 'scrollbar-hide overflow-x-auto')}>
       <div className={cn('min-w-full', isWeek && 'min-w-[640px]')}>
         {isWeek && (
           <div className="flex pb-2">
@@ -165,7 +165,8 @@ export function Timeline({ dates, blocks, onSelect, onCreate, onPickDate }: Time
                     }}
                     aria-label={`${block.title}, dalle ${block.start} alle ${block.end}. Modifica.`}
                     className={cn(
-                      'absolute cursor-pointer overflow-hidden rounded-xl border border-white/[0.06] px-2 py-1 text-left',
+                      'absolute flex cursor-pointer flex-col justify-start overflow-hidden',
+                      'rounded-xl border border-white/[0.06] px-2 py-1 text-left',
                       'transition-colors hover:border-white/20',
                       kind.fill
                     )}
@@ -189,7 +190,7 @@ export function Timeline({ dates, blocks, onSelect, onCreate, onPickDate }: Time
                       {block.title}
                     </span>
                     {!isShort && !isWeek && (
-                      <span className={cn('ml-1.5 block text-[10px] tabular-nums', kind.text)}>
+                      <span className="ml-1.5 block text-[10px] tabular-nums opacity-60">
                         {block.start}–{block.end}
                       </span>
                     )}

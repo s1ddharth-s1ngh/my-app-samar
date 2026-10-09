@@ -5,33 +5,26 @@ import type { ScheduleKind } from '@/data/types';
  * what you read at a glance on the timeline — so it lives with the kind and
  * is never picked per block.
  */
-export const SCHEDULE_KINDS: Record<
-  ScheduleKind,
-  { label: string; rail: string; fill: string; text: string }
-> = {
+export const SCHEDULE_KINDS: Record<ScheduleKind, { label: string; rail: string; fill: string }> = {
   work: {
     label: 'Lavoro',
     rail: 'bg-[#1F523A]',
     fill: 'bg-[#1F523A]/[0.25]',
-    text: 'text-[#D1D9B0]',
   },
   break: {
     label: 'Pausa',
     rail: 'bg-amber-400',
     fill: 'bg-amber-400/[0.12]',
-    text: 'text-amber-200',
   },
   gym: {
     label: 'Palestra',
     rail: 'bg-emerald-400',
     fill: 'bg-emerald-400/[0.12]',
-    text: 'text-emerald-200',
   },
   custom: {
     label: 'Altro',
     rail: 'bg-white/40',
     fill: 'bg-white/[0.05]',
-    text: 'text-white/70',
   },
 };
 

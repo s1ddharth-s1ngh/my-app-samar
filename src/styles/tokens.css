@@ -89,6 +89,11 @@ body {
   border-color: var(--theme-border) !important;
 }
 
+:root[data-theme='light'] [class*='text-[#D1D9B0]'],
+:root[data-theme='light'] .status-brand {
+  color: #1f523a !important;
+}
+
 :root[data-theme='light'] .status-chip {
   background-color: rgb(0 0 0 / 0.05);
   color: var(--theme-muted);

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { useDataStore } from './stores/useDataStore';
 import { GlobalErrorBoundary } from './app/ErrorBoundary';
 import { Layout } from './app/Layout';
@@ -11,7 +11,7 @@ import { SettingsScreen } from './features/settings/SettingsScreen';
 import { DevUIScreen } from './features/dev/DevUIScreen';
 import { ToastContainer } from './ui/Toast';
 import { GoalsScreen } from './features/goals/GoalsScreen';
-import { syncReminders } from './lib/notifier';
+import { onReminderTap, syncReminders } from './lib/notifier';
 
 import { IncomeSourcesScreen } from './features/finance/sources/IncomeSourcesScreen';
 import { BucketsScreen } from './features/finance/buckets/BucketsScreen';
@@ -41,6 +41,7 @@ import { ProjectDetailsScreen } from './features/projects/ProjectDetailsScreen';
 function Reminders() {
   const tasks = useDataStore((state) => state.tasks);
   const settings = useDataStore((state) => state.settings);
+  const navigate = useNavigate();
 
   useEffect(() => {
     void syncReminders(tasks, settings);
@@ -55,6 +56,8 @@ function Reminders() {
     document.addEventListener('visibilitychange', onVisible);
     return () => document.removeEventListener('visibilitychange', onVisible);
   }, []);
+
+  useEffect(() => onReminderTap((path) => navigate(path)), [navigate]);
 
   return null;
 }

@@ -20,6 +20,7 @@
     "@ios27_design_system/tokens": "^1.0.2",
     "@supabase/supabase-js": "^2.116.0",
     "codex": "^0.2.3",
+    "framer-motion": "^12.43.0",
     "idb": "^8.0.3",
     "lucide-react": "^1.46.0",
     "react": "^19.2.8",

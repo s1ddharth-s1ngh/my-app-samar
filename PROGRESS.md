@@ -81,7 +81,7 @@ Tracking allineato alla numerazione del MEGA PROMPT. Legenda: ✅ fatto · 🏗�
 - ⬜ T9.5 Collegamento acquisto ↔ task.
 
 ## FASE 10 — Notifiche
-- ⬜ T10.1 … T10.6
+- 🏗️ T10.1 … T10.6 (2026-10-09) Motore dei promemoria completo per gli obiettivi: `domain/goals.ts` puro con 8 test, `lib/notifier.ts` che programma gli allarmi con Capacitor `LocalNotifications` su Android e con un timer di pagina sul web, interruttore e stato in Impostazioni, tap sulla notifica che apre `/obiettivi`. Restano i promemoria di task, acquisti e cicli, e `quietHours`.
 
 ## FASE 11 — PWA e offline
 - 🏗️ T11.1 Manifest e icone — manifest statico, manca `vite-plugin-pwa`.
@@ -89,6 +89,9 @@ Tracking allineato alla numerazione del MEGA PROMPT. Legenda: ✅ fatto · 🏗�
 
 ## FASE 12 — Backup
 - ⬜ T12.1 … T12.3
+
+## FASE 16 — Obiettivi *(fuori specifica, richiesto dall'utente)*
+- ✅ T16.1 (2026-10-09) Sezione Obiettivi su `/obiettivi`: un obiettivo è un `Task` con `kind: 'goal'`, scadenza come data, cadenza a giorni della settimana con ora, avviso prima della scadenza, anteprima dei prossimi promemoria calcolata dalla stessa funzione che li programma. Raggruppati in corso / scadute / raggiunte.
 
 ## FASE 13 — La vista Oggi
 - 🏗️ T13.1 … ⬜ T13.3
