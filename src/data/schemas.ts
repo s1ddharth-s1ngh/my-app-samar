@@ -120,7 +120,7 @@ export const projectSchema = baseSchema.extend({
 export const recurrenceSchema = z.object({
   freq: z.enum(['daily', 'weekly', 'monthly']),
   interval: z.number().int().min(1),
-  byWeekday: z.array(z.number().int().min(0).max(6)).nullable(),
+  byWeekday: z.array(z.number().int().min(1).max(7)).nullable(),
   byMonthDay: z.array(z.number().int().min(1).max(31)).nullable(),
   timeOfDay: clockSchema.nullable(),
   startsOn: calendarDateSchema,
@@ -140,7 +140,7 @@ export const taskSchema = baseSchema
     projectId: idSchema.nullable(),
     title: z.string().min(1, 'Il titolo è obbligatorio'),
     notes: z.string().nullable(),
-    kind: z.enum(['simple', 'habit', 'timed']),
+    kind: z.enum(['simple', 'habit', 'timed', 'goal']),
     status: z.enum(['todo', 'doing', 'done', 'dropped']),
     priority: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]),
     dueAt: instantSchema.nullable(),

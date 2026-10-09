@@ -3,7 +3,17 @@ import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronUp, Edit2, Folder, Plus, Trash2 } from 'lucide-react';
 import { useDataStore } from '@/stores/useDataStore';
 import { useToastStore } from '@/stores/toast';
-import { Button, Card, EmptyState, Field, IconButton, PageHeader, Select, Sheet } from '@/ui';
+import {
+  Button,
+  Card,
+  ColorPicker,
+  EmptyState,
+  Field,
+  IconButton,
+  PageHeader,
+  Select,
+  Sheet,
+} from '@/ui';
 import type { Project } from '@/data/types';
 import { projectSchema } from '@/data/schemas';
 import { newBase, nowInstant } from '@/lib/record';
@@ -268,12 +278,10 @@ export default function ProjectsScreen() {
             options={STATUS_OPTIONS}
           />
 
-          <Field
+          <ColorPicker
             label="Colore"
-            type="color"
             value={form.color}
-            onChange={(e) => setForm({ ...form, color: e.target.value })}
-            className="h-16"
+            onChange={(color) => setForm({ ...form, color })}
           />
 
           <div className="flex gap-3 pt-4">

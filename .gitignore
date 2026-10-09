@@ -31,3 +31,11 @@ dist-ssr
 # Local environment. `.env.example` documents the keys; the real values stay here.
 .env
 .env.local
+
+# Capacitor: the native shell is committed, its build output is not.
+android/.gradle/
+android/build/
+android/app/build/
+android/app/src/main/assets/public/
+android/capacitor-cordova-android-plugins/
+android.sync-backup/

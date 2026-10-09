@@ -10,6 +10,8 @@ import ProjectsScreen from './features/projects/ProjectsScreen';
 import { SettingsScreen } from './features/settings/SettingsScreen';
 import { DevUIScreen } from './features/dev/DevUIScreen';
 import { ToastContainer } from './ui/Toast';
+import { GoalsScreen } from './features/goals/GoalsScreen';
+import { syncReminders } from './lib/notifier';
 
 import { IncomeSourcesScreen } from './features/finance/sources/IncomeSourcesScreen';
 import { BucketsScreen } from './features/finance/buckets/BucketsScreen';
@@ -28,6 +30,34 @@ const HistoryScreen = lazy(() =>
   }))
 );
 import { ProjectDetailsScreen } from './features/projects/ProjectDetailsScreen';
+
+/**
+ * Keeps the platform's alarms in step with the goals.
+ *
+ * Reruns on every change to a task or to the settings, and whenever the app
+ * comes back to the front: that second one is what refills the horizon, since
+ * only sixty days of alarms are programmed at a time.
+ */
+function Reminders() {
+  const tasks = useDataStore((state) => state.tasks);
+  const settings = useDataStore((state) => state.settings);
+
+  useEffect(() => {
+    void syncReminders(tasks, settings);
+  }, [tasks, settings]);
+
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return;
+      const { tasks: current, settings: now } = useDataStore.getState();
+      void syncReminders(current, now);
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, []);
+
+  return null;
+}
 
 export default function App() {
   const hydrate = useDataStore((state) => state.hydrate);
@@ -62,6 +92,7 @@ export default function App() {
   return (
     <Router>
       <GlobalErrorBoundary>
+        <Reminders />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<ScheduleScreen />} />
@@ -92,6 +123,7 @@ export default function App() {
               <Route index element={<ProjectsScreen />} />
               <Route path=":id" element={<ProjectDetailsScreen />} />
             </Route>
+            <Route path="obiettivi" element={<GoalsScreen />} />
             <Route path="impostazioni" element={<SettingsScreen />} />
           </Route>
           {import.meta.env.DEV && <Route path="/dev/ui" element={<DevUIScreen />} />}

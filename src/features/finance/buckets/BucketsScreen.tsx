@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useDataStore } from '@/stores/useDataStore';
 import { useToastStore } from '@/stores/toast';
-import { Button, IconButton, Card, Sheet, Field, Select, EmptyState } from '@/ui';
+import { Button, IconButton, Card, Sheet, Field, Select, EmptyState, ColorPicker } from '@/ui';
 import { Plus, Edit2, Trash2, GripVertical, Inbox } from 'lucide-react';
 import type { AllocationRule, Bucket } from '@/data/types';
 import { bucketSchema } from '@/data/schemas';
@@ -294,12 +294,10 @@ export function BucketsScreen() {
             ]}
           />
 
-          <Field
-            label="Colore (Hex)"
-            type="color"
+          <ColorPicker
+            label="Colore"
             value={form.color}
-            onChange={(e) => setForm({ ...form, color: e.target.value })}
-            className="h-16"
+            onChange={(color) => setForm({ ...form, color })}
           />
 
           <RuleFields rule={form.rule} onChange={(rule) => setForm({ ...form, rule })} />

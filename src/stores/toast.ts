@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 export type ToastType = 'info' | 'error' | 'success';
+export const TOAST_DURATION_MS = 4_000;
 
 export interface Toast {
   id: string;
@@ -25,7 +26,7 @@ export const useToastStore = create<ToastState>((set) => ({
     set((state) => ({ toasts: [...state.toasts, { id, message, type, action }] }));
     setTimeout(() => {
       set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) }));
-    }, 4000); // 4 seconds duration
+    }, TOAST_DURATION_MS);
   },
   removeToast: (id) => set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),
 }));

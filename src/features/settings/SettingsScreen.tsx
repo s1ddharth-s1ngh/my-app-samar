@@ -8,7 +8,7 @@ import { SupabaseSection } from './SupabaseSection';
 export function SettingsScreen() {
   const loadSeed = useDataStore((state) => state.loadSeed);
   const resetAll = useDataStore((state) => state.resetAll);
-  const { glassTransparency, setGlassTransparency } = useThemeStore();
+  const { theme, setTheme, glassTransparency, setGlassTransparency } = useThemeStore();
 
   const handleLoadSeed = async () => {
     if (
@@ -33,10 +33,20 @@ export function SettingsScreen() {
       <PageHeader title="Impostazioni" subtitle="Aspetto, denaro e dati" />
 
       <Card>
-        <CardHeader
-          title="Aspetto"
-          subtitle="L'app è scura come il sistema su cui è modellata; resta regolabile il vetro."
-        />
+        <CardHeader title="Aspetto" subtitle="Tema dell'app e trasparenza del vetro." />
+        <div className="mb-5 space-y-1.5">
+          <p className="kpi-label">Tema</p>
+          <TabPills
+            ariaLabel="Tema dell'app"
+            value={theme}
+            onChange={setTheme}
+            items={[
+              { id: 'light', label: 'Chiaro' },
+              { id: 'dark', label: 'Scuro' },
+              { id: 'system', label: 'Sistema' },
+            ]}
+          />
+        </div>
         <div className="space-y-1.5">
           <p className="kpi-label">Trasparenza del vetro</p>
           <TabPills

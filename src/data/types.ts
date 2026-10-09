@@ -97,7 +97,7 @@ export interface Project extends Base {
   order: number;
 }
 
-export type TaskKind = 'simple' | 'habit' | 'timed';
+export type TaskKind = 'simple' | 'habit' | 'timed' | 'goal';
 
 export interface Recurrence {
   freq: 'daily' | 'weekly' | 'monthly';

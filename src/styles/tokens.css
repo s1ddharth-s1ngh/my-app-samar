@@ -34,13 +34,64 @@
 
 :root {
   color-scheme: dark;
-  /* Kept for the iOS 27 material layer, which reads this attribute. */
+  --theme-canvas: #000000;
+  --theme-card: #111111;
+  --theme-card-raised: #181818;
+  --theme-foreground: #ffffff;
+  --theme-muted: #a3a3a3;
+  --theme-border: rgb(255 255 255 / 0.1);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --theme-canvas: #f5f5f5;
+  --theme-card: #ffffff;
+  --theme-card-raised: #ededed;
+  --theme-foreground: #171717;
+  --theme-muted: #666666;
+  --theme-border: rgb(0 0 0 / 0.12);
 }
 
 html,
 body {
-  background-color: #000000;
-  color: #ffffff;
+  background-color: var(--theme-canvas);
+  color: var(--theme-foreground);
+}
+
+:root[data-theme='light'] .bg-black,
+:root[data-theme='light'] .bg-\[\#000000\] {
+  background-color: var(--theme-canvas) !important;
+}
+
+:root[data-theme='light'] .bg-\[\#111111\] {
+  background-color: var(--theme-card) !important;
+}
+
+:root[data-theme='light'] .bg-\[\#121212\],
+:root[data-theme='light'] [class*='bg-[#0b0b0d]'] {
+  background-color: var(--theme-card-raised) !important;
+}
+
+:root[data-theme='light'] .text-white {
+  color: var(--theme-foreground) !important;
+}
+
+:root[data-theme='light'] [class*='text-white/'] {
+  color: var(--theme-muted) !important;
+}
+
+:root[data-theme='light'] [class*='bg-white/'] {
+  background-color: rgb(0 0 0 / 0.045) !important;
+}
+
+:root[data-theme='light'] [class*='border-white/'],
+:root[data-theme='light'] [class*='divide-white/'] {
+  border-color: var(--theme-border) !important;
+}
+
+:root[data-theme='light'] .status-chip {
+  background-color: rgb(0 0 0 / 0.05);
+  color: var(--theme-muted);
 }
 
 body {

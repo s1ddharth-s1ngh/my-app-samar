@@ -61,20 +61,13 @@ describe('Layout — desktop shell', () => {
 });
 
 describe('Layout — phone shell', () => {
-  it('renders the top bar, the bottom bar and the launcher', () => {
+  it('renders the bottom bar and the launcher', () => {
     setViewportMatches(true);
     renderLayout('/soldi');
 
     expect(screen.getByRole('navigation', { name: 'Navigazione' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Tutte le sezioni' })).toBeInTheDocument();
     expect(screen.queryByRole('navigation', { name: 'Aree' })).not.toBeInTheDocument();
-  });
-
-  it('titles the top bar with the current section', () => {
-    setViewportMatches(true);
-    renderLayout('/soldi/entrate');
-
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Entrate');
   });
 
   it('opens the launcher with the areas and the secondary sections', async () => {

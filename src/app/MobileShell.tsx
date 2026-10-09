@@ -4,19 +4,17 @@ import { LayoutGrid, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import {
   AREAS,
-  areaByKey,
   getPrimarySections,
   getSecondarySections,
   isSectionActive,
-  resolveTitle,
   type AreaKey,
   type NavSection,
 } from './navigation';
 
 /**
- * The phone shell: a fixed top bar, the only scrolling region in the middle,
- * and a bottom bar with a launcher in the centre. `fixed inset-0` pins it to
- * the viewport whatever the browser does with `dvh`, so neither bar scrolls.
+ * The phone shell: one scrolling region filling the viewport and a bottom bar
+ * with a launcher in the centre. `fixed inset-0` pins it to the viewport
+ * whatever the browser does with `dvh`, so the bar never scrolls.
  */
 export function MobileShell({ area, children }: { area: AreaKey; children: ReactNode }) {
   const location = useLocation();
@@ -24,22 +22,14 @@ export function MobileShell({ area, children }: { area: AreaKey; children: React
 
   const primary = getPrimarySections(area);
   const secondary = getSecondarySections(area);
-  const title = resolveTitle(location.pathname);
 
   return (
     <>
       <div className="fixed inset-0 flex flex-col overflow-hidden bg-black">
-        <header className="flex h-12 shrink-0 items-center gap-3 border-b border-white/[0.06] bg-black px-4">
-          <img src="/logo-transparent.png" alt="" className="h-7 w-7 rounded-lg object-cover" />
-          <h1 className="min-w-0 flex-1 truncate text-[14px] font-semibold tracking-[-0.02em]">
-            {title}
-          </h1>
-          <span className="text-[10px] tracking-[0.07em] text-white/35 uppercase">
-            {areaByKey(area).label}
-          </span>
-        </header>
-
-        <main className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain">
+        <main
+          className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain"
+          style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+        >
           {children}
         </main>
 

@@ -10,6 +10,7 @@ import {
   Receipt,
   Settings,
   SlidersHorizontal,
+  Target,
   TrendingUp,
   Wallet,
 } from 'lucide-react';
@@ -85,6 +86,7 @@ const SECTIONS: Record<AreaKey, NavSection[]> = {
 
   lavoro: [
     { id: 'progetti', label: 'Progetti', href: '/progetti', icon: ListTodo, isHome: true },
+    { id: 'obiettivi', label: 'Obiettivi', href: '/obiettivi', icon: Target },
     { id: 'inbox', label: 'Inbox', href: '/progetti/inbox', icon: Inbox },
   ],
 
@@ -114,7 +116,7 @@ export function getSecondarySections(area: AreaKey): NavSection[] {
 export function resolveArea(pathname: string): AreaKey {
   if (pathname === '/' || pathname.startsWith('/agenda')) return 'agenda';
   if (pathname.startsWith('/soldi')) return 'soldi';
-  if (pathname.startsWith('/progetti')) return 'lavoro';
+  if (pathname.startsWith('/progetti') || pathname.startsWith('/obiettivi')) return 'lavoro';
   if (pathname.startsWith('/impostazioni')) return 'impostazioni';
   return 'agenda';
 }
@@ -123,23 +125,4 @@ export function resolveArea(pathname: string): AreaKey {
 export function isSectionActive(pathname: string, section: NavSection): boolean {
   if (section.isHome) return pathname === section.href || pathname === `${section.href}/`;
   return pathname === section.href || pathname.startsWith(`${section.href}/`);
-}
-
-/** The title the phone's top bar shows for the current route. */
-export function resolveTitle(pathname: string): string {
-  const area = resolveArea(pathname);
-  const sections = getSections(area);
-
-  const match = sections
-    .filter((section) => isSectionActive(pathname, section))
-    .sort((a, b) => b.href.length - a.href.length)[0];
-
-  if (match) return match.label;
-
-  // A detail page under a section keeps that section's name.
-  const parent = [...sections]
-    .sort((a, b) => b.href.length - a.href.length)
-    .find((section) => pathname.startsWith(`${section.href}/`));
-
-  return parent?.label ?? areaByKey(area).label;
 }
