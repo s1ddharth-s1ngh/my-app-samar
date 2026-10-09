@@ -1,9 +1,14 @@
 import { type ButtonHTMLAttributes, forwardRef } from 'react';
+import { motion, type HTMLMotionProps } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { TAP, TAP_SPRING } from '@/lib/motion';
 import { ICON_ACTION, ICON_ACTION_DANGER } from '@/lib/surfaces';
 
-export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+export interface IconButtonProps
+  extends
+    Omit<ButtonHTMLAttributes<HTMLButtonElement>, keyof HTMLMotionProps<'button'>>,
+    HTMLMotionProps<'button'> {
   icon: LucideIcon;
   variant?: 'quiet' | 'danger' | 'solid';
   /** `sm` is the 28px row action; `md` stands on its own at 32px. */
@@ -14,8 +19,10 @@ export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ icon: Icon, variant = 'quiet', size = 'sm', className, label, ...props }, ref) => (
-    <button
+    <motion.button
       ref={ref}
+      whileTap={props.disabled ? undefined : TAP}
+      transition={TAP_SPRING}
       aria-label={label}
       title={label}
       className={cn(
@@ -31,7 +38,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       {...props}
     >
       <Icon className={size === 'md' ? 'h-4 w-4' : 'h-3.5 w-3.5'} aria-hidden="true" />
-    </button>
+    </motion.button>
   )
 );
 
