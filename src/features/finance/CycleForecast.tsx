@@ -19,32 +19,32 @@ export function CycleForecast() {
   return (
     <Card className="space-y-3">
       <div className="flex items-center gap-3">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/50">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-foreground/[0.06] text-muted-foreground">
           <TrendingUp className="h-3.5 w-3.5" aria-hidden="true" />
         </span>
         <div className="min-w-0">
-          <h2 className="text-[13px] font-semibold text-white">Previsione di fine ciclo</h2>
-          <p className="text-[11px] text-white/40">
+          <h2 className="text-[13px] font-semibold text-foreground">Previsione di fine ciclo</h2>
+          <p className="text-[11px] text-muted-foreground">
             <Money cents={pending} /> di entrate previste non sono ancora arrivate.
           </p>
         </div>
       </div>
 
       <dl className="grid grid-cols-2 gap-3">
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.04] p-3">
+        <div className="rounded-xl border border-border bg-foreground/[0.04] p-3">
           <dt className="kpi-label">Confermato</dt>
           <dd className="kpi-number mt-1">
             <Money cents={confirmedAvailable} compact />
           </dd>
-          <p className="mt-1 text-[10.5px] text-white/35">Solo entrate ricevute</p>
+          <p className="mt-1 text-[10.5px] text-muted-foreground">Solo entrate ricevute</p>
         </div>
 
-        <div className="rounded-xl border border-dashed border-amber-500/50 bg-amber-400/5 p-3">
+        <div className="rounded-xl border border-dashed border-warn/50 bg-warn/5 p-3">
           <dt className="kpi-label">Se arriva tutto</dt>
-          <dd className="kpi-number mt-1 text-amber-300">
+          <dd className="kpi-number mt-1 text-warn">
             <Money cents={projectedAvailable} compact />
           </dd>
-          <p className="mt-1 text-[10.5px] text-white/35">Incluse le previste</p>
+          <p className="mt-1 text-[10.5px] text-muted-foreground">Incluse le previste</p>
         </div>
       </dl>
     </Card>

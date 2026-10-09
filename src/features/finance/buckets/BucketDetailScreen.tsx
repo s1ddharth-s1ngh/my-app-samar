@@ -136,12 +136,12 @@ export function BucketDetailScreen() {
       {bucket.targetAmount !== null && towardsTarget !== null && (
         <Card className="space-y-2">
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/45">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-foreground/[0.06] text-muted-foreground">
               <Target size={18} aria-hidden="true" />
             </span>
             <div className="min-w-0 flex-1">
               <p className="kpi-label">Obiettivo</p>
-              <p className="text-sm text-white/45">
+              <p className="text-sm text-muted-foreground">
                 <Money cents={towardsTarget} /> su <Money cents={bucket.targetAmount} />
               </p>
             </div>
@@ -149,9 +149,9 @@ export function BucketDetailScreen() {
               {Math.min(100, Math.round((towardsTarget / bucket.targetAmount) * 100))}%
             </span>
           </div>
-          <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
+          <div className="h-1 rounded-full bg-foreground/[0.06] overflow-hidden">
             <div
-              className="h-full rounded-full bg-emerald-400"
+              className="h-full rounded-full bg-good"
               style={{
                 width: `${Math.min(100, (towardsTarget / bucket.targetAmount) * 100)}%`,
               }}
@@ -167,10 +167,10 @@ export function BucketDetailScreen() {
             {plannedPurchases.map((item) => (
               <li key={item.id}>
                 <Card className="flex items-center gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/45">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-foreground/[0.06] text-muted-foreground">
                     <ShoppingBag size={18} aria-hidden="true" />
                   </span>
-                  <span className="min-w-0 flex-1 font-medium text-white truncate">
+                  <span className="min-w-0 flex-1 font-medium text-foreground truncate">
                     {item.name}
                   </span>
                   <Money cents={item.estimatedCost} className="font-semibold shrink-0" />
@@ -195,8 +195,8 @@ export function BucketDetailScreen() {
               <li key={item.id}>
                 <Card className="flex items-center gap-3">
                   <div className="min-w-0 flex-1">
-                    <p className="font-medium text-white truncate">{item.description}</p>
-                    <p className="text-sm text-white/45">
+                    <p className="font-medium text-foreground truncate">{item.description}</p>
+                    <p className="text-sm text-muted-foreground">
                       {DAY_FORMAT.format(parseCalendarDate(item.date))}
                     </p>
                   </div>
@@ -216,19 +216,19 @@ export function BucketDetailScreen() {
               {trend.map((row) => (
                 <li key={row.cycle.id} className="space-y-1">
                   <div className="flex items-center justify-between gap-3 text-sm">
-                    <span className="truncate text-white/45">{row.cycle.label}</span>
-                    <span className="shrink-0 tabular-nums text-white/45">
+                    <span className="truncate text-muted-foreground">{row.cycle.label}</span>
+                    <span className="shrink-0 tabular-nums text-muted-foreground">
                       <Money cents={row.spent} compact /> / <Money cents={row.planned} compact />
                     </span>
                   </div>
                   <div className="flex gap-1 h-1.5">
                     <div
-                      className="rounded-full bg-[#9DB560]/50"
+                      className="rounded-full bg-brand-soft/50"
                       style={{ width: `${(row.planned / maxTrend) * 100}%` }}
                       aria-hidden="true"
                     />
                     <div
-                      className="rounded-full bg-[#9DB560]"
+                      className="rounded-full bg-brand-soft"
                       style={{ width: `${(row.spent / maxTrend) * 100}%` }}
                       aria-hidden="true"
                     />

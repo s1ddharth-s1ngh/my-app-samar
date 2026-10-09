@@ -125,7 +125,7 @@ export function DeltaPill({
     >
       {up ? '↑' : '↓'}
       {unit === 'pp' ? `${delta.toFixed(1)}pp` : `${Math.abs(delta).toFixed(0)}%`}
-      {suffix && <span className="font-normal opacity-70">{suffix}</span>}
+      {suffix && <span className="font-normal">{suffix}</span>}
     </span>
   );
 }

@@ -201,7 +201,7 @@ export function IncomeEntriesScreen() {
       </div>
 
       {activeSources.length === 0 && (
-        <Card className="text-sm text-white/45">
+        <Card className="text-sm text-muted-foreground">
           Prima crea una fonte di entrata: un movimento in entrata deve sapere da dove arriva.
         </Card>
       )}
@@ -223,8 +223,10 @@ export function IncomeEntriesScreen() {
             <li key={entry.id}>
               <Card className="flex items-center gap-3">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium text-white truncate">{sourceName(entry.sourceId)}</p>
-                  <p className="text-sm text-white/45">
+                  <p className="font-medium text-foreground truncate">
+                    {sourceName(entry.sourceId)}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
                     {DATE_FORMAT.format(parseCalendarDate(entry.date))}
                     {entry.note ? ` · ${entry.note}` : ''}
                   </p>
@@ -234,7 +236,7 @@ export function IncomeEntriesScreen() {
                   <Money
                     cents={entry.amount}
                     className={`font-semibold ${
-                      entry.status === 'expected' ? 'text-white/45' : 'text-white'
+                      entry.status === 'expected' ? 'text-muted-foreground' : 'text-foreground'
                     }`}
                   />
                   <button

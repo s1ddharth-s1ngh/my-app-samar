@@ -32,16 +32,16 @@ export function CycleBanner() {
   };
 
   return (
-    <div className="rounded-xl border border-[#9DB560]/40 bg-[#1F523A]/30 p-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+    <div className="rounded-xl border border-border bg-card p-4 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
       <div className="flex gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-white/45">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-foreground/[0.06] text-muted-foreground">
           <CalendarClock size={18} aria-hidden="true" />
         </span>
         <div>
-          <h2 className="font-semibold text-white">
+          <h2 className="font-semibold text-foreground">
             {isFirst ? 'Nessun ciclo aperto' : 'Il ciclo è finito'}
           </h2>
-          <p className="text-sm text-white/45">
+          <p className="text-sm text-muted-foreground">
             {isFirst
               ? 'Apri il primo ciclo per iniziare a registrare entrate e spese.'
               : 'Guarda il riepilogo, poi chiudilo e apri il successivo.'}

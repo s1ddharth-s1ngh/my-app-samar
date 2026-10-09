@@ -11,7 +11,16 @@ import {
   YAxis,
 } from 'recharts';
 import { Wallet } from 'lucide-react';
-import { Card, CardHeader, EmptyState, MetricCard, Money, PageHeader, TabPills } from '@/ui';
+import {
+  Card,
+  CardHeader,
+  EmptyState,
+  MetricCard,
+  Money,
+  PageHeader,
+  TabPills,
+  TabPanel,
+} from '@/ui';
 import { LINK_SOFT, PILL_QUIET, ROW_DIVIDE } from '@/lib/surfaces';
 import { formatCents } from '@/domain/money';
 import {
@@ -142,8 +151,8 @@ export default function FinanceScreen() {
           title="Soldi"
           subtitle={
             <>
-              Ciclo <span className="font-medium text-white/70">{totals.cycle.label}</span> · giorno{' '}
-              {elapsed} di {length}
+              Ciclo <span className="font-medium text-secondary">{totals.cycle.label}</span> ·
+              giorno {elapsed} di {length}
             </>
           }
         />
@@ -164,182 +173,189 @@ export default function FinanceScreen() {
       </div>
 
       {overspent > 0 && (
-        <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-4 py-3 text-[12px] text-white/70">
-          <span className="font-semibold text-white">
+        <div className="rounded-xl border border-warn/20 bg-warn/[0.06] px-4 py-3 text-[12px] text-secondary">
+          <span className="font-semibold text-foreground">
             {overspent} {overspent === 1 ? 'bucket è' : 'bucket sono'} oltre il budget
           </span>{' '}
           in questo ciclo. Correggi la ripartizione o rimanda una spesa al ciclo successivo.
         </div>
       )}
 
-      {tab === 'panoramica' && (
-        <div className="space-y-3">
-          <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-            <MetricCard
-              label="Entrate del ciclo"
-              value={formatCents(totals.income, { compact: true })}
-              delta={incomeDelta}
-              deltaSuffix=" vs prec."
-              chartData={series.points}
-              chartKey="income"
-              subs={[
-                {
-                  label: 'Confermate',
-                  value: formatCents(totals.incomeReceived, { compact: true }),
-                },
-                {
-                  label: 'Previste',
-                  value: formatCents(totals.income - totals.incomeReceived, { compact: true }),
-                  tone: totals.income > totals.incomeReceived ? 'warn' : 'default',
-                },
-                { label: 'Allocato', value: formatCents(totals.allocated, { compact: true }) },
-              ]}
-            />
-            <MetricCard
-              label="Disponibile"
-              value={formatCents(totals.available, { compact: true })}
-              // Spending less than last cycle is the good direction, so the sign flips.
-              delta={spentDelta === null ? null : -spentDelta}
-              deltaSuffix=" di spesa"
-              chartData={series.points}
-              chartKey="saved"
-              alert={totals.available < 0}
-              subs={[
-                { label: 'Speso', value: formatCents(totals.spent, { compact: true }) },
-                {
-                  label: 'Bucket scoperti',
-                  value: String(overspent),
-                  tone: overspent > 0 ? 'bad' : 'good',
-                },
-                { label: 'Giorni rimasti', value: String(Math.max(0, length - elapsed)) },
-              ]}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
-            <Card className="xl:col-span-2">
-              <CardHeader
-                title="Entrate e spese per ciclo"
-                subtitle="confronto sui cicli registrati"
-                action={
-                  <Link to="/soldi/storico" className={LINK_SOFT}>
-                    Dettaglio →
-                  </Link>
-                }
+      <TabPanel value={tab} label={TABS.find((item) => item.id === tab)!.label}>
+        {tab === 'panoramica' && (
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+              <MetricCard
+                label="Entrate del ciclo"
+                value={formatCents(totals.income, { compact: true })}
+                delta={incomeDelta}
+                deltaSuffix=" vs prec."
+                chartData={series.points}
+                chartKey="income"
+                subs={[
+                  {
+                    label: 'Confermate',
+                    value: formatCents(totals.incomeReceived, { compact: true }),
+                  },
+                  {
+                    label: 'Previste',
+                    value: formatCents(totals.income - totals.incomeReceived, { compact: true }),
+                    tone: totals.income > totals.incomeReceived ? 'warn' : 'default',
+                  },
+                  { label: 'Allocato', value: formatCents(totals.allocated, { compact: true }) },
+                ]}
               />
-              {series.points.length < 2 ? (
-                <p className="py-6 text-center text-[12px] text-white/35">
-                  Serve almeno un secondo ciclo per un confronto.
-                </p>
-              ) : (
-                <ResponsiveContainer width="100%" height={240}>
-                  <BarChart
-                    data={series.points}
-                    margin={{ top: 4, right: 4, bottom: 0, left: -14 }}
-                  >
-                    <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-                    <XAxis
-                      dataKey="short"
-                      tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }}
-                      tickLine={false}
-                      axisLine={false}
-                    />
-                    <YAxis
-                      tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }}
-                      tickLine={false}
-                      axisLine={false}
-                      tickFormatter={euro}
-                      width={62}
-                    />
-                    <Tooltip
-                      cursor={{ fill: 'rgba(255,255,255,0.04)' }}
-                      contentStyle={{
-                        background: '#111111',
-                        border: '1px solid rgba(255,255,255,0.08)',
-                        borderRadius: 12,
-                        fontSize: 12,
-                      }}
-                      formatter={euro}
-                    />
-                    <Legend wrapperStyle={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }} />
-                    <Bar dataKey="income" name="Entrate" fill="#9DB560" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="spent" name="Spese" fill="#d97706" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
-            </Card>
+              <MetricCard
+                label="Disponibile"
+                value={formatCents(totals.available, { compact: true })}
+                // Spending less than last cycle is the good direction, so the sign flips.
+                delta={spentDelta === null ? null : -spentDelta}
+                deltaSuffix=" di spesa"
+                chartData={series.points}
+                chartKey="saved"
+                alert={totals.available < 0}
+                subs={[
+                  { label: 'Speso', value: formatCents(totals.spent, { compact: true }) },
+                  {
+                    label: 'Bucket scoperti',
+                    value: String(overspent),
+                    tone: overspent > 0 ? 'bad' : 'good',
+                  },
+                  { label: 'Giorni rimasti', value: String(Math.max(0, length - elapsed)) },
+                ]}
+              />
+            </div>
 
-            <div className="flex flex-col gap-3">
-              <CycleForecast />
-
-              <Card className="flex-1">
+            <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
+              <Card className="xl:col-span-2">
                 <CardHeader
-                  title="Ultimi movimenti"
+                  title="Entrate e spese per ciclo"
+                  subtitle="confronto sui cicli registrati"
                   action={
-                    <Link to="/soldi/movimenti" className={LINK_SOFT}>
-                      Tutti →
+                    <Link to="/soldi/storico" className={LINK_SOFT}>
+                      Dettaglio →
                     </Link>
                   }
                 />
-                {recent.length === 0 ? (
-                  <p className="py-4 text-center text-[12px] text-white/35">Nessun movimento.</p>
+                {series.points.length < 2 ? (
+                  <p className="py-6 text-center text-[12px] text-muted-foreground">
+                    Serve almeno un secondo ciclo per un confronto.
+                  </p>
                 ) : (
-                  <div className={ROW_DIVIDE}>
-                    {recent.map((item) => (
-                      <div key={item.id} className="flex min-w-0 items-center gap-3 py-2">
-                        <span className="min-w-0 flex-1 truncate text-[12px] text-white/85">
-                          {item.description}
-                        </span>
-                        <span className="hidden shrink-0 text-[11px] text-white/35 tabular-nums sm:inline">
-                          {DAY_FORMAT.format(parseCalendarDate(item.date))}
-                        </span>
-                        <Money
-                          cents={item.amount}
-                          className="shrink-0 text-[12px] font-semibold"
-                          compact
-                        />
-                      </div>
-                    ))}
-                  </div>
+                  <ResponsiveContainer width="100%" height={240}>
+                    <BarChart
+                      data={series.points}
+                      margin={{ top: 4, right: 4, bottom: 0, left: -14 }}
+                    >
+                      <CartesianGrid stroke="var(--theme-border)" vertical={false} />
+                      <XAxis
+                        dataKey="short"
+                        tick={{ fill: 'var(--theme-muted)', fontSize: 10 }}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis
+                        tick={{ fill: 'var(--theme-muted)', fontSize: 10 }}
+                        tickLine={false}
+                        axisLine={false}
+                        tickFormatter={euro}
+                        width={62}
+                      />
+                      <Tooltip
+                        cursor={{ fill: 'var(--theme-card-raised)' }}
+                        contentStyle={{
+                          background: 'var(--theme-card)',
+                          color: 'var(--theme-foreground)',
+                          border: '1px solid var(--theme-border)',
+                          borderRadius: 12,
+                          fontSize: 12,
+                        }}
+                        formatter={euro}
+                      />
+                      <Legend wrapperStyle={{ fontSize: 11, color: 'var(--theme-secondary)' }} />
+                      <Bar dataKey="income" name="Entrate" fill="#9DB560" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="spent" name="Spese" fill="#d97706" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
                 )}
               </Card>
+
+              <div className="flex flex-col gap-3">
+                <CycleForecast />
+
+                <Card className="flex-1">
+                  <CardHeader
+                    title="Ultimi movimenti"
+                    action={
+                      <Link to="/soldi/movimenti" className={LINK_SOFT}>
+                        Tutti →
+                      </Link>
+                    }
+                  />
+                  {recent.length === 0 ? (
+                    <p className="py-4 text-center text-[12px] text-muted-foreground">
+                      Nessun movimento.
+                    </p>
+                  ) : (
+                    <div className={ROW_DIVIDE}>
+                      {recent.map((item) => (
+                        <div key={item.id} className="flex min-w-0 items-center gap-3 py-2">
+                          <span className="min-w-0 flex-1 truncate text-[12px] text-foreground">
+                            {item.description}
+                          </span>
+                          <span className="hidden shrink-0 text-[11px] text-muted-foreground tabular-nums sm:inline">
+                            {DAY_FORMAT.format(parseCalendarDate(item.date))}
+                          </span>
+                          <Money
+                            cents={item.amount}
+                            className="shrink-0 text-[12px] font-semibold"
+                            compact
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Card>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {tab === 'bucket' && <BucketTable rows={rows} committed={committed} />}
+        {tab === 'bucket' && <BucketTable rows={rows} committed={committed} />}
 
-      {tab === 'movimenti' && (
-        <Card>
-          <CardHeader
-            title="Movimenti del ciclo"
-            subtitle={`${cycleTransactions} registrati`}
-            action={
-              <Link to="/soldi/movimenti" className={LINK_SOFT}>
-                Apri la lista completa →
-              </Link>
-            }
-          />
-          {recent.length === 0 ? (
-            <p className="py-6 text-center text-[12px] text-white/35">Nessun movimento.</p>
-          ) : (
-            <div className={ROW_DIVIDE}>
-              {recent.map((item) => (
-                <div key={item.id} className="flex min-w-0 items-center gap-3 py-2">
-                  <span className="min-w-0 flex-1 truncate text-[12px] text-white/85">
-                    {item.description}
-                  </span>
-                  <span className="shrink-0 text-[11px] text-white/35 tabular-nums">
-                    {DAY_FORMAT.format(parseCalendarDate(item.date))}
-                  </span>
-                  <Money cents={item.amount} className="shrink-0 text-[12px] font-semibold" />
-                </div>
-              ))}
-            </div>
-          )}
-        </Card>
-      )}
+        {tab === 'movimenti' && (
+          <Card>
+            <CardHeader
+              title="Movimenti del ciclo"
+              subtitle={`${cycleTransactions} registrati`}
+              action={
+                <Link to="/soldi/movimenti" className={LINK_SOFT}>
+                  Apri la lista completa →
+                </Link>
+              }
+            />
+            {recent.length === 0 ? (
+              <p className="py-6 text-center text-[12px] text-muted-foreground">
+                Nessun movimento.
+              </p>
+            ) : (
+              <div className={ROW_DIVIDE}>
+                {recent.map((item) => (
+                  <div key={item.id} className="flex min-w-0 items-center gap-3 py-2">
+                    <span className="min-w-0 flex-1 truncate text-[12px] text-foreground">
+                      {item.description}
+                    </span>
+                    <span className="shrink-0 text-[11px] text-muted-foreground tabular-nums">
+                      {DAY_FORMAT.format(parseCalendarDate(item.date))}
+                    </span>
+                    <Money cents={item.amount} className="shrink-0 text-[12px] font-semibold" />
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+        )}
+      </TabPanel>
     </div>
   );
 }
@@ -355,7 +371,7 @@ interface BucketRow {
 }
 
 const TH =
-  'px-2 py-1.5 text-[9.5px] uppercase tracking-[0.06em] font-semibold text-white/35 whitespace-nowrap';
+  'px-2 py-1.5 text-[9.5px] uppercase tracking-[0.06em] font-semibold text-muted-foreground whitespace-nowrap';
 
 /** The split, as a table: one row per bucket, every figure right-aligned. */
 function BucketTable({ rows, committed }: { rows: BucketRow[]; committed: number }) {
@@ -397,11 +413,11 @@ function BucketTable({ rows, committed }: { rows: BucketRow[]; committed: number
             {rows.map((row) => {
               const ratio = row.planned > 0 ? Math.min(1, row.spent / row.planned) : 0;
               return (
-                <tr key={row.id} className="border-t border-white/[0.04]">
+                <tr key={row.id} className="border-t border-border">
                   <td className="px-2 py-2">
                     <Link
                       to={`/soldi/bucket/${row.bucketId}`}
-                      className="flex min-w-0 items-center gap-2 text-white/85 hover:text-white"
+                      className="flex min-w-0 items-center gap-2 text-foreground hover:text-foreground"
                     >
                       <span
                         className="h-2 w-2 shrink-0 rounded-full"
@@ -412,22 +428,22 @@ function BucketTable({ rows, committed }: { rows: BucketRow[]; committed: number
                     </Link>
                   </td>
                   <td className="px-2 py-2">
-                    <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+                    <div className="h-1.5 overflow-hidden rounded-full bg-foreground/[0.06]">
                       <div
-                        className={`h-full rounded-full ${row.available < 0 ? 'bg-red-400' : 'bg-[#9DB560]'}`}
+                        className={`h-full rounded-full ${row.available < 0 ? 'bg-bad' : 'bg-brand-soft'}`}
                         style={{ width: `${ratio * 100}%` }}
                       />
                     </div>
                   </td>
-                  <td className="px-2 py-2 text-right text-white/60 tabular-nums">
+                  <td className="px-2 py-2 text-right text-secondary tabular-nums">
                     {formatCents(row.planned, { compact: true })}
                   </td>
-                  <td className="px-2 py-2 text-right text-white/60 tabular-nums">
+                  <td className="px-2 py-2 text-right text-secondary tabular-nums">
                     {formatCents(row.spent, { compact: true })}
                   </td>
                   <td
                     className={`px-2 py-2 text-right font-semibold tabular-nums ${
-                      row.available < 0 ? 'text-red-300' : 'text-white'
+                      row.available < 0 ? 'text-bad' : 'text-foreground'
                     }`}
                   >
                     {formatCents(row.available, { compact: true })}

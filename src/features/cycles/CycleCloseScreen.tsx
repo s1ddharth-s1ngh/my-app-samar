@@ -71,18 +71,18 @@ export function CycleCloseScreen() {
 
       <Card>
         <h2 className="kpi-label mb-3">Bucket per bucket</h2>
-        <ul className="divide-y divide-white/[0.04]">
+        <ul className="divide-y divide-border">
           {summary.rows.map((row) => (
             <li key={row.bucketId} className="flex items-center justify-between gap-3 py-2.5">
               <div className="min-w-0">
-                <p className="font-medium text-white truncate">{row.name}</p>
-                <p className="text-sm text-white/45">
+                <p className="font-medium text-foreground truncate">{row.name}</p>
+                <p className="text-sm text-muted-foreground">
                   {row.carries ? 'Riporta l’avanzo' : 'L’avanzo non si riporta'}
                 </p>
               </div>
               <div className="text-right shrink-0">
                 <Money cents={row.leftover} semanticColor showSign className="font-medium" />
-                <p className="text-sm text-white/45 tabular-nums">
+                <p className="text-sm text-muted-foreground tabular-nums">
                   <Money cents={row.spent} compact /> di <Money cents={row.planned} compact />
                 </p>
               </div>
@@ -95,7 +95,7 @@ export function CycleCloseScreen() {
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="kpi-label">Riporto al ciclo successivo</p>
-            <p className="text-sm text-white/45">{summary.nextLabel}</p>
+            <p className="text-sm text-muted-foreground">{summary.nextLabel}</p>
           </div>
           <Money
             cents={summary.carryOver.openingBalance}
@@ -108,7 +108,7 @@ export function CycleCloseScreen() {
         {summary.carryOver.forfeited > 0 && (
           <>
             <Divider />
-            <p className="text-sm text-white/45">
+            <p className="text-sm text-muted-foreground">
               <Money cents={summary.carryOver.forfeited} /> restano nei bucket che non riportano:
               non finiscono nel ciclo successivo.
             </p>

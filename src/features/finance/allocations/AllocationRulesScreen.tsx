@@ -1,3 +1,4 @@
+import { BucketIcon } from '@/ui/BucketIcon';
 import { useState } from 'react';
 import { useDataStore } from '@/stores/useDataStore';
 import { useToastStore } from '@/stores/toast';
@@ -52,7 +53,7 @@ export function AllocationRulesScreen() {
   // The engine serves one remainder bucket; the others silently stay at zero.
   if (remainderCount > 1) {
     validationAlert = (
-      <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
+      <div className="flex items-start gap-3 rounded-xl border border-bad/20 bg-bad/10 p-4 text-bad">
         <AlertCircle className="mt-0.5 shrink-0" size={20} />
         <p className="text-sm font-medium">
           Hai {remainderCount} bucket su "tutto il resto". Solo il primo per priorità riceve
@@ -62,7 +63,7 @@ export function AllocationRulesScreen() {
     );
   } else if (totalPercent > 100) {
     validationAlert = (
-      <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-red-300">
+      <div className="flex items-start gap-3 rounded-xl border border-bad/20 bg-bad/10 p-4 text-bad">
         <AlertCircle className="mt-0.5 shrink-0" size={20} />
         <p className="text-sm font-medium">
           La somma delle percentuali ({totalPercent}%) supera il 100%.
@@ -71,7 +72,7 @@ export function AllocationRulesScreen() {
     );
   } else if (!hasRemainder && totalPercent < 100) {
     validationAlert = (
-      <div className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-400/10 p-4 text-amber-300">
+      <div className="flex items-start gap-3 rounded-xl border border-warn/20 bg-warn/10 p-4 text-warn">
         <AlertCircle className="mt-0.5 shrink-0" size={20} />
         <p className="text-sm font-medium">
           Non hai un bucket per il "resto", e le percentuali non coprono il 100%. I fondi in eccesso
@@ -81,7 +82,7 @@ export function AllocationRulesScreen() {
     );
   } else {
     validationAlert = (
-      <div className="flex items-center gap-3 rounded-xl border border-emerald-500/20 bg-emerald-400/10 p-4 text-emerald-300">
+      <div className="flex items-center gap-3 rounded-xl border border-good/20 bg-good/10 p-4 text-good">
         <CheckCircle2 className="shrink-0" size={20} />
         <p className="text-sm font-medium">
           Configurazione valida. I fondi fluiranno correttamente.
@@ -94,7 +95,7 @@ export function AllocationRulesScreen() {
     <div className="space-y-6">
       <div className="space-y-2">
         <h1 className="text-2xl font-bold">Regole di Allocazione</h1>
-        <p className="text-sm text-white/45">
+        <p className="text-sm text-muted-foreground">
           Quando ricevi un'entrata (es. Stipendio), i soldi scendono a cascata nei bucket in base
           all'ordine e a queste regole.
         </p>
@@ -110,15 +111,10 @@ export function AllocationRulesScreen() {
           return (
             <Card key={bucket.id} className="p-4 flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="flex items-center gap-3 w-48 shrink-0">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-white/[0.06] text-white/45">
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold bg-foreground/[0.06] text-muted-foreground">
                   {index + 1}
                 </div>
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-xl shrink-0"
-                  style={{ backgroundColor: `${bucket.color}20`, color: bucket.color }}
-                >
-                  {bucket.icon}
-                </div>
+                <BucketIcon icon={bucket.icon} color={bucket.color} />
                 <div>
                   <h3 className="font-semibold line-clamp-1">{bucket.name}</h3>
                 </div>
@@ -138,7 +134,7 @@ export function AllocationRulesScreen() {
                   </div>
                 </div>
               ) : (
-                <div className="flex-1 flex justify-between items-center bg-white/[0.04] p-3 rounded-xl">
+                <div className="flex-1 flex justify-between items-center bg-foreground/[0.04] p-3 rounded-xl">
                   <div className="text-sm font-medium">{describeRule(rule)}</div>
                   <Button variant="quiet" size="sm" onClick={() => handleEdit(bucket)}>
                     Modifica

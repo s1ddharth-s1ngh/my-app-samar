@@ -23,7 +23,7 @@ import { formatCents } from '@/domain/money';
 /** Buckets beyond this fold into a single "Altro" slice rather than inventing hues. */
 const MAX_SLICES = 6;
 
-const AXIS_STYLE = { fill: 'hsl(var(--muted-foreground))', fontSize: 11 } as const;
+const AXIS_STYLE = { fill: 'var(--theme-muted)', fontSize: 11 } as const;
 
 function euro(value: number): string {
   return formatCents(Math.round(value), { compact: true });
@@ -152,12 +152,12 @@ export function HistoryScreen() {
                 width={64}
               />
               <Tooltip
-                cursor={{ fill: 'var(--surface-3)' }}
+                cursor={{ fill: 'var(--theme-card-raised)' }}
                 contentStyle={{
-                  background: 'var(--surface)',
-                  border: '1px solid hsl(var(--border))',
+                  background: 'var(--theme-card)',
+                  border: '1px solid var(--theme-border)',
                   borderRadius: 12,
-                  color: 'var(--ink)',
+                  color: 'var(--theme-foreground)',
                 }}
                 formatter={euroTick}
               />
@@ -195,7 +195,7 @@ export function HistoryScreen() {
                 innerRadius={48}
                 outerRadius={80}
                 paddingAngle={2}
-                stroke="var(--surface)"
+                stroke="var(--theme-card)"
                 strokeWidth={2}
               >
                 {averageSplit.map((row, index) => (
@@ -204,10 +204,10 @@ export function HistoryScreen() {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  background: 'var(--surface)',
-                  border: '1px solid hsl(var(--border))',
+                  background: 'var(--theme-card)',
+                  border: '1px solid var(--theme-border)',
                   borderRadius: 12,
-                  color: 'var(--ink)',
+                  color: 'var(--theme-foreground)',
                 }}
                 formatter={euroTick}
               />
@@ -239,10 +239,10 @@ export function HistoryScreen() {
             />
             <Tooltip
               contentStyle={{
-                background: 'var(--surface)',
-                border: '1px solid hsl(var(--border))',
+                background: 'var(--theme-card)',
+                border: '1px solid var(--theme-border)',
                 borderRadius: 12,
-                color: 'var(--ink)',
+                color: 'var(--theme-foreground)',
               }}
               formatter={euroTick}
             />

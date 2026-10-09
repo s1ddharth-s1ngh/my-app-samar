@@ -121,7 +121,7 @@ export function SupabaseSection() {
                   Sincronizza ora
                 </Button>
               </div>
-              {cloud.message && <p className="text-[11px] text-red-300">{cloud.message}</p>}
+              {cloud.message && <p className="text-[11px] text-bad">{cloud.message}</p>}
               <Button variant="ghost" onClick={() => void getSupabaseClient().auth.signOut()}>
                 Esci dall’account
               </Button>

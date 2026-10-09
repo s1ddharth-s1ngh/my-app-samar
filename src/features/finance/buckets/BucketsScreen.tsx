@@ -1,3 +1,4 @@
+import { BucketIcon } from '@/ui/BucketIcon';
 import { useState } from 'react';
 import { useDataStore } from '@/stores/useDataStore';
 import { useToastStore } from '@/stores/toast';
@@ -188,7 +189,7 @@ export function BucketsScreen() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold">Bucket</h1>
-          <p className="text-sm text-white/45">I tuoi contenitori di spesa e risparmio</p>
+          <p className="text-sm text-muted-foreground">I tuoi contenitori di spesa e risparmio</p>
         </div>
         <Button onClick={handleOpenCreate} size="sm" className="hidden sm:inline-flex">
           <Plus size={16} className="mr-2" /> Nuovo
@@ -208,25 +209,20 @@ export function BucketsScreen() {
             <Card
               id={`bucket-${bucket.id}`}
               key={bucket.id}
-              className="flex items-center p-3 gap-3 cursor-move hover:border-white/[0.06] transition-colors"
+              className="flex items-center p-3 gap-3 cursor-move hover:border-border transition-colors"
               draggable
               onDragStart={(e) => handleDragStart(e, bucket.id)}
               onDragEnd={(e) => handleDragEnd(e, bucket.id)}
               onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, bucket.id)}
             >
-              <div className="text-white/45 cursor-grab active:cursor-grabbing">
+              <div className="text-muted-foreground cursor-grab active:cursor-grabbing">
                 <GripVertical size={20} />
               </div>
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center text-xl shrink-0"
-                style={{ backgroundColor: `${bucket.color}20`, color: bucket.color }}
-              >
-                {bucket.icon}
-              </div>
-              <div className="flex-1">
+              <BucketIcon icon={bucket.icon} color={bucket.color} />
+              <div className="min-w-0 flex-1">
                 <h3 className="font-semibold">{bucket.name}</h3>
-                <p className="text-xs text-white/45">{describeRule(bucket.rule)}</p>
+                <p className="text-xs text-muted-foreground">{describeRule(bucket.rule)}</p>
               </div>
               <div className="flex gap-1 shrink-0">
                 <IconButton
@@ -250,7 +246,11 @@ export function BucketsScreen() {
 
       {/* Mobile FAB */}
       <div className="fixed bottom-20 right-4 md:hidden">
-        <Button onClick={handleOpenCreate} className="h-14 w-14 rounded-full shadow-lg p-0">
+        <Button
+          aria-label="Nuovo bucket"
+          onClick={handleOpenCreate}
+          className="h-14 w-14 rounded-full shadow-lg p-0"
+        >
           <Plus size={24} />
         </Button>
       </div>

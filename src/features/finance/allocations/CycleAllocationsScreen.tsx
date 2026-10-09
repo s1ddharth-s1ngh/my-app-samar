@@ -130,14 +130,14 @@ export function CycleAllocationsScreen() {
                   <div className="flex items-center gap-3">
                     <span
                       className="h-2.5 w-2.5 rounded-full shrink-0"
-                      style={{ backgroundColor: bucket?.color ?? 'hsl(var(--muted-foreground))' }}
+                      style={{ backgroundColor: bucket?.color ?? 'var(--theme-muted)' }}
                       aria-hidden="true"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="font-medium text-white truncate">
+                      <p className="font-medium text-foreground truncate">
                         {bucket?.name ?? 'Bucket rimosso'}
                       </p>
-                      <p className="text-sm text-white/45">
+                      <p className="text-sm text-muted-foreground">
                         Speso <Money cents={allocation.actualAmount} compact /> · resta{' '}
                         <Money cents={available} compact />
                       </p>
@@ -170,10 +170,10 @@ export function CycleAllocationsScreen() {
                   </div>
 
                   {allocation.plannedAmount > 0 && (
-                    <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
+                    <div className="h-1 rounded-full bg-foreground/[0.06] overflow-hidden">
                       <div
                         className={`h-full rounded-full ${
-                          available < 0 ? 'bg-red-500' : 'bg-[#9DB560]'
+                          available < 0 ? 'bg-bad' : 'bg-brand-soft'
                         }`}
                         style={{
                           width: `${Math.min(100, (allocation.actualAmount / allocation.plannedAmount) * 100)}%`,
@@ -194,7 +194,7 @@ export function CycleAllocationsScreen() {
         title="Correggi l’allocazione"
       >
         <div className="space-y-4 py-2">
-          <p className="text-sm text-white/45">
+          <p className="text-sm text-muted-foreground">
             Se cambi questo importo a mano, il motore smette di ricalcolarlo: resterà così anche
             quando registri nuove entrate. Potrai sbloccarlo quando vuoi.
           </p>

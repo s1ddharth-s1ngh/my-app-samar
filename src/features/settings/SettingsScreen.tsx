@@ -59,7 +59,7 @@ export function SettingsScreen() {
               label: preset.label,
             }))}
           />
-          <p className="text-[11px] text-white/35">
+          <p className="text-[11px] text-muted-foreground">
             Sfoca e opacizza insieme, come il cursore di iOS 27. Se hai chiesto meno trasparenza al
             sistema, il vetro resta opaco comunque.
           </p>

@@ -81,7 +81,7 @@ export function RuleFields({
       )}
 
       {rule.type === 'remainder' && (
-        <p className="text-[11px] text-white/35">
+        <p className="text-[11px] text-muted-foreground">
           Prende quel che avanza dopo tutti gli altri. Un solo bucket per ciclo può farlo: se ce n’è
           più d’uno, gli altri restano a zero.
         </p>

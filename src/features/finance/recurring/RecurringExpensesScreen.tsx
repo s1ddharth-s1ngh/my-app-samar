@@ -129,8 +129,8 @@ export function RecurringExpensesScreen() {
     <div className="space-y-6">
       <header className="flex justify-between items-start gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Spese ricorrenti</h1>
-          <p className="text-sm text-white/45">
+          <h1 className="text-2xl font-bold text-foreground">Spese ricorrenti</h1>
+          <p className="text-sm text-muted-foreground">
             Le uscite che tornano ogni mese, con il bucket da cui escono.
           </p>
         </div>
@@ -140,7 +140,7 @@ export function RecurringExpensesScreen() {
       </header>
 
       {buckets.length === 0 && (
-        <Card className="text-sm text-white/45">
+        <Card className="text-sm text-muted-foreground">
           Prima crea almeno un bucket: una spesa ricorrente deve sapere da dove esce il soldo.
         </Card>
       )}
@@ -162,8 +162,8 @@ export function RecurringExpensesScreen() {
             <li key={expense.id}>
               <Card className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
-                  <h2 className="font-semibold text-white truncate">{expense.name}</h2>
-                  <p className="text-sm text-white/45">
+                  <h2 className="font-semibold text-foreground truncate">{expense.name}</h2>
+                  <p className="text-sm text-muted-foreground">
                     Il {expense.dayOfMonth} · {bucketName(expense.bucketId)}
                     {expense.createsTask ? ' · crea un task' : ''}
                   </p>

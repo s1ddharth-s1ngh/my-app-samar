@@ -47,8 +47,8 @@ export function FinancialSettingsSection() {
   return (
     <section className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-white">Denaro</h2>
-        <p className="text-sm text-white/45">
+        <h2 className="text-lg font-semibold text-foreground">Denaro</h2>
+        <p className="text-sm text-muted-foreground">
           Come si misura un ciclo e cosa si porta avanti da un ciclo all’altro.
         </p>
       </div>
@@ -78,8 +78,10 @@ export function FinancialSettingsSection() {
       )}
 
       <Card className="space-y-1">
-        <p className="text-sm text-white/45">Con queste impostazioni, il ciclo di oggi sarebbe</p>
-        <p className="text-lg font-semibold text-white tabular-nums">
+        <p className="text-sm text-muted-foreground">
+          Con queste impostazioni, il ciclo di oggi sarebbe
+        </p>
+        <p className="text-lg font-semibold text-foreground tabular-nums">
           {describeBounds(preview.startDate, preview.endDate)}
         </p>
       </Card>
