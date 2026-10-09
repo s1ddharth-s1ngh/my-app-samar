@@ -7,6 +7,7 @@ export * from './Chip';
 export * from './Card';
 export * from './MetricCard';
 export * from './TabPills';
+export * from './TabPanel';
 export * from './WeekdayPicker';
 export * from './PageHeader';
 export * from './Divider';
