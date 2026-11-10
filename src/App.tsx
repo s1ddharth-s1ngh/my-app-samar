@@ -11,6 +11,7 @@ import { SettingsScreen } from './features/settings/SettingsScreen';
 import { DevUIScreen } from './features/dev/DevUIScreen';
 import { ToastContainer } from './ui/Toast';
 import { GoalsScreen } from './features/goals/GoalsScreen';
+import { GarminScreen } from './features/health/GarminScreen';
 import { onReminderTap, syncReminders } from './lib/notifier';
 import { getSupabaseClient, isSupabaseConfigured } from './data/supabase/client';
 import { requestCloudSync, syncCloud, useCloudStore } from './stores/cloud';
@@ -146,6 +147,7 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<ScheduleScreen />} />
             <Route path="agenda/schema" element={<WeekScheduleScreen />} />
+            <Route path="agenda/garmin" element={<GarminScreen />} />
             <Route path="soldi">
               <Route index element={<FinanceScreen />} />
               <Route path="fonti" element={<IncomeSourcesScreen />} />

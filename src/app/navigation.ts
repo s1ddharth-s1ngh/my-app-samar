@@ -13,6 +13,7 @@ import {
   Target,
   TrendingUp,
   Wallet,
+  Watch,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
@@ -58,6 +59,7 @@ const SECTIONS: Record<AreaKey, NavSection[]> = {
   agenda: [
     { id: 'giornata', label: 'La giornata', href: '/', icon: CalendarDays, isHome: true },
     { id: 'schema', label: 'Schema settimanale', href: '/agenda/schema', icon: CalendarRange },
+    { id: 'garmin', label: 'Garmin', href: '/agenda/garmin', icon: Watch },
   ],
 
   soldi: [

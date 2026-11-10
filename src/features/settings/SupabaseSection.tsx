@@ -138,9 +138,22 @@ export function SupabaseSection() {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
               />
-              <Button disabled={isSending || !email.trim()} onClick={() => void sendAccessLink()}>
-                {isSending ? 'Invio…' : 'Invia link di accesso'}
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button disabled={isSending || !email.trim()} onClick={() => void sendAccessLink()}>
+                  {isSending ? 'Invio…' : 'Invia link di accesso'}
+                </Button>
+                <Button
+                  variant="quiet"
+                  onClick={() =>
+                    void getSupabaseClient().auth.signInWithOAuth({
+                      provider: 'github',
+                      options: { redirectTo: window.location.origin },
+                    })
+                  }
+                >
+                  Accedi con GitHub
+                </Button>
+              </div>
               {authMessage && <p className="text-[11px] text-muted-foreground">{authMessage}</p>}
             </div>
           ) : null}
